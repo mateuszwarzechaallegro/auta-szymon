@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f0f1a">
+  <title>🏆 Wygraliście! — Auta Szymon</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    @keyframes confetti-fall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity:1; }
+      100% { transform: translateY(100vh)  rotate(720deg); opacity:0; }
+    }
+    .confetti-piece {
+      position: fixed; top:-10px; width:10px; height:10px;
+      border-radius:2px; animation: confetti-fall linear infinite;
+      pointer-events:none; z-index:0;
+    }
+    .content-above { position:relative; z-index:1; }
+  </style>
+</head>
+<body>
+  <div id="confetti-container"></div>
+
+  <div class="page content-above">
+    <div class="flag-strip"></div>
+
+    <div class="neon-title" style="margin-top:24px;">🏆 WYGRANA! 🏆</div>
+    <div class="gold-text">Urodziny Szymona — 16 maja 2026</div>
+
+    <div class="hero-emoji" style="font-size:5rem;">🎉</div>
+
+    <div class="mission-box" style="margin:16px;">
+      <div class="mission-label">📻 Wiadomość od Zygzaka McQueena</div>
+      <div class="mission-text">
+        <em>"KA-CZAOW! Zebraliście wszystkie 4 paczki i otworzyliście sejf!
+        Jesteście NAJLEPSZĄ Ekipą Ratunkową w historii Radiator Springs!
+        Złomek przeprasza... i jest z Was naprawdę dumny!"</em>
+      </div>
+    </div>
+
+    <div class="task-card" style="margin:0 16px 16px;border-color:#FFD700;background:rgba(255,215,0,0.08);">
+      <div class="task-card-icon">🎁</div>
+      <div class="task-card-text">
+        <strong style="color:#FFD700;font-size:1.1rem;">Jest jeszcze jeden prezent!</strong><br><br>
+        Złomek ukrył go specjalnie dla Szymona:<br><br>
+        <span id="gift-location" style="color:#ffffff;font-size:1rem;line-height:1.7;">
+          PLACEHOLDER: opisz gdzie jest schowany dodatkowy prezent
+          (np. "Pod poduszką na kanapie w salonie" lub "W samochodzie taty w bagażniku")
+        </span>
+      </div>
+    </div>
+
+    <!-- Symbols collected -->
+    <div class="task-card" style="margin:0 16px 16px;">
+      <div class="task-card-icon">🔐</div>
+      <div class="task-card-text">
+        <div style="font-size:0.8rem;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">
+          Zdobyte symbole sejfu:
+        </div>
+        <div style="font-size:2.2rem;letter-spacing:16px;text-align:center;">
+          🔧 🏁 ⚡ 🔴
+        </div>
+      </div>
+    </div>
+
+    <!-- Time display -->
+    <div class="task-card" style="margin:0 16px 16px;">
+      <div class="task-card-icon">⏱️</div>
+      <div class="task-card-text">
+        <div style="font-size:0.8rem;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Czas misji:</div>
+        <div class="task-countdown ok" id="elapsed-time" style="font-size:1.8rem;margin-top:4px;">--:--</div>
+      </div>
+    </div>
+
+    <div class="bottom-deco">🚗💨🏆<br><span style="font-size:1rem;">✨ ⚡ KA-CZAOW! ⚡ ✨</span></div>
+    <div class="flag-strip" style="margin-top:8px;"></div>
+  </div>
+
+  <script src="../assets/game.js"></script>
+  <script>
+    // Elapsed time
+    const start = GameState.getStartTime();
+    if (start) {
+      const ms  = Date.now() - start;
+      const m   = Math.floor(ms/60000);
+      const s   = Math.floor((ms%60000)/1000);
+      document.getElementById('elapsed-time').textContent = m + ' min ' + s + 's';
+    }
+
+    // Gift location placeholder
+    document.getElementById('gift-location').textContent = EXTRA_GIFT_LOCATION;
+
+    // Confetti
+    const colors = ['#e94560','#FFD700','#4CAF50','#2196F3','#FF9800','#ffffff'];
+    const cont   = document.getElementById('confetti-container');
+    for (let i = 0; i < 40; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left              = Math.random()*100 + 'vw';
+      el.style.background        = colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDuration = (2 + Math.random()*3) + 's';
+      el.style.animationDelay    = (Math.random()*3) + 's';
+      el.style.width             = (8+Math.random()*10) + 'px';
+      el.style.height            = (8+Math.random()*10) + 'px';
+      cont.appendChild(el);
+    }
+  </script>
+</body>
+</html>
