@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Sejf + Instrukcja — Auta Szymon 2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12pt;
+      background: #fff;
+      color: #000;
+      padding: 20mm;
+    }
+    @media print {
+      body { padding: 10mm; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+    }
+    h1 { font-size: 20pt; text-align: center; margin-bottom: 6mm; }
+    h2 { font-size: 14pt; margin: 8mm 0 4mm; border-bottom: 1px solid #ccc; padding-bottom: 2mm; }
+    .instructions { background: #f9f9f9; border: 1px solid #ddd; padding: 6mm; border-radius: 4mm; margin-bottom: 8mm; }
+    .safe-box {
+      border: 3px solid #000;
+      border-radius: 6mm;
+      padding: 8mm;
+      margin: 6mm 0;
+      text-align: center;
+    }
+    .symbols-row {
+      display: flex;
+      justify-content: center;
+      gap: 8mm;
+      margin: 6mm 0;
+      font-size: 40pt;
+    }
+    .dial {
+      border: 2px dashed #888;
+      border-radius: 4mm;
+      padding: 4mm 8mm;
+      display: inline-block;
+      text-align: center;
+    }
+    .combination-answer {
+      font-size: 36pt;
+      letter-spacing: 8mm;
+      font-weight: 900;
+      margin: 4mm 0;
+    }
+    .nfc-codes {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 4mm 0;
+    }
+    .nfc-codes th, .nfc-codes td {
+      border: 1px solid #ccc;
+      padding: 3mm 4mm;
+      text-align: left;
+    }
+    .nfc-codes th { background: #f0f0f0; font-weight: bold; }
+    .code-val { font-family: monospace; font-size: 13pt; font-weight: bold; letter-spacing: 2px; }
+    .qr-placeholder {
+      border: 2px dashed #888;
+      width: 50mm;
+      height: 50mm;
+      margin: 6mm auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9pt;
+      color: #888;
+      text-align: center;
+    }
+    .cut-here { border-top: 2px dashed red; margin: 8mm 0; padding-top: 4mm; font-size: 9pt; color: red; }
+    .btn-print {
+      display: block;
+      margin: 0 auto 8mm;
+      padding: 10px 30px;
+      background: #e94560;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14pt;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<button class="btn-print no-print" onclick="window.print()">🖨️ DRUKUJ</button>
+
+<h1>⚡ AUTA — URODZINY SZYMONA 2026 ⚡</h1>
+<h1>🔐 INSTRUKCJA SEJFU + KODY NFC</h1>
+
+<div class="instructions">
+  <strong>Dla organizatora:</strong><br>
+  1. Wydrukuj tę stronę (najlepiej kolor).<br>
+  2. Ustaw sejf na kombinację: <strong>🔧 🏁 ⚡ 🔴</strong> (Klucz → Flaga → Błyskawica → Tłok).<br>
+  3. Włóż do środka kartkę z QR kodem prowadzącym do: <code>https://[TWOJA DOMENA]/final/</code><br>
+  4. Ukryj sejf przy bazie. Dzieci otworzą go po zebraniu wszystkich 4 symboli.<br>
+  5. Programuj tagi NFC adresami URL z tabeli poniżej.<br>
+</div>
+
+<h2>🔐 Kombinacja sejfu</h2>
+<div class="safe-box">
+  <div style="font-size:11pt;color:#666;margin-bottom:4mm;">USTAW POKRĘTŁA W TEJ KOLEJNOŚCI:</div>
+  <div class="combination-answer">🔧 🏁 ⚡ 🔴</div>
+  <div style="font-size:10pt;color:#444;margin-top:4mm;">
+    Klucz &nbsp;&nbsp; Flaga &nbsp;&nbsp; Błyskawica &nbsp;&nbsp; Tłok
+  </div>
+</div>
+
+<div style="text-align:center;margin:6mm 0;font-size:10pt;color:#666;">
+  Dzieci odkryją te symbole po kolei (jeden na każdej z 4 lokalizacji).<br>
+  Kombinację zapamiętają z ekranu lub z notatek.
+</div>
+
+<div class="cut-here">✂ --- Tutaj wkleić kartkę z kodem QR do środka sejfu ---</div>
+<div class="qr-placeholder">
+  Wklej tu naklejkę z kodem QR<br>prowadzącą do:<br><code>/final/</code>
+</div>
+<div class="cut-here">✂ ------</div>
+
+<div class="page-break"></div>
+
+<h2>📡 Kody NFC tagów (backup)</h2>
+<p style="margin-bottom:4mm;font-size:10pt;color:#555;">
+  Każdy tag NFC jest zaprogramowany adresem URL. Przy każdym tagu nakleij etykietkę z kodem backup.
+  Dzieci wpisują go gdy NFC nie działa.
+</p>
+
+<table class="nfc-codes">
+  <tr>
+    <th>#</th>
+    <th>Etap</th>
+    <th>URL do zaprogramowania w tagu</th>
+    <th>Backup kod</th>
+    <th>Gdzie ukryć tag</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Etap 1 (Baza)</td>
+    <td><code>https://[DOMENA]/zadanie/1/?nfc=1</code></td>
+    <td class="code-val">START1</td>
+    <td>PLACEHOLDER: przy bazie startowej</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Etap 2</td>
+    <td><code>https://[DOMENA]/zadanie/2/?nfc=1</code></td>
+    <td class="code-val">FLIK22</td>
+    <td>PLACEHOLDER: zagadka z E1 wskazuje miejsce</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Etap 3 — Lok. 1</td>
+    <td><code>https://[DOMENA]/zadanie/3/?nfc=1</code></td>
+    <td class="code-val">PACZK3</td>
+    <td>PLACEHOLDER: przy paczce #1 w Lokalizacji 1</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Etap 4 — Lok. 2</td>
+    <td><code>https://[DOMENA]/zadanie/4/?nfc=1</code></td>
+    <td class="code-val">PACZK4</td>
+    <td>PLACEHOLDER: przy paczce #2 w Lokalizacji 2</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Etap 5 — Lok. 3</td>
+    <td><code>https://[DOMENA]/zadanie/5/?nfc=1</code></td>
+    <td class="code-val">PACZK5</td>
+    <td>PLACEHOLDER: przy beeper + paczce #3</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>Etap 6 — Lok. 4</td>
+    <td><code>https://[DOMENA]/zadanie/6/?nfc=1</code></td>
+    <td class="code-val">PACZK6</td>
+    <td>PLACEHOLDER: przy paczce #4 w Lokalizacji 4</td>
+  </tr>
+</table>
+
+<div style="margin-top:8mm;padding:4mm 6mm;background:#fff3cd;border:1px solid #ffc107;border-radius:4mm;">
+  <strong>Uwaga:</strong> Zastąp <code>[DOMENA]</code> prawdziwym adresem GitHub Pages, np.
+  <code>username.github.io/auta-szymon</code>
+</div>
+
+<h2>📋 Checklist przed imprezą (16 maja 2026)</h2>
+<ul style="line-height:2.2;padding-left:6mm;">
+  <li>☐ Uzupełnij współrzędne GPS w <code>assets/game.js</code> (STAGE3–6_WAYPOINTS)</li>
+  <li>☐ Wpisz wskazówki do waypointów (hint dla każdego punktu trasy)</li>
+  <li>☐ Wpisz STAGE2_NFC_HINT (zagadka z E1 → miejsce tagu E2)</li>
+  <li>☐ Wpisz STAGE3_NFC_HINT (wskazówka do znalezienia tagu w Lok. 1)</li>
+  <li>☐ Wpisz EXTRA_GIFT_LOCATION (opis miejsca dodatkowego prezentu)</li>
+  <li>☐ Zastąp [DOMENA] w tabeli NFC powyżej</li>
+  <li>☐ Zaprogramuj 6 tagów NFC (app: NFC Tools lub TagWriter)</li>
+  <li>☐ Wydrukuj i przykrój etykiety backup-code</li>
+  <li>☐ Ukryj tagi + paczki w lokalizacjach</li>
+  <li>☐ Ukryj beeper w Lokalizacji 3 (razem z tagiem #5)</li>
+  <li>☐ Ustaw sejf na kombinację 🔧🏁⚡🔴 i ukryj przy bazie</li>
+  <li>☐ Naładuj telefon do 100%</li>
+  <li>☐ Test: otwórz stronę w Chrome Android, sprawdź że GPS i NFC działają</li>
+  <li>☐ Push do GitHub Pages i sprawdź HTTPS</li>
+</ul>
+
+</body>
+</html>
