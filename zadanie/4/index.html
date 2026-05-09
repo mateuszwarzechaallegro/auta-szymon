@@ -10,28 +10,304 @@
 <body>
   <div class="page">
     <div class="flag-strip"></div>
-
+    <div class="fuel-widget">
+      <span class="fuel-icon">⛽</span>
+      <div class="fuel-track"><div class="fuel-fill" id="fuel-fill"></div></div>
+      <span class="fuel-label" id="fuel-label">--</span>
+    </div>
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
       <span class="task-badge">ETAP 4 / 6</span>
     </div>
 
-    <div class="task-body">
-      <div class="task-step-label">🏁 Zadanie czwarte</div>
-      <div class="task-title"><!-- Tytuł zadania --></div>
+    <div id="stage-content" class="task-body">
 
-      <div class="task-card">
-        <div class="task-card-icon">🔍</div>
-        <div class="task-card-text">
-          <em style="color:#666; font-size:0.85em;">[uzupełnij treść zadania tutaj]</em>
+      <!-- Phase 1: GPS Nav -->
+      <div id="phase-nav">
+        <div class="task-step-label">🗺️ Nawiguj do Lokalizacji 2</div>
+        <div class="task-title">Szukamy Paczki #2!</div>
+        <div class="nav-widget">
+          <div class="nav-arrow-wrap" id="nav-arrow-wrap">
+            <span class="nav-arrow" id="nav-arrow">⬆️</span>
+          </div>
+          <div class="nav-distance" id="nav-distance">--</div>
+          <div class="nav-hint" id="nav-hint">Szukam GPS...</div>
+          <div class="nav-status" id="nav-status">Czekam na GPS...</div>
+        </div>
+        <div class="task-hint">Jedź za strzałką, słuchaj wskazówek na każdym skrzyżowaniu!</div>
+      </div>
+
+      <!-- Phase 2: NFC -->
+      <div id="phase-nfc" style="display:none;">
+        <div class="task-step-label">📡 Zeskanuj tag NFC</div>
+        <div class="task-card"><div class="task-card-icon">📡</div>
+          <div class="task-card-text"><strong>Dotknij tagiem NFC!</strong></div></div>
+        <div class="backup-input-wrap">
+          <div style="font-size:0.8rem;color:#888;">Kod z naklejki:</div>
+          <input id="backup-code-input" type="text" maxlength="6" placeholder="XXXXXX">
+          <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj</button>
         </div>
       </div>
 
-      <div class="neon-divider"></div>
-      <div class="task-hint">⚡ Znajdź następny QR kod w terenie ⚡</div>
+      <!-- Phase 3: Memory Match -->
+      <div id="phase-memory" style="display:none;">
+        <div class="task-step-label">🃏 Memory — Bohaterowie Aut</div>
+        <div class="task-title">Znajdź pary!</div>
+        <div class="task-card">
+          <div class="task-card-icon">⏱️</div>
+          <div class="task-card-text">
+            Dopasuj wszystkie pary zanim czas minie!<br>
+            <div class="task-countdown ok" id="mem-timer" style="font-size:1.8rem;margin-top:8px;">90s</div>
+          </div>
+        </div>
+        <div class="memory-grid" id="memory-grid"></div>
+        <button id="mem-retry" class="btn-primary" style="display:none;margin-top:12px;">
+          🔄 Spróbuj ponownie
+        </button>
+      </div>
+
+      <!-- Phase 4: Speed Burst 15 km/h -->
+      <div id="phase-speed" style="display:none;">
+        <div class="task-step-label">💨 PEŁNA PRĘDKOŚĆ!</div>
+        <div class="task-title">Osiągnij 15 km/h!</div>
+        <div class="task-card">
+          <div class="task-card-icon">🚀</div>
+          <div class="task-card-text">
+            <em>"Złomek mówi: Teraz PEŁNA PARA! Osiągnijcie 15 km/h 
+            i trzymajcie przez 3 sekundy! Macie 2 minuty!"</em>
+          </div>
+        </div>
+        <div class="speed-widget">
+          <div class="speed-number" id="burst-speed">0</div>
+          <div class="speed-unit">km/h</div>
+          <div class="speed-progress-track" style="height:20px;position:relative;">
+            <div class="speed-progress-fill" id="burst-fill"
+                 style="background:linear-gradient(90deg,#4CAF50,#FFD700);"></div>
+            <div id="burst-marker"
+                 style="position:absolute;top:0;height:100%;width:3px;
+                        background:#e94560;border-radius:2px;left:50%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;
+                      font-size:0.75rem;color:#888;margin-top:2px;">
+            <span>0</span>
+            <span style="color:#e94560;font-weight:700;">▲ 15 km/h</span>
+            <span>30</span>
+          </div>
+          <div style="font-size:0.9rem;color:#aaa;margin-top:6px;" id="burst-status">
+            Jedźcie szybko!
+          </div>
+          <div class="task-countdown ok" id="burst-hold">Utrzymaj: 0.0 / 3s</div>
+        </div>
+        <div class="task-countdown ok" id="burst-timer" style="font-size:1.6rem;">2:00</div>
+        <button id="burst-retry" class="btn-primary" style="display:none;margin-top:12px;">
+          🔄 Czas minął! Spróbuj ponownie
+        </button>
+      </div>
+
+      <!-- Phase 5: Symbol + Success -->
+      <div id="phase-success" style="display:none;">
+        <div class="symbol-reveal active">
+          <div class="symbol-label">Symbol #2 zdobyty!</div>
+          <div class="symbol-big">🏁</div>
+          <div class="symbol-name">FLAGA</div>
+          <div style="font-size:0.85rem;color:#aaa;margin-top:4px;">
+            To 2. znak kodu do sejfu!
+          </div>
+        </div>
+        <div class="task-card" style="margin-top:16px;border-color:#4CAF50;">
+          <div class="task-card-icon">📦</div>
+          <div class="task-card-text">
+            <strong>Paczka #2 jest obok! Weźcie ją!</strong><br>
+            Jedźcie do <strong>Lokalizacji 3</strong> — tam jest tracker Złomka!
+          </div>
+        </div>
+        <a class="btn-primary" href="../5/">⚡ JEDŹ DO LOKALIZACJI 3 →</a>
+      </div>
     </div>
 
-    <div class="flag-strip" style="margin-top: auto;"></div>
+    <div id="pit-stop-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-icon">🏁</div><div class="modal-title">PIT STOP!</div>
+        <div class="modal-text">Paliwo na零! Zrób <strong>10 pajacyków</strong>!</div>
+        <button class="btn-primary" onclick="FuelManager.closePitStop()">✅ Naładowano!</button>
+      </div>
+    </div>
+    <div class="flag-strip" style="margin-top:auto;"></div>
   </div>
+
+  <script src="../../assets/game.js"></script>
+  <script>
+    FuelManager.startDrain(); FuelManager.startGPSTracking(); FuelManager.renderFuel();
+
+    const waypoints = STAGE4_WAYPOINTS.length > 0 ? STAGE4_WAYPOINTS : [
+      { lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij trasę Lokalizacji 2' }
+    ];
+    Navigation.start(waypoints,
+      (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(showNFC,1500); },
+      (i,fin,nextHint) => { if(!fin&&nextHint) document.getElementById('nav-hint').textContent='✓ '+nextHint; }
+    );
+    document.getElementById('nav-status').addEventListener('dblclick', showNFC);
+
+    function showNFC() {
+      Navigation.stop();
+      document.getElementById('phase-nav').style.display  = 'none';
+      document.getElementById('phase-nfc').style.display  = 'block';
+      setupBackupCodeInput(4, startMemory);
+      if (checkNFCToken(4)) startMemory();
+    }
+
+    // MEMORY MATCH
+    const PAIRS = [
+      {emoji:'🏎️',name:'Zygzak'}, {emoji:'🚙',name:'Złomek'},
+      {emoji:'🟣',name:'Ramona'}, {emoji:'🔵',name:'Szerszeń'},
+    ];
+
+    function startMemory() {
+      document.getElementById('phase-nfc').style.display    = 'none';
+      document.getElementById('phase-memory').style.display = 'block';
+      runMemory();
+    }
+
+    function runMemory() {
+      const grid    = document.getElementById('memory-grid');
+      const timerEl = document.getElementById('mem-timer');
+      const retryEl = document.getElementById('mem-retry');
+      retryEl.style.display = 'none';
+      let matched = 0, flipped = [], blocked = false;
+
+      const cards = [...PAIRS, ...PAIRS].sort(() => Math.random()-0.5);
+      grid.innerHTML = '';
+      const els = cards.map((c, i) => {
+        const div = document.createElement('div');
+        div.className     = 'mem-card face-down';
+        div.dataset.emoji = c.emoji;
+        div.dataset.idx   = i;
+        div.addEventListener('click', () => flipCard(div));
+        grid.appendChild(div);
+        return div;
+      });
+
+      let timeLeft = 90;
+      const tick = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft + 's';
+        timerEl.className   = 'task-countdown ' + (timeLeft <= 20 ? 'warning' : 'ok');
+        if (timeLeft <= 0) { clearInterval(tick); onMemFail(); }
+      }, 1000);
+
+      function flipCard(el) {
+        if (blocked || !el.classList.contains('face-down') || el.classList.contains('matched')) return;
+        el.classList.remove('face-down');
+        el.textContent = el.dataset.emoji;
+        flipped.push(el);
+        if (flipped.length === 2) {
+          blocked = true;
+          if (flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
+            flipped.forEach(c => c.classList.add('matched'));
+            matched++;
+            flipped = []; blocked = false;
+            if (matched === PAIRS.length) { clearInterval(tick); onMemWin(); }
+          } else {
+            setTimeout(() => {
+              flipped.forEach(c => { c.classList.add('face-down'); c.textContent = ''; });
+              flipped = []; blocked = false;
+            }, 900);
+          }
+        }
+      }
+
+      function onMemWin()  { startSpeedBurst(); }
+      function onMemFail() {
+        retryEl.style.display = 'block';
+        retryEl.onclick = () => { retryEl.style.display='none'; runMemory(); };
+      }
+    }
+
+    // SPEED BURST — 15 km/h through 3 consecutive seconds
+    function startSpeedBurst() {
+      document.getElementById('phase-memory').style.display = 'none';
+      document.getElementById('phase-speed').style.display  = 'block';
+      const speedEl  = document.getElementById('burst-speed');
+      const fillEl   = document.getElementById('burst-fill');
+      const markerEl = document.getElementById('burst-marker');
+      const statusEl = document.getElementById('burst-status');
+      const holdEl   = document.getElementById('burst-hold');
+      const timerEl  = document.getElementById('burst-timer');
+      const retryEl  = document.getElementById('burst-retry');
+      const TARGET_KMH  = 15;
+      const HOLD_SECS   = 3;
+      const MAX_DISPLAY = 30;
+      const DEADLINE    = 2 * 60 * 1000;
+      let holdSecs = 0, endTime = Date.now() + DEADLINE;
+      let prevPos = null, prevTime = null, done = false, watchId = null;
+
+      // Position red marker at 15 km/h on gauge
+      markerEl.style.left = (TARGET_KMH / MAX_DISPLAY * 100) + '%';
+
+      function tickTimer() {
+        if (done) return;
+        const left = Math.max(0, endTime - Date.now());
+        const m = Math.floor(left/60000), s = Math.floor((left%60000)/1000);
+        timerEl.textContent = m + ':' + String(s).padStart(2,'0');
+        timerEl.className   = 'task-countdown ' + (left < 30000 ? 'warning' : 'ok');
+        if (left > 0) setTimeout(tickTimer, 500); else onBurstFail();
+      }
+      tickTimer();
+
+      watchId = navigator.geolocation.watchPosition(pos => {
+        if (done) return;
+        const now = Date.now();
+        let spd = 0;
+        if (prevPos && prevTime) {
+          const dt   = (now - prevTime) / 1000;
+          const dist = haversineM(prevPos.lat, prevPos.lng, pos.coords.latitude, pos.coords.longitude);
+          spd = dt > 0.2 ? (dist / dt) * 3.6 : 0;
+        }
+        prevPos  = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        prevTime = now;
+
+        const spdRound = Math.round(spd);
+        speedEl.textContent = spdRound;
+        fillEl.style.width  = Math.min(100, spd / MAX_DISPLAY * 100) + '%';
+        fillEl.style.background = spd >= TARGET_KMH
+          ? 'linear-gradient(90deg,#4CAF50,#e94560)'
+          : 'linear-gradient(90deg,#4CAF50,#FFD700)';
+
+        if (spd >= TARGET_KMH) {
+          holdSecs = Math.min(HOLD_SECS, holdSecs + 0.5);
+          statusEl.textContent = '🔥 KA-CZAOW! Trzymajcie!';
+          holdEl.className     = 'task-countdown warning';
+          if (holdSecs >= HOLD_SECS) onBurstSuccess();
+        } else {
+          holdSecs = Math.max(0, holdSecs - 0.3);
+          statusEl.textContent = spd > 10 ? 'Prawie! Szybciej!' : 'Jedźcie szybko!';
+          holdEl.className     = 'task-countdown ok';
+        }
+        holdEl.textContent = 'Utrzymaj: ' + holdSecs.toFixed(1) + ' / ' + HOLD_SECS + 's';
+      }, null, { enableHighAccuracy: true, maximumAge: 500 });
+
+      function onBurstSuccess() {
+        done = true;
+        navigator.geolocation.clearWatch(watchId);
+        GameState.addFuel(GAME_CONFIG.fuelTaskBonus);
+        FuelManager.renderFuel();
+        GameState.addSymbol('flag');
+        GameState.markStage(4);
+        document.getElementById('phase-speed').style.display   = 'none';
+        document.getElementById('phase-success').style.display = 'block';
+      }
+      function onBurstFail() {
+        done = true;
+        navigator.geolocation.clearWatch(watchId);
+        retryEl.style.display = 'block';
+        retryEl.onclick = () => {
+          retryEl.style.display = 'none';
+          holdSecs = 0; done = false; prevPos = null; prevTime = null;
+          endTime = Date.now() + DEADLINE;
+          startSpeedBurst();
+        };
+      }
+    }
+  </script>
 </body>
 </html>
