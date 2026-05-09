@@ -356,3 +356,123 @@ function renderNav(arrowAngle, distM, isClose, isLast, hint) {
     else                    statusEl.textContent = 'Nawiguj do celu';
   }
 }
+
+// ============================================================
+// SENSORS — Accelerometer shake + Level balance
+// ============================================================
+const Sensors = (() => {
+
+  // --- SHAKE CHALLENGE ---
+  // count: number of shakes required
+  // timeLimitMs: total time window
+  // onProgress(current, target): called each shake
+  // onSuccess(): all shakes done
+  // onFail(): time expired before reaching count
+  function startShake(count, timeLimitMs, onProgress, onSuccess, onFail) {
+    const THRESHOLD = 18; // m/s² total acceleration spike
+    let shakeCount = 0;
+    let lastShakeTime = 0;
+    let deadline = Date.now() + timeLimitMs;
+    let done = false;
+
+    function onMotion(e) {
+      if (done) return;
+      if (Date.now() > deadline) {
+        done = true;
+        window.removeEventListener('devicemotion', onMotion);
+        onFail();
+        return;
+      }
+      const ag = e.accelerationIncludingGravity;
+      if (!ag) return;
+      const total = Math.sqrt(ag.x**2 + ag.y**2 + ag.z**2);
+      const now = Date.now();
+      if (total > THRESHOLD && now - lastShakeTime > 300) {
+        lastShakeTime = now;
+        shakeCount++;
+        if (onProgress) onProgress(shakeCount, count);
+        if (shakeCount >= count) {
+          done = true;
+          window.removeEventListener('devicemotion', onMotion);
+          onSuccess();
+        }
+      }
+    }
+
+    if (!window.DeviceMotionEvent) {
+      // Fallback: tap button 20 times
+      return { fallback: true };
+    }
+
+    // iOS 13+ requires permission
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+      DeviceMotionEvent.requestPermission().then(r => {
+        if (r === 'granted') window.addEventListener('devicemotion', onMotion);
+        else onFail();
+      });
+    } else {
+      window.addEventListener('devicemotion', onMotion);
+    }
+
+    return { fallback: false };
+  }
+
+  // --- LEVEL CHALLENGE ---
+  // holdSecs: seconds device must stay level
+  // toleranceDeg: max tilt in gamma (left-right) degrees
+  // failSecs: seconds of bad tilt before fail
+  // onProgress(goodSecs, holdSecs): update progress bar
+  // onSuccess()
+  // onFail()
+  function startLevel(holdSecs, toleranceDeg, failSecs, onProgress, onSuccess, onFail) {
+    let goodMs  = 0;
+    let badMs   = 0;
+    let lastT   = Date.now();
+    let done    = false;
+
+    function onOrient(e) {
+      if (done) return;
+      const now = Date.now();
+      const dt  = (now - lastT) / 1000;
+      lastT = now;
+      const tilt = Math.abs(e.gamma || 0); // left-right tilt degrees
+
+      if (tilt <= toleranceDeg) {
+        goodMs += dt;
+        badMs   = Math.max(0, badMs - dt * 0.5); // recover slowly
+        if (onProgress) onProgress(goodMs, holdSecs);
+        if (goodMs >= holdSecs) {
+          done = true;
+          window.removeEventListener('deviceorientation', onOrient);
+          onSuccess();
+        }
+      } else {
+        badMs += dt;
+        goodMs = Math.max(0, goodMs - dt * 0.3); // penalize tilt
+        if (onProgress) onProgress(goodMs, holdSecs);
+        if (badMs >= failSecs) {
+          done = true;
+          window.removeEventListener('deviceorientation', onOrient);
+          onFail();
+        }
+      }
+    }
+
+    if (!window.DeviceOrientationEvent) {
+      return { fallback: true };
+    }
+
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission().then(r => {
+        if (r === 'granted') window.addEventListener('deviceorientation', onOrient);
+        else onFail();
+      });
+    } else {
+      window.addEventListener('deviceorientation', onOrient);
+    }
+
+    return { fallback: false };
+  }
+
+  return { startShake, startLevel };
+})();
