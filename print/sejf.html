@@ -186,6 +186,62 @@
   <code>username.github.io/auta-szymon</code>
 </div>
 
+<h2>⛽ Kody Butelek Paliwa</h2>
+<p style="margin-bottom:4mm;font-size:10pt;color:#555;">
+  Przy każdej lokalizacji umieść fizyczną "butelkę paliwa" (butelka lub kartka) z wydrukowanym kodem.
+  Dzieci wpisują go w grze, żeby naładować bak ⛽ (+30%).
+</p>
+
+<table class="nfc-codes">
+  <tr>
+    <th>Lokalizacja</th>
+    <th>Etap</th>
+    <th>Kod</th>
+    <th>GPS-gate (50m)</th>
+    <th>Uwaga</th>
+  </tr>
+  <tr>
+    <td>Baza startowa</td>
+    <td>E1</td>
+    <td class="code-val">BENZ1</td>
+    <td>❌ (brak)</td>
+    <td>Zawsze dostępny przy starcie</td>
+  </tr>
+  <tr>
+    <td>Lokalizacja 1</td>
+    <td>E3</td>
+    <td class="code-val">BENZ3</td>
+    <td>✅ 50m od tagu E3</td>
+    <td>Uzupełnij FUEL_BOTTLE_COORDS[3] w game.js</td>
+  </tr>
+  <tr>
+    <td>Lokalizacja 2</td>
+    <td>E4</td>
+    <td class="code-val">BENZ4</td>
+    <td>✅ 50m od tagu E4</td>
+    <td>Uzupełnij FUEL_BOTTLE_COORDS[4] w game.js</td>
+  </tr>
+  <tr>
+    <td>Lokalizacja 3</td>
+    <td>E5</td>
+    <td class="code-val">BENZ5</td>
+    <td>✅ 50m od tagu E5</td>
+    <td>Uzupełnij FUEL_BOTTLE_COORDS[5] w game.js</td>
+  </tr>
+  <tr>
+    <td>Lokalizacja 4</td>
+    <td>E6</td>
+    <td class="code-val">BENZ6</td>
+    <td>✅ 50m od tagu E6</td>
+    <td>Uzupełnij FUEL_BOTTLE_COORDS[6] w game.js</td>
+  </tr>
+</table>
+
+<div style="margin-top:4mm;padding:4mm 6mm;background:#e8f5e9;border:1px solid #4CAF50;border-radius:4mm;font-size:10pt;">
+  <strong>Jak uzupełnić GPS-gate:</strong> w <code>assets/game.js</code> znajdź <code>FUEL_BOTTLE_COORDS</code>
+  i wpisz współrzędne każdego punktu tankowania (te same co waypoint końcowy dla danego etapu).
+</div>
+
 <h2>📋 Checklist przed imprezą (16 maja 2026)</h2>
 <ul style="line-height:2.2;padding-left:6mm;">
   <li>☐ Uzupełnij współrzędne GPS w <code>assets/game.js</code> (STAGE3–6_WAYPOINTS)</li>
