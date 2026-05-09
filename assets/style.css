@@ -624,3 +624,115 @@ body {
   left: 30%;
   border-radius: 8px;
 }
+
+/* ============================================================
+   REDESIGN 2026-05-09 — Energy System + Fixed Header + Handoffs
+   ============================================================ */
+
+/* --- Fixed game header (injected by game.js on every page) --- */
+#game-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  height: 44px;
+  background: rgba(15, 15, 26, 0.97);
+  border-bottom: 1px solid rgba(233, 69, 96, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 12px;
+  gap: 12px;
+}
+.header-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+.header-icon { font-size: 1rem; flex-shrink: 0; }
+.header-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.header-fill {
+  height: 100%; width: 0%; border-radius: 5px;
+  transition: width 0.4s ease;
+}
+.header-fuel-fill   { background: linear-gradient(90deg, #4CAF50, #FFD700); }
+.header-energy-fill { background: linear-gradient(90deg, #2196F3, #00BCD4); }
+.header-pct {
+  font-size: 0.75rem; font-weight: 700; color: #aaa;
+  min-width: 32px; text-align: right;
+}
+
+/* --- Push page content below fixed header --- */
+.page { padding-top: 44px; }
+
+/* --- Handoff overlay --- */
+.handoff-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.handoff-box {
+  background: #16213e;
+  border-radius: 16px;
+  padding: 28px 24px;
+  max-width: 360px; width: 100%;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+.handoff-name {
+  font-family: var(--font-heading);
+  font-size: 2rem; font-weight: 900;
+  letter-spacing: 4px; margin-bottom: 6px;
+}
+.handoff-title  { font-size: 1rem; color: #aaa; margin-bottom: 16px; }
+.handoff-task {
+  font-size: 1.05rem; color: #fff; line-height: 1.5;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px; border-radius: 8px;
+}
+
+/* --- Speed sweet-spot zone overlay (E4) --- */
+.speed-zone-wrap {
+  position: relative; width: 100%; height: 28px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px; overflow: hidden; margin: 8px 0;
+}
+.speed-zone-fill {
+  height: 100%; width: 0%; border-radius: 14px;
+  transition: width 0.2s, background 0.2s;
+  background: linear-gradient(90deg, #4CAF50, #FFD700);
+}
+.speed-zone-fill.inside { background: #4CAF50; }
+.speed-zone-fill.fast   { background: linear-gradient(90deg, #FF9800, #e94560); }
+.speed-zone-green {
+  position: absolute; top: 0; height: 100%;
+  background: rgba(76, 175, 80, 0.25);
+  border-left: 2px solid rgba(76, 175, 80, 0.8);
+  border-right: 2px solid rgba(76, 175, 80, 0.8);
+  pointer-events: none;
+}
+.speed-zone-marker {
+  position: absolute; top: 0; height: 100%;
+  width: 3px; background: #e94560; pointer-events: none;
+}
+
+/* --- Mission timer bar (E6) --- */
+#mission-bar {
+  position: fixed; top: 44px; left: 0; right: 0; z-index: 190;
+  height: 32px;
+  background: rgba(233, 69, 96, 0.15);
+  border-bottom: 1px solid rgba(233, 69, 96, 0.4);
+  display: none;
+  align-items: center; justify-content: center;
+  font-size: 0.95rem; font-weight: 700; color: #e94560;
+}
+#mission-bar.active { display: flex; }
+.page-with-mission-bar { padding-top: 76px !important; }
