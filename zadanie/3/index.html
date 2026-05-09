@@ -10,27 +10,19 @@
 <body>
   <div class="page">
     <div class="flag-strip"></div>
-    <div class="fuel-widget">
-      <span class="fuel-icon">⛽</span>
-      <div class="fuel-track"><div class="fuel-fill" id="fuel-fill"></div></div>
-      <span class="fuel-label" id="fuel-label">--</span>
-    </div>
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
       <span class="task-badge">ETAP 3 / 6</span>
     </div>
 
-    <div id="stage-content" class="task-body">
-
-      <!-- Phase 1: GPS Navigation -->
-      <div id="phase-nav">
+    <!-- Phase 1: Szymon GPS nav -->
+    <div id="phase-nav" class="task-body">
+      <div id="nav-content" style="display:none;">
         <div class="task-step-label">🗺️ Nawiguj do Lokalizacji 1</div>
         <div class="task-title">Szukamy Paczki #1!</div>
         <div class="task-card">
           <div class="task-card-icon">📻</div>
-          <div class="task-card-text">
-            <em>Złomek: "Paczka Szymona! Jedźcie za strzałką!"</em>
-          </div>
+          <div class="task-card-text"><em>Złomek: "Paczka Szymona! Jedźcie za strzałką!"</em></div>
         </div>
         <div class="nav-widget">
           <div class="nav-arrow-wrap" id="nav-arrow-wrap">
@@ -40,16 +32,18 @@
           <div class="nav-hint" id="nav-hint">Szukam sygnału GPS...</div>
           <div class="nav-status" id="nav-status">Czekam na GPS...</div>
         </div>
-        <div class="task-hint">Jedź za strzałką! Gdy znajdziesz miejsce, zeskanuj tag NFC.</div>
+        <div class="task-hint">Jedź za strzałką! Dblclick na status żeby pominąć (dev).</div>
       </div>
+    </div>
 
-      <!-- Phase 2: NFC Gate (shown after arriving) -->
-      <div id="phase-nfc" style="display:none;">
-        <div class="task-step-label">📡 Zeskanuj tag NFC</div>
-        <div class="task-title">Skanuj i odblokuj!</div>
+    <!-- Phase 2: Amelia NFC entry -->
+    <div id="phase-nfc" class="task-body" style="display:none;">
+      <div id="nfc-content" style="display:none;">
+        <div class="task-step-label">📡 Odblokuj Lokalizację 1</div>
+        <div class="task-title">Skanuj tag NFC!</div>
         <div class="task-card">
           <div class="task-card-icon">📡</div>
-          <div class="task-card-text"><strong>Dotknij tagiem NFC telefonu aby odblokować wyzwanie!</strong></div>
+          <div class="task-card-text"><strong>Dotknij tagiem NFC telefonu lub wpisz kod!</strong></div>
         </div>
         <div class="backup-input-wrap">
           <div style="font-size:0.8rem;color:#888;">Kod z naklejki:</div>
@@ -57,53 +51,42 @@
           <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj</button>
         </div>
       </div>
+    </div>
 
-      <!-- Phase 3: Reaction button game -->
-      <div id="phase-game" style="display:none;">
+    <!-- Phase 3: Ania reaction game -->
+    <div id="phase-game" class="task-body" style="display:none;">
+      <div id="game-content" style="display:none;">
         <div class="task-step-label">🏎️ Pit Stop Chaos!</div>
         <div class="task-title">Klikaj szybko!</div>
         <div class="task-card">
           <div class="task-card-icon">🔧</div>
           <div class="task-card-text">
-            <em>"Mechanicy! Klikajcie podświetlone narzędzia zanim znikną!"</em>
+            <em>"Klikajcie podświetlone narzędzia w tej samej kolejności!"</em>
           </div>
         </div>
-        <div class="task-countdown ok" id="game-timer">8s</div>
+        <div class="task-countdown ok" id="game-timer">10s</div>
         <div class="reaction-grid" id="reaction-grid"></div>
         <div class="task-hint" id="game-status">Zapamiętaj kolejność!</div>
-        <button id="game-retry" class="btn-primary" style="display:none;margin-top:12px;">
-          🔄 Spróbuj ponownie
-        </button>
-      </div>
-
-      <!-- Phase 4: Symbol reveal + success -->
-      <div id="phase-success" style="display:none;">
-        <div class="symbol-reveal active">
-          <div class="symbol-label">Symbol #1 zdobyty!</div>
-          <div class="symbol-big">🔧</div>
-          <div class="symbol-name">KLUCZ</div>
-          <div style="font-size:0.85rem;color:#aaa;margin-top:4px;">
-            Zapamiętajcie! To 1. znak kodu do sejfu.
-          </div>
-        </div>
-        <div class="task-card" style="margin-top:16px;border-color:#4CAF50;">
-          <div class="task-card-icon">📦</div>
-          <div class="task-card-text">
-            <strong>Złomek: "Paczka #1 jest tu obok tagu NFC! Weźcie ją!"</strong><br>
-            Teraz jedźcie do <strong>Lokalizacji 2!</strong>
-          </div>
-        </div>
-        <a class="btn-primary" href="../4/">⚡ JEDŹ DO LOKALIZACJI 2 →</a>
+        <button id="game-retry" class="btn-primary" style="display:none;margin-top:12px;">🔄 Spróbuj ponownie</button>
       </div>
     </div>
 
-    <div id="pit-stop-modal" class="modal-overlay">
-      <div class="modal-box">
-        <div class="modal-icon">🏁</div>
-        <div class="modal-title">PIT STOP!</div>
-        <div class="modal-text">Paliwo na零! Zrób <strong>10 pajacyków</strong>!</div>
-        <button class="btn-primary" onclick="FuelManager.closePitStop()">✅ Naładowano!</button>
+    <!-- Phase 4: Success -->
+    <div id="phase-success" class="task-body" style="display:none;">
+      <div class="symbol-reveal active">
+        <div class="symbol-label">Symbol #1 zdobyty!</div>
+        <div class="symbol-big">🔧</div>
+        <div class="symbol-name">KLUCZ</div>
+        <div style="font-size:0.85rem;color:#aaa;margin-top:4px;">To 1. znak kodu do sejfu!</div>
       </div>
+      <div class="task-card" style="margin-top:16px;border-color:#4CAF50;">
+        <div class="task-card-icon">📦</div>
+        <div class="task-card-text">
+          <strong>Złomek: "Paczka #1 jest tu obok! Weźcie ją!"</strong><br>
+          Jedźcie do <strong>Lokalizacji 2!</strong>
+        </div>
+      </div>
+      <a class="btn-primary" href="../4/">⚡ JEDŹ DO LOKALIZACJI 2 →</a>
     </div>
 
     <div class="flag-strip" style="margin-top:auto;"></div>
@@ -111,84 +94,75 @@
 
   <script src="../../assets/game.js"></script>
   <script>
-    FuelManager.startDrain();
-    FuelManager.startGPSTracking();
-    FuelManager.renderFuel();
+    initFuelBottle(3);
+    startEnergyMonitoring();
 
-    // --- PHASE 1: GPS NAVIGATION ---
-    const waypoints = STAGE3_WAYPOINTS.length > 0 ? STAGE3_WAYPOINTS : [
-      { lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij współrzędne Lokalizacji 1' }
-    ];
+    // Step 1: Szymon GPS nav
+    showHandoff('szymon', 'Nawiguj GPS do Lokalizacji 1 — jesteś kierowcą!', startNav);
 
-    Navigation.start(
-      waypoints,
-      (angle, dist, isClose, isLast, hint) => {
-        renderNav(angle, dist, isClose, isLast, hint);
-        if (isClose && isLast) setTimeout(showNFCPhase, 1500);
-      },
-      (idx, isFinal, nextHint) => {
-        if (!isFinal && nextHint) {
-          document.getElementById('nav-hint').textContent = '✓ ' + nextHint;
+    function startNav() {
+      document.getElementById('nav-content').style.display = 'block';
+      const waypoints = STAGE3_WAYPOINTS.length > 0 ? STAGE3_WAYPOINTS :
+        [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij współrzędne Lokalizacji 1' }];
+      Navigation.start(waypoints,
+        (angle, dist, isClose, isLast, hint) => {
+          renderNav(angle, dist, isClose, isLast, hint);
+          if (isClose && isLast) setTimeout(showNFCPhase, 1500);
+        },
+        (idx, isFinal, nextHint) => {
+          if (!isFinal && nextHint) document.getElementById('nav-hint').textContent = '✓ ' + nextHint;
         }
-      }
-    );
-
-    // Allow manual advance if GPS unavailable (dev/testing)
-    document.getElementById('nav-status').addEventListener('dblclick', showNFCPhase);
+      );
+      document.getElementById('nav-status').addEventListener('dblclick', showNFCPhase);
+    }
 
     function showNFCPhase() {
       Navigation.stop();
       document.getElementById('phase-nav').style.display = 'none';
       document.getElementById('phase-nfc').style.display = 'block';
-      setupBackupCodeInput(3, startGamePhase);
-      checkNFCToken(3) && startGamePhase();
+      // Step 2: Amelia enters NFC code
+      showHandoff('amelia', 'Wpisz kod NFC z naklejki obok tagu — PACZK3!', () => {
+        document.getElementById('nfc-content').style.display = 'block';
+        if (checkNFCToken(3)) { startGamePhase(); return; }
+        setupBackupCodeInput(3, startGamePhase);
+      });
     }
-
-    // --- PHASE 3: REACTION GAME ---
-    const ICONS = ['🔧','🔩','🪛','⚙️','🔨','🪝'];
-    const SEQUENCE_LEN = 5;
-    const TIME_LIMIT = 8000;
 
     function startGamePhase() {
       document.getElementById('phase-nfc').style.display  = 'none';
       document.getElementById('phase-game').style.display = 'block';
-      runReactionGame();
+      // Step 3: Ania reaction game
+      showHandoff('ania', 'Zapamiętaj kolejność 4 narzędzi i kliknij je w tej samej kolejności w 10 sekund!', () => {
+        document.getElementById('game-content').style.display = 'block';
+        runReactionGame();
+      });
     }
 
+    // REACTION GAME: 4 icons, sequence length 4, 10s time limit
+    const ICONS = ['🔧','🔩','🪛','⚙️'];
+    const SEQ_LEN = 4, TIME_LIMIT = 10000;
+
     function runReactionGame() {
-      const grid      = document.getElementById('reaction-grid');
-      const timerEl   = document.getElementById('game-timer');
-      const statusEl  = document.getElementById('game-status');
-      const retryEl   = document.getElementById('game-retry');
+      const grid    = document.getElementById('reaction-grid');
+      const timerEl = document.getElementById('game-timer');
+      const statusEl = document.getElementById('game-status');
+      const retryEl  = document.getElementById('game-retry');
       retryEl.style.display = 'none';
-
-      // Build 6 buttons
       grid.innerHTML = '';
-      const btns = [];
-      ICONS.forEach((icon, i) => {
+      const btns = ICONS.map((icon, i) => {
         const b = document.createElement('button');
-        b.className        = 'reaction-btn';
-        b.style.background = `hsl(${i*60},60%,25%)`;
-        b.textContent      = icon;
-        b.dataset.idx      = i;
-        grid.appendChild(b);
-        btns.push(b);
+        b.className = 'reaction-btn';
+        b.style.background = `hsl(${i*90},60%,25%)`;
+        b.textContent = icon; b.dataset.idx = i;
+        grid.appendChild(b); return b;
       });
-
-      // Generate random sequence
-      const seq = Array.from({length: SEQUENCE_LEN}, () => Math.floor(Math.random()*ICONS.length));
-      let step  = 0;
-
-      // Highlight each button in sequence (show sequence first)
+      const seq = Array.from({length: SEQ_LEN}, () => Math.floor(Math.random() * ICONS.length));
+      let step = 0;
       statusEl.textContent = 'Zapamiętaj kolejność...';
       let showIdx = 0;
       function showNext() {
         if (showIdx > 0) btns[seq[showIdx-1]].classList.remove('active');
-        if (showIdx >= seq.length) {
-          statusEl.textContent = 'Teraz klikaj w tej samej kolejności!';
-          startInput();
-          return;
-        }
+        if (showIdx >= seq.length) { statusEl.textContent = 'Teraz klikaj w tej samej kolejności!'; startInput(); return; }
         btns[seq[showIdx]].classList.add('active');
         showIdx++;
         setTimeout(showNext, 700);
@@ -201,37 +175,27 @@
           const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
           timerEl.textContent = left + 's';
           timerEl.className   = 'task-countdown ' + (left <= 3 ? 'warning' : 'ok');
-          if (left > 0) setTimeout(tick, 500);
-          else onFail();
+          if (left > 0) setTimeout(tick, 500); else onFail();
         }
         tick();
-
-        btns.forEach(b => {
-          b.addEventListener('click', () => {
-            if (Number(b.dataset.idx) === seq[step]) {
-              b.style.background = 'rgba(76,175,80,0.4)';
-              step++;
-              if (step >= seq.length) onWin();
-            } else {
-              onFail();
-            }
-          }, { once: true });
-        });
+        btns.forEach(b => b.addEventListener('click', () => {
+          if (Number(b.dataset.idx) === seq[step]) {
+            b.style.background = 'rgba(76,175,80,0.4)'; step++;
+            if (step >= seq.length) onWin();
+          } else { onFail(); }
+        }, { once: true }));
       }
       function onWin()  { onGameSuccess(); }
       function onFail() {
-        statusEl.textContent  = '❌ Błąd! Spróbuj ponownie!';
-        retryEl.style.display = 'block';
+        statusEl.textContent = '❌ Błąd! Spróbuj ponownie!'; retryEl.style.display = 'block';
         retryEl.onclick = () => { retryEl.style.display='none'; runReactionGame(); };
       }
     }
 
     function onGameSuccess() {
-      GameState.addFuel(GAME_CONFIG.fuelTaskBonus);
-      FuelManager.renderFuel();
       GameState.addSymbol('wrench');
       GameState.markStage(3);
-      document.getElementById('phase-game').style.display   = 'none';
+      document.getElementById('phase-game').style.display    = 'none';
       document.getElementById('phase-success').style.display = 'block';
     }
   </script>
