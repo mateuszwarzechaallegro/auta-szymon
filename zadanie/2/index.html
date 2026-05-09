@@ -10,28 +10,211 @@
 <body>
   <div class="page">
     <div class="flag-strip"></div>
-
+    <div class="fuel-widget">
+      <span class="fuel-icon">⛽</span>
+      <div class="fuel-track"><div class="fuel-fill" id="fuel-fill"></div></div>
+      <span class="fuel-label" id="fuel-label">--</span>
+    </div>
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
       <span class="task-badge">ETAP 2 / 6</span>
     </div>
 
-    <div class="task-body">
-      <div class="task-step-label">🏁 Zadanie drugie</div>
-      <div class="task-title"><!-- Tytuł zadania --></div>
-
+    <!-- NFC Gate -->
+    <div id="nfc-gate" class="task-body" style="display:none;">
       <div class="task-card">
-        <div class="task-card-icon">🔍</div>
-        <div class="task-card-text">
-          <em style="color:#666; font-size:0.85em;">[uzupełnij treść zadania tutaj]</em>
+        <div class="task-card-icon">📡</div>
+        <div class="task-card-text"><strong>Znajdź tag NFC i dotknij nim telefon!</strong></div>
+      </div>
+      <div class="backup-input-wrap">
+        <div style="font-size:0.8rem;color:#888;">Kod z naklejki:</div>
+        <input id="backup-code-input" type="text" maxlength="6" placeholder="XXXXXX">
+        <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj</button>
+      </div>
+    </div>
+
+    <div id="stage-content" class="task-body" style="display:none;">
+      <div class="task-step-label">🏁 Zadanie drugie</div>
+      <div class="task-title">Skrzynka od Filka!</div>
+
+      <!-- Phase 1: Cipher puzzle -->
+      <div id="phase-cipher">
+        <div class="task-card">
+          <div class="task-card-icon">🔐</div>
+          <div class="task-card-text" style="text-align:left;line-height:2;">
+            <strong>Filk zostawił kod! Rozwiążcie:</strong><br>
+            🚗 + 🚗 + 🚗 = 3 &nbsp;→&nbsp; 🚗 = <strong>?</strong><br>
+            🚕 − 🚗 = 2 &nbsp;→&nbsp; 🚕 = <strong>?</strong><br>
+            🔥 = 🚗 × 4 &nbsp;→&nbsp; 🔥 = <strong>?</strong><br>
+            🏎️ = 🔥 ÷ 2 &nbsp;→&nbsp; 🏎️ = <strong>?</strong><br><br>
+            <strong>KOD: 🚕 🚗 🔥 🏎️ = _ _ _ _</strong>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;padding:0 0 12px;">
+          <input id="cipher-input" type="number" inputmode="numeric"
+            style="flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(233,69,96,0.3);
+                   border-radius:8px;color:#fff;font-size:1.6rem;font-weight:700;
+                   padding:12px;text-align:center;outline:none;"
+            maxlength="4" placeholder="____">
+          <button id="cipher-submit" class="btn-primary" style="width:auto;padding:12px 20px;margin:0;">OK</button>
+        </div>
+        <div id="cipher-error" style="display:none;color:#e94560;text-align:center;font-size:0.9rem;">
+          Błędny kod! Sprawdź równania jeszcze raz 🔍
+        </div>
+        <div id="cipher-retry" style="display:none;">
+          <button class="btn-primary" onclick="resetCipher()">🔄 Spróbuj ponownie</button>
         </div>
       </div>
 
-      <div class="neon-divider"></div>
-      <div class="task-hint">⚡ Znajdź następny QR kod w terenie ⚡</div>
+      <!-- Phase 2: GPS Speed -->
+      <div id="phase-speed" style="display:none;">
+        <div class="task-card">
+          <div class="task-card-icon">💨</div>
+          <div class="task-card-text">
+            <strong>Złomek:</strong> <em>"Teraz jedźcie szybko! 
+            Utrzymajcie prędkość przez 60 sekund!"</em>
+          </div>
+        </div>
+        <div class="speed-widget">
+          <div class="speed-number" id="spd-val">0</div>
+          <div class="speed-unit">km/h</div>
+          <div class="speed-progress-track">
+            <div class="speed-progress-fill" id="spd-fill"></div>
+          </div>
+          <div style="font-size:0.8rem;color:#aaa;margin-top:4px;">
+            <span id="spd-secs">0</span> / 60 sekund w ruchu
+          </div>
+        </div>
+        <div class="task-hint" style="margin-top:12px;">
+          Jedźcie ≥ 5 km/h przez 60 sekund bez zatrzymania!
+        </div>
+        <button id="spd-retry" class="btn-primary" style="display:none;margin-top:12px;">
+          🔄 Silnik zgasł! Zacznij od nowa
+        </button>
+      </div>
+
+      <!-- Phase 3: Success -->
+      <div id="phase-success" style="display:none;">
+        <div class="task-card" style="border-color:#4CAF50;">
+          <div class="task-card-icon">🗺️</div>
+          <div class="task-card-text">
+            <strong>ZŁOMEK:</strong> <em>"Ej amigo! Znalazłem ją! 
+            Pierwsza paczka jest w lokalizacji 1! 
+            Waszym celem jest:</em><br><br>
+            <span id="e3-hint" style="color:#FFD700;font-weight:700;">
+              PLACEHOLDER: wskazówka do Lokalizacji 1
+            </span>
+          </div>
+        </div>
+        <a class="btn-primary" href="../3/">⚡ JEDŹ DO LOKALIZACJI 1 →</a>
+      </div>
     </div>
 
-    <div class="flag-strip" style="margin-top: auto;"></div>
+    <!-- Pit Stop Modal -->
+    <div id="pit-stop-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-icon">🏁</div>
+        <div class="modal-title">PIT STOP!</div>
+        <div class="modal-text">Paliwo na零! Zrób <strong>10 pajacyków</strong>!</div>
+        <button class="btn-primary" onclick="FuelManager.closePitStop()">✅ Naładowano!</button>
+      </div>
+    </div>
+
+    <div class="flag-strip" style="margin-top:auto;"></div>
   </div>
+
+  <script src="../../assets/game.js"></script>
+  <script>
+    showNFCGate(2, initStage);
+
+    function initStage() {
+      FuelManager.startDrain();
+      FuelManager.startGPSTracking();
+      FuelManager.renderFuel();
+      setupCipher();
+    }
+
+    // CIPHER PUZZLE
+    const CORRECT_CODE = '3142';
+    function setupCipher() {
+      document.getElementById('cipher-submit').addEventListener('click', checkCipher);
+      document.getElementById('cipher-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') checkCipher();
+      });
+    }
+    function checkCipher() {
+      const val = document.getElementById('cipher-input').value.trim();
+      if (val === CORRECT_CODE) {
+        document.getElementById('phase-cipher').style.display = 'none';
+        document.getElementById('phase-speed').style.display  = 'block';
+        startGPSSpeed();
+      } else {
+        document.getElementById('cipher-error').style.display = 'block';
+        document.getElementById('cipher-retry').style.display = 'block';
+      }
+    }
+    function resetCipher() {
+      document.getElementById('cipher-input').value        = '';
+      document.getElementById('cipher-error').style.display = 'none';
+      document.getElementById('cipher-retry').style.display = 'none';
+    }
+
+    // GPS SPEED CHALLENGE
+    function startGPSSpeed() {
+      const spdValEl  = document.getElementById('spd-val');
+      const spdFillEl = document.getElementById('spd-fill');
+      const spdSecsEl = document.getElementById('spd-secs');
+      const retryEl   = document.getElementById('spd-retry');
+      const TARGET = 60;
+      let movingSecs  = 0;
+      let prevPos     = null;
+      let prevTime    = null;
+      let failed      = false;
+
+      const watchId = navigator.geolocation.watchPosition(pos => {
+        const now  = Date.now();
+        const lat  = pos.coords.latitude;
+        const lng  = pos.coords.longitude;
+        let spd = 0;
+        if (prevPos && prevTime) {
+          const dt   = (now - prevTime) / 1000;
+          const dist = haversineM(prevPos.lat, prevPos.lng, lat, lng);
+          spd = dt > 0 ? (dist / dt) * 3.6 : 0;
+        }
+        prevPos  = { lat, lng };
+        prevTime = now;
+        spdValEl.textContent = Math.round(spd);
+
+        if (spd >= GAME_CONFIG.fuelGPSMinSpeedKmh) {
+          movingSecs = Math.min(TARGET, movingSecs + 1);
+        } else {
+          // Allow brief stops (< 5s lost before penalty)
+        }
+        spdFillEl.style.width = (movingSecs / TARGET * 100) + '%';
+        spdSecsEl.textContent = Math.round(movingSecs);
+
+        if (movingSecs >= TARGET) {
+          navigator.geolocation.clearWatch(watchId);
+          onSpeedSuccess();
+        }
+      }, null, { enableHighAccuracy: true, maximumAge: 1000 });
+
+      retryEl.addEventListener('click', () => {
+        navigator.geolocation.clearWatch(watchId);
+        movingSecs = 0;
+        retryEl.style.display = 'none';
+        startGPSSpeed();
+      });
+    }
+
+    function onSpeedSuccess() {
+      GameState.addFuel(GAME_CONFIG.fuelTaskBonus);
+      FuelManager.renderFuel();
+      GameState.markStage(2);
+      document.getElementById('phase-speed').style.display   = 'none';
+      document.getElementById('phase-success').style.display = 'block';
+      document.getElementById('e3-hint').textContent = STAGE3_NFC_HINT;
+    }
+  </script>
 </body>
 </html>
