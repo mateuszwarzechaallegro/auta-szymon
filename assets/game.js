@@ -248,3 +248,111 @@ function showNFCGate(stageNum, onUnlock) {
     onUnlock();
   });
 }
+
+// ============================================================
+// NAVIGATION — GPS Waypoint system
+// ============================================================
+const Navigation = (() => {
+  let watchId        = null;
+  let compassWatchOn = false;
+  let waypoints      = [];
+  let currentIdx     = 0;
+  let headingDeg     = 0; // device compass heading
+  let onUpdateCb     = null;
+  let onArrivalCb    = null;
+  let lastPos        = null;
+
+  function start(wps, onUpdate, onArrival) {
+    waypoints    = wps;
+    currentIdx   = 0;
+    onUpdateCb   = onUpdate;
+    onArrivalCb  = onArrival;
+
+    // Listen for device compass
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', onOrientation, true);
+      compassWatchOn = true;
+    }
+
+    if (!navigator.geolocation) {
+      onUpdate(0, null, 'Brak GPS w tej przeglądarce');
+      return;
+    }
+
+    watchId = navigator.geolocation.watchPosition(
+      onPosition,
+      onGPSError,
+      { enableHighAccuracy: true, maximumAge: 1000, timeout: 15000 }
+    );
+  }
+
+  function onOrientation(e) {
+    // e.alpha = compass heading (0=North) on Android with absolute:true
+    if (e.webkitCompassHeading != null) {
+      headingDeg = e.webkitCompassHeading; // iOS
+    } else if (e.absolute && e.alpha != null) {
+      headingDeg = 360 - e.alpha;          // Android absolute
+    }
+  }
+
+  function onPosition(pos) {
+    lastPos = pos;
+    if (waypoints.length === 0) return;
+
+    const wp   = waypoints[currentIdx];
+    const dist = haversineM(pos.coords.latitude, pos.coords.longitude, wp.lat, wp.lng);
+    const bear = bearingDeg(pos.coords.latitude, pos.coords.longitude, wp.lat, wp.lng);
+    // Rotate arrow relative to device heading so it points toward target
+    const arrowAngle = (bear - headingDeg + 360) % 360;
+
+    const isLast  = currentIdx === waypoints.length - 1;
+    const isClose = dist <= (isLast ? GAME_CONFIG.gpsArrivalRadiusM : GAME_CONFIG.waypointRadiusM);
+
+    if (onUpdateCb) onUpdateCb(arrowAngle, dist, isClose, isLast, wp.hint || '');
+
+    if (isClose) {
+      if (!isLast) {
+        // Auto-advance to next waypoint
+        currentIdx++;
+        const nextHint = waypoints[currentIdx]?.hint || '';
+        if (onArrivalCb) onArrivalCb(currentIdx - 1, false, nextHint);
+      } else {
+        // Final destination reached
+        stop();
+        if (onArrivalCb) onArrivalCb(currentIdx, true, '');
+      }
+    }
+  }
+
+  function onGPSError(err) {
+    if (onUpdateCb) onUpdateCb(0, null, false, false, 'Błąd GPS: ' + err.message);
+  }
+
+  function stop() {
+    if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+    if (compassWatchOn) { window.removeEventListener('deviceorientation', onOrientation, true); compassWatchOn = false; }
+  }
+
+  return { start, stop };
+})();
+
+// Helper: render navigation UI
+// Call this from onUpdate callback
+function renderNav(arrowAngle, distM, isClose, isLast, hint) {
+  const arrowEl   = document.getElementById('nav-arrow');
+  const distEl    = document.getElementById('nav-distance');
+  const hintEl    = document.getElementById('nav-hint');
+  const wrapEl    = document.getElementById('nav-arrow-wrap');
+  const statusEl  = document.getElementById('nav-status');
+
+  if (arrowEl) arrowEl.style.transform = `rotate(${arrowAngle}deg)`;
+  if (distEl)  distEl.textContent = distM != null ? formatDist(distM) : '---';
+  if (hintEl)  hintEl.textContent = hint || '';
+  if (wrapEl)  { wrapEl.classList.toggle('hot', isClose); }
+  if (statusEl) {
+    if (distM == null)      statusEl.textContent = 'Szukam sygnału GPS...';
+    else if (isClose && isLast) statusEl.textContent = '🔥 JESTEŚ BLISKO!';
+    else if (isClose)       statusEl.textContent = '✓ Następny punkt!';
+    else                    statusEl.textContent = 'Nawiguj do celu';
+  }
+}
