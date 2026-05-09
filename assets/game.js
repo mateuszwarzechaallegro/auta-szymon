@@ -556,10 +556,10 @@ const Sensors = (() => {
 })();
 
 // ============================================================
-// BACKWARDS COMPAT SHIMS — removed in Task 10
+// LEGACY SHIM — Navigation uses gpsArrivalRadiusM (hardcoded in Navigation module above)
+// GAME_CONFIG kept for backwards compat in case any page references it
 // ============================================================
 const GAME_CONFIG = { fuelGPSMinSpeedKmh: 5, waypointRadiusM: 30, gpsArrivalRadiusM: 25 };
-const FuelManager = { startDrain:()=>{}, startGPSTracking:()=>{}, stop:()=>{}, renderFuel:()=>{}, closePitStop:()=>{} };
 
 // ============================================================
 // GLOBAL INIT
