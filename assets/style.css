@@ -291,3 +291,336 @@ body {
   padding: 0 16px;
   line-height: 1.5;
 }
+
+/* ============================================================
+   FUEL BAR
+   ============================================================ */
+.fuel-widget {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(15,15,26,0.9);
+  border-bottom: 1px solid rgba(233,69,96,0.3);
+  flex-shrink: 0;
+}
+.fuel-icon { font-size: 1rem; flex-shrink: 0; }
+.fuel-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.fuel-fill {
+  height: 100%;
+  width: 80%;
+  background: #4CAF50;
+  border-radius: 5px;
+  transition: width 0.5s ease, background 0.5s ease;
+}
+.fuel-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ============================================================
+   PIT STOP MODAL
+   ============================================================ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+.modal-box {
+  background: linear-gradient(160deg,#1a1a2e,#16213e);
+  border: 2px solid var(--color-neon);
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  width: 100%;
+  max-width: 380px;
+}
+.modal-icon { font-size: 3rem; margin-bottom: 12px; }
+.modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--color-neon);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.modal-text { font-size: 1rem; color: #ccc; line-height: 1.6; margin-bottom: 20px; }
+
+/* ============================================================
+   GPS NAVIGATION COMPASS
+   ============================================================ */
+.nav-widget {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px;
+  gap: 12px;
+}
+.nav-arrow-wrap {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255,215,0,0.08);
+  border: 3px solid var(--color-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s;
+}
+.nav-arrow-wrap.hot { border-color: var(--color-neon); background: rgba(233,69,96,0.15); animation: pulse 0.8s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.06);} }
+.nav-arrow {
+  font-size: 3rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+  transform-origin: center;
+}
+.nav-distance {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--color-white);
+}
+.nav-distance span { font-size: 1rem; color: var(--color-muted); }
+.nav-hint {
+  font-size: 0.9rem;
+  color: var(--color-gold);
+  text-align: center;
+  padding: 8px 16px;
+  background: rgba(255,215,0,0.08);
+  border-radius: 8px;
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-status { font-size: 0.75rem; color: var(--color-muted); letter-spacing: 1px; }
+
+/* ============================================================
+   SYMBOL REVEAL
+   ============================================================ */
+.symbol-reveal {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  background: rgba(255,215,0,0.06);
+  border: 2px solid var(--color-gold);
+  border-radius: 14px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+.symbol-reveal.active { display: flex; }
+@keyframes fadeIn { from{opacity:0;transform:scale(0.8);} to{opacity:1;transform:scale(1);} }
+.symbol-big { font-size: 3.5rem; line-height: 1; }
+.symbol-label { font-size: 0.75rem; color: var(--color-gold); letter-spacing: 2px; text-transform: uppercase; font-weight: 700; }
+.symbol-name { font-family: var(--font-heading); font-size: 1.2rem; color: var(--color-white); }
+
+/* ============================================================
+   GAME CANVAS (Etap 6 dodge game)
+   ============================================================ */
+.canvas-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+#game-canvas {
+  border: 2px solid var(--color-neon);
+  border-radius: 8px;
+  max-width: 100%;
+  touch-action: none;
+}
+.game-timer {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--color-gold);
+}
+.game-lives { font-size: 1.2rem; letter-spacing: 4px; }
+
+/* ============================================================
+   GPS SPEED METER
+   ============================================================ */
+.speed-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  width: 100%;
+}
+.speed-number {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--color-white);
+  line-height: 1;
+}
+.speed-unit { font-size: 0.8rem; color: var(--color-muted); letter-spacing: 1px; }
+.speed-progress-track {
+  width: 100%;
+  height: 12px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.speed-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+/* ============================================================
+   MEMORY MATCH GAME
+   ============================================================ */
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  padding: 8px 0;
+}
+.mem-card {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background: rgba(233,69,96,0.15);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.mem-card.face-down { font-size: 0; background: rgba(233,69,96,0.15); }
+.mem-card.face-down::before { content: '🏎️'; font-size: 1.4rem; filter: grayscale(1) opacity(0.3); }
+.mem-card.matched { background: rgba(76,175,80,0.2); border-color: #4CAF50; }
+.mem-card:active { transform: scale(0.92); }
+
+/* ============================================================
+   BACKUP CODE INPUT
+   ============================================================ */
+.backup-input-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+.backup-input-wrap input {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 12px;
+  text-align: center;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  outline: none;
+}
+.backup-input-wrap input:focus { border-color: var(--color-gold); }
+
+/* ============================================================
+   REACTION BUTTON GAME (Etap 3)
+   ============================================================ */
+.reaction-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+  padding: 8px 0;
+}
+.reaction-btn {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  border: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: opacity 0.1s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.reaction-btn.active { border-color: #FFD700; box-shadow: 0 0 12px rgba(255,215,0,0.5); }
+.reaction-btn:active { transform: scale(0.9); opacity: 0.7; }
+
+/* ============================================================
+   TASK COUNTDOWN TIMER
+   ============================================================ */
+.task-countdown {
+  font-family: var(--font-heading);
+  font-size: 2.4rem;
+  font-weight: 900;
+  text-align: center;
+  padding: 8px 0;
+}
+.task-countdown.warning { color: var(--color-neon); animation: pulse 0.5s infinite; }
+.task-countdown.ok { color: var(--color-gold); }
+
+/* ============================================================
+   LEVEL METER (Etap 5 accelerometer)
+   ============================================================ */
+.level-meter {
+  width: 100%;
+  height: 16px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.level-indicator {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 12px;
+  background: var(--color-gold);
+  border-radius: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: left 0.1s linear;
+}
+.level-indicator.danger { background: var(--color-neon); }
+.level-ok-zone {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 40%;
+  background: rgba(76,175,80,0.25);
+  left: 30%;
+  border-radius: 8px;
+}
