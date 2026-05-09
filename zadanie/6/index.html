@@ -10,27 +10,326 @@
 <body>
   <div class="page">
     <div class="flag-strip"></div>
+    <div class="fuel-widget">
+      <span class="fuel-icon">⛽</span>
+      <div class="fuel-track"><div class="fuel-fill" id="fuel-fill"></div></div>
+      <span class="fuel-label" id="fuel-label">--</span>
+    </div>
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
       <span class="task-badge">ETAP 6 / 6</span>
     </div>
-    <div class="task-body">
-      <div class="task-step-label">🏁 Zadanie ostatnie</div>
-      <div class="task-title"><!-- Tytuł zadania --></div>
-      <div class="task-card">
-        <div class="task-card-icon">🔍</div>
-        <div class="task-card-text">
-          <em style="color:#666; font-size:0.85em;">[uzupełnij treść zadania tutaj]</em>
+
+    <div id="stage-content" class="task-body">
+
+      <!-- Phase 1: GPS Nav -->
+      <div id="phase-nav">
+        <div class="task-step-label">🗺️ OSTATNIA LOKALIZACJA!</div>
+        <div class="task-title">Finałowy Sprint!</div>
+        <div class="task-card">
+          <div class="task-card-icon">🏆</div>
+          <div class="task-card-text">
+            <em>Złomek: "To jest ta NAJWIĘKSZA paczka Szymona! 
+            KA-CZAOW! Jedźcie ile sił w nogach!"</em>
+          </div>
+        </div>
+        <div class="nav-widget">
+          <div class="nav-arrow-wrap" id="nav-arrow-wrap">
+            <span class="nav-arrow" id="nav-arrow">⬆️</span>
+          </div>
+          <div class="nav-distance" id="nav-distance">--</div>
+          <div class="nav-hint" id="nav-hint">Szukam GPS...</div>
+          <div class="nav-status" id="nav-status">Czekam na GPS...</div>
         </div>
       </div>
-      <div class="neon-divider"></div>
-      <div class="task-hint" style="color: #FFD700; font-size: 1rem; font-weight: 700;">
-        🏆 GRATULACJE! 🏆<br>
-        <span style="font-size: 0.85rem; font-weight: 400;">Zdobyliście Puchar Tłokowy!</span>
+
+      <!-- Phase 2: NFC + Countdown start -->
+      <div id="phase-nfc" style="display:none;">
+        <div class="task-step-label">⏱️ UWAGA — CZAS LECI!</div>
+        <div class="task-title">Macie 5 minut!</div>
+        <div class="task-card">
+          <div class="task-card-icon">🚨</div>
+          <div class="task-card-text">
+            <em>"Po zeskanowaniu tagu startuje odliczanie 5 minut! 
+            Musicie zdążyć z obydwoma wyzwaniami!"</em>
+          </div>
+        </div>
+        <div class="task-countdown ok" id="mission-timer" style="font-size:2.8rem;">5:00</div>
+        <div class="task-card"><div class="task-card-icon">📡</div>
+          <div class="task-card-text"><strong>Dotknij tagiem NFC aby uruchomić odliczanie!</strong></div></div>
+        <div class="backup-input-wrap">
+          <div style="font-size:0.8rem;color:#888;">Kod z naklejki:</div>
+          <input id="backup-code-input" type="text" maxlength="6" placeholder="XXXXXX">
+          <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj + Start!</button>
+        </div>
       </div>
-      <div style="font-size: 3rem; margin-top: 16px; text-align: center;">🏆🎉🏎️</div>
+
+      <!-- Phase 3: Dodge game -->
+      <div id="phase-game" style="display:none;">
+        <div class="task-step-label">🏎️ Wyścig Zygzaka!</div>
+        <div class="task-title">Unikaj przeszkód!</div>
+        <div class="task-card" style="padding:10px 12px;">
+          <div class="task-card-text">
+            Przeżyj <strong>20 sekund</strong>! Dotknij ekranu żeby skakać!
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <div class="game-timer" id="dodge-timer">20s</div>
+          <canvas id="game-canvas" width="380" height="180"></canvas>
+        </div>
+        <button id="game-retry" class="btn-primary" style="display:none;margin-top:12px;">
+          🔄 Rozbity! Spróbuj ponownie
+        </button>
+      </div>
+
+      <!-- Phase 4: GPS Sprint -->
+      <div id="phase-sprint" style="display:none;">
+        <div class="task-step-label">💨 SPRINT!</div>
+        <div class="task-title">100 metrów bez zatrzymania!</div>
+        <div class="task-card">
+          <div class="task-card-icon">🏎️</div>
+          <div class="task-card-text">
+            <em>Złomek: "Ostatnie wyzwanie! Jedźcie 100 metrów bez zatrzymania!
+            GPS mierzy!"</em>
+          </div>
+        </div>
+        <div class="speed-widget">
+          <div class="speed-number" id="sprint-dist">0</div>
+          <div class="speed-unit">/ 100 m</div>
+          <div class="speed-progress-track">
+            <div class="speed-progress-fill" id="sprint-fill"></div>
+          </div>
+          <div style="font-size:0.85rem;color:#aaa;margin-top:4px;" id="sprint-status">
+            Nie zatrzymujcie się!
+          </div>
+        </div>
+        <button id="sprint-retry" class="btn-primary" style="display:none;margin-top:12px;">
+          🔄 Zatrzymaliście się! Zacznij od nowa
+        </button>
+      </div>
+
+      <!-- Phase 5: Symbol + Success -->
+      <div id="phase-success" style="display:none;">
+        <div class="symbol-reveal active">
+          <div class="symbol-label">Symbol #4 zdobyty!</div>
+          <div class="symbol-big">🔴</div>
+          <div class="symbol-name">TŁOK</div>
+          <div style="font-size:0.85rem;color:#aaa;margin-top:4px;">To 4. i OSTATNI znak kodu!</div>
+        </div>
+        <div class="task-card" style="margin-top:16px;border-color:#FFD700;background:rgba(255,215,0,0.08);">
+          <div class="task-card-icon">🏆</div>
+          <div class="task-card-text">
+            <strong>ZEBRALIŚCIE WSZYSTKIE 4 PACZKI!</strong><br><br>
+            Złomek: <em>"KA-CZAOW! Macie wszystkie symbole! 
+            Wróćcie do bazy i otwórzcie SEJF! 
+            Kombinacja to 4 symbole które zebraliście!"</em><br><br>
+            <div style="font-size:1.4rem;letter-spacing:12px;text-align:center;margin:8px 0;">
+              🔧 🏁 ⚡ 🔴
+            </div>
+          </div>
+        </div>
+        <a class="btn-primary" href="../../final/">🏆 DO BAZY! OTWIERAMY SEJF! →</a>
+      </div>
     </div>
-    <div class="flag-strip" style="margin-top: auto;"></div>
+
+    <div id="pit-stop-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-icon">🏁</div><div class="modal-title">PIT STOP!</div>
+        <div class="modal-text">Paliwo na零! Zrób <strong>10 pajacyków</strong>!</div>
+        <button class="btn-primary" onclick="FuelManager.closePitStop()">✅ Naładowano!</button>
+      </div>
+    </div>
+    <div id="time-fail-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-icon">⏰</div>
+        <div class="modal-title">CZAS MINĄŁ!</div>
+        <div class="modal-text">Odliczanie skończyło się! Złomek mówi: spróbujcie jeszcze raz!</div>
+        <button class="btn-primary" id="time-fail-retry">🔄 Zacznij od nowa</button>
+      </div>
+    </div>
+    <div class="flag-strip" style="margin-top:auto;"></div>
   </div>
+
+  <script src="../../assets/game.js"></script>
+  <script>
+    FuelManager.startDrain(); FuelManager.startGPSTracking(); FuelManager.renderFuel();
+
+    const waypoints = STAGE6_WAYPOINTS.length > 0 ? STAGE6_WAYPOINTS : [
+      { lat:0, lng:0, hint:'PLACEHOLDER: uzupełnij współrzędne Lokalizacji 4' }
+    ];
+    Navigation.start(waypoints,
+      (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(showNFC,1500); },
+      (i,fin,nh) => { if(!fin&&nh) document.getElementById('nav-hint').textContent='✓ '+nh; }
+    );
+    document.getElementById('nav-status').addEventListener('dblclick', showNFC);
+
+    // Mission countdown
+    let missionDeadline = null;
+    let missionFailed   = false;
+
+    function showNFC() {
+      Navigation.stop();
+      document.getElementById('phase-nav').style.display = 'none';
+      document.getElementById('phase-nfc').style.display = 'block';
+      setupBackupCodeInput(6, startMission);
+      if (checkNFCToken(6)) startMission();
+    }
+
+    function startMission() {
+      missionDeadline = Date.now() + 5 * 60 * 1000;
+      tickMission();
+      document.getElementById('phase-nfc').style.display  = 'none';
+      document.getElementById('phase-game').style.display = 'block';
+      startDodgeGame();
+    }
+
+    function tickMission() {
+      if (missionFailed) return;
+      const left = Math.max(0, missionDeadline - Date.now());
+      const m = Math.floor(left/60000), s = Math.floor((left%60000)/1000);
+      document.getElementById('mission-timer').textContent = m+':'+String(s).padStart(2,'0');
+      if (left <= 0) { showTimeFail(); return; }
+      setTimeout(tickMission, 500);
+    }
+
+    function showTimeFail() {
+      missionFailed = true;
+      document.getElementById('time-fail-modal').classList.add('active');
+      document.getElementById('time-fail-retry').onclick = () => location.reload();
+    }
+
+    // DODGE GAME (Canvas)
+    function startDodgeGame() {
+      const canvas   = document.getElementById('game-canvas');
+      const ctx      = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const timerEl  = document.getElementById('dodge-timer');
+      const retryEl  = document.getElementById('game-retry');
+      let carY       = H / 2;
+      let velocity   = 0;
+      const GRAVITY  = 0.4;
+      const JUMP     = -8;
+      let obstacles  = [];
+      let frameCount = 0;
+      let survived   = 0;
+      let raf        = null;
+      let dead       = false;
+
+      canvas.addEventListener('touchstart', e => { e.preventDefault(); if(!dead) velocity = JUMP; }, { passive:false });
+      canvas.addEventListener('mousedown',  () => { if(!dead) velocity = JUMP; });
+
+      function spawnObstacle() {
+        const gapY = 30 + Math.random() * (H - 90);
+        obstacles.push({ x: W, gapY, gap: 65 });
+      }
+
+      function loop() {
+        if (dead) return;
+        frameCount++;
+        survived = frameCount / 60;
+        timerEl.textContent = Math.max(0, Math.ceil(20 - survived)) + 's';
+        if (survived >= 20) { onDodgeWin(); return; }
+        if (frameCount % 90 === 0) spawnObstacle();
+
+        velocity += GRAVITY;
+        carY     += velocity;
+        if (carY < 0) { carY = 0; velocity = 0; }
+        if (carY > H - 15) { onDodgeFail(); return; }
+
+        obstacles.forEach(o => o.x -= 3);
+        obstacles = obstacles.filter(o => o.x > -30);
+
+        for (const o of obstacles) {
+          if (o.x < 55 && o.x > 10) {
+            if (carY < o.gapY || carY + 15 > o.gapY + o.gap) { onDodgeFail(); return; }
+          }
+        }
+
+        ctx.fillStyle = '#0f0f1a';
+        ctx.fillRect(0, 0, W, H);
+        // Car
+        ctx.fillStyle = '#e94560';
+        ctx.fillRect(30, carY, 30, 15);
+        ctx.fillStyle = '#FFD700';
+        ctx.fillRect(50, carY+3, 8, 9); // windshield
+        // Obstacles
+        ctx.fillStyle = '#4CAF50';
+        obstacles.forEach(o => {
+          ctx.fillRect(o.x, 0, 20, o.gapY);
+          ctx.fillRect(o.x, o.gapY + o.gap, 20, H - o.gapY - o.gap);
+        });
+        // Timer bar
+        const pct = survived / 20;
+        ctx.fillStyle = 'rgba(255,215,0,0.3)';
+        ctx.fillRect(0, 0, W * pct, 4);
+
+        raf = requestAnimationFrame(loop);
+      }
+
+      function onDodgeWin() {
+        cancelAnimationFrame(raf);
+        document.getElementById('phase-game').style.display   = 'none';
+        document.getElementById('phase-sprint').style.display = 'block';
+        startSprint();
+      }
+
+      function onDodgeFail() {
+        dead = true;
+        cancelAnimationFrame(raf);
+        retryEl.style.display = 'block';
+        retryEl.onclick = () => {
+          retryEl.style.display = 'none';
+          carY=H/2; velocity=0; obstacles=[]; frameCount=0; survived=0; dead=false;
+          raf = requestAnimationFrame(loop);
+        };
+      }
+
+      raf = requestAnimationFrame(loop);
+    }
+
+    // GPS SPRINT
+    function startSprint() {
+      const distEl   = document.getElementById('sprint-dist');
+      const fillEl   = document.getElementById('sprint-fill');
+      const statusEl = document.getElementById('sprint-status');
+      const retryEl  = document.getElementById('sprint-retry');
+      const TARGET   = 100;
+      let totalDist  = 0, prevPos = null, stopped = false;
+
+      const watchId = navigator.geolocation.watchPosition(pos => {
+        if (stopped) return;
+        const spd = (pos.coords.speed || 0) * 3.6;
+        if (spd < 1.5 && prevPos) {
+          stopped = true;
+          navigator.geolocation.clearWatch(watchId);
+          onSprintFail();
+          return;
+        }
+        if (prevPos) {
+          const d = haversineM(prevPos.lat, prevPos.lng, pos.coords.latitude, pos.coords.longitude);
+          totalDist = Math.min(TARGET, totalDist + d);
+        }
+        prevPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        distEl.textContent = Math.round(totalDist);
+        fillEl.style.width = (totalDist/TARGET*100)+'%';
+        if (totalDist >= TARGET) { navigator.geolocation.clearWatch(watchId); onSprintSuccess(); }
+      }, null, { enableHighAccuracy:true, maximumAge:500 });
+
+      function onSprintFail() {
+        statusEl.textContent  = '❌ Zatrzymaliście się!';
+        retryEl.style.display = 'block';
+        retryEl.onclick = () => { retryEl.style.display='none'; totalDist=0; stopped=false; prevPos=null; startSprint(); };
+      }
+    }
+
+    function onSprintSuccess() {
+      GameState.addFuel(GAME_CONFIG.fuelTaskBonus);
+      FuelManager.renderFuel();
+      GameState.addSymbol('piston');
+      GameState.markStage(6);
+      document.getElementById('phase-sprint').style.display  = 'none';
+      document.getElementById('phase-success').style.display = 'block';
+    }
+  </script>
 </body>
 </html>
