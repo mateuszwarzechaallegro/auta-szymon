@@ -11,28 +11,173 @@
   <div class="page">
     <div class="flag-strip"></div>
 
+    <!-- Fuel widget -->
+    <div class="fuel-widget">
+      <span class="fuel-icon">⛽</span>
+      <div class="fuel-track"><div class="fuel-fill" id="fuel-fill"></div></div>
+      <span class="fuel-label" id="fuel-label">80%</span>
+    </div>
+
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
       <span class="task-badge">ETAP 1 / 6</span>
     </div>
 
-    <div class="task-body">
+    <!-- NFC Gate (shown if no token) -->
+    <div id="nfc-gate" class="task-body" style="display:none;">
+      <div class="task-card">
+        <div class="task-card-icon">📡</div>
+        <div class="task-card-text">
+          <strong>Dotknij tagiem NFC telefonu</strong><br>
+          aby odblokować Etap 1
+        </div>
+      </div>
+      <div class="backup-input-wrap">
+        <div style="font-size:0.8rem;color:#888;">Nie działa? Wpisz kod z naklejki:</div>
+        <input id="backup-code-input" type="text" maxlength="6" placeholder="XXXXXX">
+        <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj</button>
+      </div>
+    </div>
+
+    <!-- Main stage content -->
+    <div id="stage-content" class="task-body" style="display:none;">
       <div class="task-step-label">🏁 Zadanie pierwsze</div>
-      <div class="task-title"><!-- Tytuł zadania --></div>
+      <div class="task-title">Alarm w Radiator Springs!</div>
 
       <div class="task-card">
-        <div class="task-card-icon">🔍</div>
+        <div class="task-card-icon">📻</div>
         <div class="task-card-text">
-          <!-- Treść zadania / zagadki --><br>
-          <em style="color:#666; font-size:0.85em;">[uzupełnij treść zadania tutaj]</em>
+          <strong>Złomek:</strong> <em>"Hej amigo! Chyba trochę namieszałem...
+          ale mam dobry GPS i paliwo na pokładzie — tylko ten silnik 
+          trzeba rozgrzać! Potrząśnij telefonem żeby odpalić bolid!"</em>
         </div>
       </div>
 
-      <div class="neon-divider"></div>
-      <div class="task-hint">⚡ Znajdź następny QR kod w terenie ⚡</div>
+      <!-- Shake challenge -->
+      <div id="shake-section">
+        <div class="speed-widget">
+          <div class="speed-number" id="shake-count">0</div>
+          <div class="speed-unit">/ 20 POTRZĄŚNIĘĆ</div>
+          <div class="speed-progress-track">
+            <div class="speed-progress-fill" id="shake-fill"></div>
+          </div>
+        </div>
+        <div class="task-hint" style="margin-top:12px;">
+          ⚡ Potrząśnij telefonem 20 razy w 15 sekund! ⚡
+        </div>
+        <div id="shake-timer" class="task-countdown ok" style="margin-top:8px;"></div>
+        <button id="shake-fallback-btn" class="btn-primary" style="display:none;margin-top:12px;">
+          Dotknij 20 razy (brak akcelerometru)
+        </button>
+        <button id="shake-retry" class="btn-primary" style="display:none;margin-top:12px;">
+          🔄 Spróbuj ponownie
+        </button>
+      </div>
+
+      <!-- Success message -->
+      <div id="shake-success" style="display:none;">
+        <div class="task-card" style="border-color:#4CAF50;">
+          <div class="task-card-icon">🚗💨</div>
+          <div class="task-card-text">
+            <strong>SILNIK GOTOWY! KA-CZAOW!</strong><br><br>
+            Złomek mówi: <em>"Pierwsza paczka Szymona jest tam gdzie
+            <strong id="e2-hint">PLACEHOLDER: wpisz zagadkę do miejsca z tagiem NFC etapu 2</strong></em>
+          </div>
+        </div>
+        <a id="next-btn" class="btn-primary" href="../2/?nfc=1">
+          ⚡ JEDŹ! Etap 2 →
+        </a>
+      </div>
     </div>
 
-    <div class="flag-strip" style="margin-top: auto;"></div>
+    <!-- Pit Stop Modal -->
+    <div id="pit-stop-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-icon">🏁</div>
+        <div class="modal-title">PIT STOP!</div>
+        <div class="modal-text">Paliwo na零! Zrób <strong>10 pajacyków</strong> żeby naładować bak!</div>
+        <button class="btn-primary" onclick="FuelManager.closePitStop()">✅ Naładowano!</button>
+      </div>
+    </div>
+
+    <div class="flag-strip" style="margin-top:auto;"></div>
   </div>
+
+  <script src="../../assets/game.js"></script>
+  <script>
+    // Init
+    GameState.ensureStartTime();
+    showNFCGate(1, initStage);
+
+    function initStage() {
+      FuelManager.startDrain();
+      startShakeChallenge();
+    }
+
+    function startShakeChallenge() {
+      const countEl   = document.getElementById('shake-count');
+      const fillEl    = document.getElementById('shake-fill');
+      const timerEl   = document.getElementById('shake-timer');
+      const retryEl   = document.getElementById('shake-retry');
+      const TIME_MS   = 15000;
+      let deadline    = Date.now() + TIME_MS;
+
+      function updateTimer() {
+        const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+        timerEl.textContent = left + 's';
+        timerEl.className   = 'task-countdown ' + (left <= 5 ? 'warning' : 'ok');
+        if (left > 0) setTimeout(updateTimer, 500);
+      }
+      updateTimer();
+
+      const result = Sensors.startShake(
+        20, TIME_MS,
+        (cur, tot) => {
+          countEl.textContent     = cur;
+          fillEl.style.width      = (cur / tot * 100) + '%';
+        },
+        () => onShakeSuccess(),
+        () => onShakeFail()
+      );
+
+      if (result.fallback) {
+        // Tap fallback for devices without accelerometer
+        let tapCount = 0;
+        const fallbackBtn = document.getElementById('shake-fallback-btn');
+        fallbackBtn.style.display = 'block';
+        fallbackBtn.addEventListener('click', () => {
+          tapCount++;
+          countEl.textContent = tapCount;
+          fillEl.style.width  = (tapCount / 20 * 100) + '%';
+          if (tapCount >= 20) onShakeSuccess();
+        });
+      }
+
+      retryEl.addEventListener('click', () => {
+        retryEl.style.display = 'none';
+        timerEl.textContent   = '';
+        countEl.textContent   = '0';
+        fillEl.style.width    = '0%';
+        deadline = Date.now() + TIME_MS;
+        updateTimer();
+        startShakeChallenge();
+      });
+    }
+
+    function onShakeSuccess() {
+      GameState.addFuel(GAME_CONFIG.fuelTaskBonus);
+      FuelManager.renderFuel();
+      GameState.markStage(1);
+      document.getElementById('shake-section').style.display  = 'none';
+      document.getElementById('shake-success').style.display  = 'block';
+      // Populate placeholder hint
+      document.getElementById('e2-hint').textContent = STAGE2_NFC_HINT;
+    }
+
+    function onShakeFail() {
+      document.getElementById('shake-retry').style.display = 'block';
+      document.getElementById('shake-timer').textContent   = 'Czas minął!';
+    }
+  </script>
 </body>
 </html>
