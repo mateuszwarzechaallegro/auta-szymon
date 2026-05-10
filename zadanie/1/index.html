@@ -32,7 +32,33 @@
       </div>
     </div>
 
-    <!-- Phase 2: Ania shake -->
+    <!-- Phase 2: Amelia fuel bottle -->
+    <div id="phase-fuel" class="task-body" style="display:none;">
+      <div id="fuel-content" style="display:none;">
+        <div class="task-step-label">⛽ Zatankuj Radiator!</div>
+        <div class="task-title">Wpisz Kod Paliwa!</div>
+        <div class="task-card" style="border-color:#FF9800;">
+          <div class="task-card-icon">🔧</div>
+          <div class="task-card-text">
+            <em>Złomek: "Szefowo, jesteśmy bez paliwa! Znajdź butelkę paliwa przy bazie startowej i wpisz kod z naklejki!"</em>
+          </div>
+        </div>
+        <div class="backup-input-wrap" style="margin-top:16px;">
+          <input id="fuel-code" type="text" maxlength="5" placeholder="BENZX"
+            style="text-transform:uppercase;letter-spacing:3px;">
+          <button id="fuel-submit" class="btn-primary" style="margin:0;">⛽ Tankuj!</button>
+        </div>
+        <div id="fuel-error" style="display:none;color:#e94560;font-size:0.88rem;margin-top:8px;text-align:center;">
+          Błędny kod! Sprawdź naklejkę na butelce.
+        </div>
+        <button id="fuel-skip" class="btn-primary"
+          style="margin-top:20px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);font-size:0.82rem;opacity:0.7;">
+          Pomiń — butelki nie ma
+        </button>
+      </div>
+    </div>
+
+    <!-- Phase 3: Ania shake -->
     <div id="phase-shake" class="task-body" style="display:none;">
       <div id="shake-content" style="display:none;">
         <div class="task-step-label">⚡ Naładuj Baterię!</div>
@@ -40,7 +66,7 @@
         <div class="task-card">
           <div class="task-card-icon">🚗</div>
           <div class="task-card-text">
-            <em>Złomek: "Hej amigo! Telefon ma płaską baterię! Potrząśnij nim mocno 20 razy żeby ją naładować!"</em>
+            <em>Złomek: "Hej amigo! Telefon ma pustą baterię! Potrząśnij nim mocno 20 razy żeby ją naładować!"</em>
           </div>
         </div>
 
@@ -49,7 +75,7 @@
           <div class="task-card-icon">⚡</div>
           <div class="task-card-text">
             <strong>Bateria (⚡)</strong><br>
-            Ładuje się przez <strong>potrząsanie telefonem</strong> — każde potrząśnięcie dodaje energię. Pilnujcie żeby nie wypadła poniżej zera!
+            Ładuje się przez <strong>potrząsanie telefonem</strong> — każde potrząśnięcie dodaje energię. Pilnujcie żeby nie spadła do zera!
           </div>
         </div>
         <div class="task-card" style="border-color:#FF9800;margin-top:8px;">
@@ -92,8 +118,6 @@
 
   <script src="../../assets/game.js"></script>
   <script>
-    initFuelBottle(1);
-
     // Step 1: Amelia unlocks NFC
     showHandoff('amelia', 'Wpisz kod startowy NFC żeby uruchomić misję Ekipy Ratunkowej!', () => {
       document.getElementById('nfc-content').style.display = 'block';
@@ -102,7 +126,38 @@
     });
 
     function onNFCUnlocked() {
-      document.getElementById('phase-nfc').style.display   = 'none';
+      document.getElementById('phase-nfc').style.display  = 'none';
+      document.getElementById('phase-fuel').style.display = 'block';
+      showHandoff('amelia', 'Znajdź butelkę paliwa przy bazie i wpisz kod — zatankujmy Radiator!', startFuel);
+    }
+
+    function startFuel() {
+      document.getElementById('fuel-content').style.display = 'block';
+      const USED_KEY = 'auta_szymon_26_refuel_1';
+
+      // Already refueled (eg. page reload)
+      if (localStorage.getItem(USED_KEY)) { onFuelDone(); return; }
+
+      function tryFuel() {
+        const code = document.getElementById('fuel-code').value.trim().toUpperCase();
+        if (code === FUEL_BOTTLE_CODES[1]) {
+          Resources.addBenzyna(30);
+          localStorage.setItem(USED_KEY, '1');
+          onFuelDone();
+        } else {
+          const er = document.getElementById('fuel-error');
+          er.style.display = 'block';
+          setTimeout(() => er.style.display = 'none', 2500);
+        }
+      }
+
+      document.getElementById('fuel-submit').addEventListener('click', tryFuel);
+      document.getElementById('fuel-code').addEventListener('keydown', e => { if (e.key === 'Enter') tryFuel(); });
+      document.getElementById('fuel-skip').addEventListener('click', onFuelDone);
+    }
+
+    function onFuelDone() {
+      document.getElementById('phase-fuel').style.display  = 'none';
       document.getElementById('phase-shake').style.display = 'block';
       showHandoff('ania', 'Potrząśnij telefonem 20 razy żeby naładować baterię Ekipy!', startShake);
     }
