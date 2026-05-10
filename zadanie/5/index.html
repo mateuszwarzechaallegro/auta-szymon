@@ -159,7 +159,7 @@
       const waypoints = STAGE5_WAYPOINTS.length > 0 ? STAGE5_WAYPOINTS :
         [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij współrzędne Lokalizacji 3' }];
       Navigation.start(waypoints,
-        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(showBeeper,1500); },
+        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(() => showSuccess('szymon','Lokalizacja 3 znaleziona! Pikanie coraz głośniejsze! 📡', showBeeper),1500); },
         (i,fin,nh) => { if(!fin&&nh) document.getElementById('nav-hint').textContent='✓ '+nh; }
       );
       document.getElementById('nav-status').addEventListener('dblclick', showBeeper);
@@ -171,7 +171,9 @@
       document.getElementById('phase-beeper').style.display = 'block';
       showHandoff('szymon', 'Szukaj urządzenia które pika! Gdy znajdziesz — naciśnij przycisk!', () => {
         document.getElementById('beeper-content').style.display = 'block';
-        document.getElementById('beeper-found-btn').addEventListener('click', showNFCPhase);
+        document.getElementById('beeper-found-btn').addEventListener('click', () =>
+          showSuccess('szymon','Znaleźliście beeper! Teraz skanujcie tag NFC! 📡', showNFCPhase)
+        );
       });
     }
 
@@ -193,8 +195,10 @@
           const v = document.getElementById('riddle-input').value.trim().toLowerCase()
             .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
           if (ANSWERS.includes(v)) {
-            document.getElementById('phase-riddle').style.display = 'none';
-            startLevel();
+            showSuccess('amelia', 'To opona! Zagadka rozwiązana! 🔍', () => {
+              document.getElementById('phase-riddle').style.display = 'none';
+              startLevel();
+            });
           } else {
             document.getElementById('riddle-error').style.display = 'block';
             setTimeout(() => document.getElementById('riddle-error').style.display='none', 2000);
@@ -237,10 +241,12 @@
     }
 
     function onSuccess() {
-      GameState.addSymbol('lightning');
-      GameState.markStage(5);
-      document.getElementById('phase-level').style.display   = 'none';
-      document.getElementById('phase-success').style.display = 'block';
+      showSuccess('ania', 'Poziomo przez 15 sekund! Transport kompletny! ⚡', () => {
+        GameState.addSymbol('lightning');
+        GameState.markStage(5);
+        document.getElementById('phase-level').style.display   = 'none';
+        document.getElementById('phase-success').style.display = 'block';
+      });
     }
   </script>
 </body>

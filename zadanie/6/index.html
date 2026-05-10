@@ -154,7 +154,7 @@
       const waypoints = STAGE6_WAYPOINTS.length > 0 ? STAGE6_WAYPOINTS :
         [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij współrzędne Lokalizacji 4' }];
       Navigation.start(waypoints,
-        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(showNFC,1500); },
+        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(() => showSuccess('szymon','Lokalizacja 4 znaleziona! Ostatni etap! 🏆', showNFC),1500); },
         (i,fin,nh) => { if(!fin&&nh) document.getElementById('nav-hint').textContent='✓ '+nh; }
       );
       document.getElementById('nav-status').addEventListener('dblclick', showNFC);
@@ -242,12 +242,13 @@
     }
 
     function onSprintSuccess() {
-      document.getElementById('phase-sprint').style.display = 'none';
-      document.getElementById('phase-game').style.display   = 'block';
-      // Phase 3: Ania dodge game
-      showHandoff('ania', 'Steruj samochodem — dotykaj ekranu żeby skakać i przeżyj 20 sekund!', () => {
-        document.getElementById('game-content').style.display = 'block';
-        startDodgeGame();
+      showSuccess('amelia', '100 metrów bez zatrzymania! Sprint zaliczony! 💨', () => {
+        document.getElementById('phase-sprint').style.display = 'none';
+        document.getElementById('phase-game').style.display   = 'block';
+        showHandoff('ania', 'Steruj samochodem — dotykaj ekranu żeby skakać i przeżyj 20 sekund!', () => {
+          document.getElementById('game-content').style.display = 'block';
+          startDodgeGame();
+        });
       });
     }
 
@@ -321,7 +322,7 @@
 
       function onDodgeWin() {
         cancelAnimationFrame(raf);
-        onAllSuccess();
+        showSuccess('ania', 'Przeżyłaś Wyścig Zygzaka! Ostatni symbol zdobyty! 🔴', onAllSuccess);
       }
 
       function onDodgeFail() {

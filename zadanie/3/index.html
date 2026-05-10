@@ -107,7 +107,7 @@
       Navigation.start(waypoints,
         (angle, dist, isClose, isLast, hint) => {
           renderNav(angle, dist, isClose, isLast, hint);
-          if (isClose && isLast) setTimeout(showNFCPhase, 1500);
+          if (isClose && isLast) setTimeout(() => showSuccess('szymon', 'Lokalizacja 1 znaleziona! Paczka gdzieś tu jest! 📦', showNFCPhase), 1500);
         },
         (idx, isFinal, nextHint) => {
           if (!isFinal && nextHint) document.getElementById('nav-hint').textContent = '✓ ' + nextHint;
@@ -123,8 +123,8 @@
       // Step 2: Amelia enters NFC code
       showHandoff('amelia', 'Wpisz kod NFC z naklejki obok tagu — PACZK3!', () => {
         document.getElementById('nfc-content').style.display = 'block';
-        if (checkNFCToken(3)) { startGamePhase(); return; }
-        setupBackupCodeInput(3, startGamePhase);
+        if (checkNFCToken(3)) { showSuccess('amelia','Tag odblokowany! Wchodzimy do Lokalizacji 1! 📡', startGamePhase); return; }
+        setupBackupCodeInput(3, () => showSuccess('amelia','Tag odblokowany! Wchodzimy do Lokalizacji 1! 📡', startGamePhase));
       });
     }
 
@@ -185,7 +185,7 @@
           } else { onFail(); }
         }, { once: true }));
       }
-      function onWin()  { onGameSuccess(); }
+      function onWin()  { showSuccess('ania', 'Wszystkie narzędzia w kolejności! Pit Stop rozwiązany! 🔧', onGameSuccess); }
       function onFail() {
         statusEl.textContent = '❌ Błąd! Spróbuj ponownie!'; retryEl.style.display = 'block';
         retryEl.onclick = () => { retryEl.style.display='none'; runReactionGame(); };

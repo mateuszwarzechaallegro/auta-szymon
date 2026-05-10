@@ -171,9 +171,11 @@
     }
 
     function onTriviaSuccess() {
-      document.getElementById('phase-trivia').style.display = 'none';
-      document.getElementById('phase-ride').style.display   = 'block';
-      showHandoff('ania', 'Jedź ≥5 km/h przez 60 sekund bez zatrzymania!', startRide);
+      showSuccess('amelia', '3 pytania zaliczone! Amelia wie wszystko o Autach! 🏎️', () => {
+        document.getElementById('phase-trivia').style.display = 'none';
+        document.getElementById('phase-ride').style.display   = 'block';
+        showHandoff('ania', 'Jedź ≥5 km/h przez 60 sekund bez zatrzymania!', startRide);
+      });
     }
 
     // GPS RIDE
@@ -194,19 +196,23 @@
     }
 
     function onRideSuccess() {
-      document.getElementById('phase-ride').style.display    = 'none';
-      document.getElementById('phase-confirm').style.display = 'block';
-      showHandoff('szymon', 'Sprawdź strzałkę GPS i potwierdź że jedziecie w dobrym kierunku do Lokalizacji 1!', () => {
-        document.getElementById('confirm-content').style.display = 'block';
-        document.getElementById('confirm-btn').addEventListener('click', onConfirmSuccess);
+      showSuccess('ania', '60 sekund w ruchu! Sprint zaliczony! 💨', () => {
+        document.getElementById('phase-ride').style.display    = 'none';
+        document.getElementById('phase-confirm').style.display = 'block';
+        showHandoff('szymon', 'Sprawdź strzałkę GPS i potwierdź że jedziecie w dobrym kierunku do Lokalizacji 1!', () => {
+          document.getElementById('confirm-content').style.display = 'block';
+          document.getElementById('confirm-btn').addEventListener('click', onConfirmSuccess);
+        });
       });
     }
 
     function onConfirmSuccess() {
-      GameState.markStage(2);
-      document.getElementById('phase-confirm').style.display = 'none';
-      document.getElementById('phase-success').style.display = 'block';
-      document.getElementById('e3-hint').textContent = STAGE3_NFC_HINT;
+      showSuccess('szymon', 'Trasa potwierdzona! Drużyna wie dokąd jechać! 🗺️', () => {
+        GameState.markStage(2);
+        document.getElementById('phase-confirm').style.display = 'none';
+        document.getElementById('phase-success').style.display = 'block';
+        document.getElementById('e3-hint').textContent = STAGE3_NFC_HINT;
+      });
     }
   </script>
 </body>

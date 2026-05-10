@@ -250,6 +250,27 @@ function showHandoff(player, task, onConfirm) {
 }
 
 // ============================================================
+// SUCCESS OVERLAY — shown after each child completes a task
+// ============================================================
+function showSuccess(player, message, onContinue) {
+  const colors = { szymon: '#e94560', amelia: '#FFD700', ania: '#4fc3f7' };
+  const names  = { szymon: '🔴 Szymon', amelia: '🟡 Amelia', ania: '🔵 Ania' };
+  const col = colors[player] || '#fff';
+  const ov = document.createElement('div');
+  ov.className = 'success-overlay';
+  ov.innerHTML = `
+    <div class="success-box">
+      <div class="success-stars">⭐ ⭐ ⭐</div>
+      <div class="success-player" style="color:${col};">${names[player] || player}</div>
+      <div class="success-msg">${message}</div>
+      <button class="btn-primary success-btn" style="border-color:${col};">Dalej! →</button>
+    </div>`;
+  document.body.appendChild(ov);
+  requestAnimationFrame(() => ov.classList.add('active'));
+  ov.querySelector('.success-btn').addEventListener('click', () => { ov.remove(); if (onContinue) onContinue(); });
+}
+
+// ============================================================
 // LOW ENERGY MODAL  (bateria < 5%, benzyna > 0%)
 // ============================================================
 function initLowEnergyModal() {

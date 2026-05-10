@@ -151,7 +151,7 @@
       const waypoints = STAGE4_WAYPOINTS.length > 0 ? STAGE4_WAYPOINTS :
         [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij trasę Lokalizacji 2' }];
       Navigation.start(waypoints,
-        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(showNFCPhase,1500); },
+        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(() => showSuccess('szymon','Lokalizacja 2 znaleziona! Paczka #2 blisko! 📦', showNFCPhase),1500); },
         (i,fin,nh) => { if(!fin&&nh) document.getElementById('nav-hint').textContent='✓ '+nh; }
       );
       document.getElementById('nav-status').addEventListener('dblclick', showNFCPhase);
@@ -211,7 +211,7 @@
           }
         }
       }
-      function onMemWin(){startSpeedSequence();}
+      function onMemWin(){showSuccess('amelia','Wszystkie 4 pary znalezione! Pamięć jak komputer! 🃏', startSpeedSequence);}
       function onMemFail(){
         retryEl.style.display='block';
         retryEl.onclick=()=>{retryEl.style.display='none';runMemory();};
@@ -315,18 +315,28 @@
     }
 
     function onSpeedPhaseSuccess() {
+      const ph = SPEED_PHASES[phaseIdx];
+      const msgs = [
+        'Idealna prędkość! Faza 1 zaliczona! 🚗',
+        'Mistrz kierownicy! Faza 2 zaliczona! 🏎️',
+        'Pełna para! Faza 3 zaliczona! 🔥',
+        'KA-CZAOW! Faza 4 zaliczona! Symbol 🏁 zdobyty!',
+      ];
+      const msg = msgs[phaseIdx] || '🎉';
       phaseIdx++;
-      if (phaseIdx < SPEED_PHASES.length) {
-        document.getElementById('sweet-gauge').style.display = 'none';
-        document.getElementById('burst-gauge').style.display = 'none';
-        document.getElementById('speed-content').style.display = 'none';
-        runSpeedPhase();
-      } else {
-        GameState.addSymbol('flag');
-        GameState.markStage(4);
-        document.getElementById('phase-speed').style.display   = 'none';
-        document.getElementById('phase-success').style.display = 'block';
-      }
+      showSuccess(ph.player, msg, () => {
+        if (phaseIdx < SPEED_PHASES.length) {
+          document.getElementById('sweet-gauge').style.display = 'none';
+          document.getElementById('burst-gauge').style.display = 'none';
+          document.getElementById('speed-content').style.display = 'none';
+          runSpeedPhase();
+        } else {
+          GameState.addSymbol('flag');
+          GameState.markStage(4);
+          document.getElementById('phase-speed').style.display   = 'none';
+          document.getElementById('phase-success').style.display = 'block';
+        }
+      });
     }
   </script>
 </body>

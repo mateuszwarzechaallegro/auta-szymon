@@ -150,8 +150,8 @@
     // ── Phase 1: Amelia NFC unlock ──────────────────────────────
     showHandoff('amelia', 'Wpisz kod startowy NFC żeby uruchomić misję Ekipy Ratunkowej!', () => {
       document.getElementById('nfc-content').style.display = 'block';
-      if (checkNFCToken(1)) { onNFCUnlocked(); return; }
-      setupBackupCodeInput(1, onNFCUnlocked);
+      if (checkNFCToken(1)) { showSuccess('amelia','Misja odblokowana! Ekipa Ratunkowa do akcji! 🚗', onNFCUnlocked); return; }
+      setupBackupCodeInput(1, () => showSuccess('amelia','Misja odblokowana! Ekipa Ratunkowa do akcji! 🚗', onNFCUnlocked));
     });
 
     function onNFCUnlocked() {
@@ -172,7 +172,7 @@
         if (code === FUEL_BOTTLE_CODES[1]) {
           Resources.addBenzyna(30);
           localStorage.setItem(USED_KEY, '1');
-          onFuelDone();
+          showSuccess('amelia', 'Zbak pełny! +30% paliwa dla Radiatora! ⛽', onFuelDone);
         } else {
           const er = document.getElementById('fuel-error');
           er.style.display = 'block';
@@ -218,8 +218,8 @@
         (angle, dist, isClose, isLast, hint) => {
           renderNav(angle, dist, isClose, isLast, hint);
           if (isClose && isLast) {
-            if (segment === 0) setTimeout(showRechargePhase, 1500);
-            else               setTimeout(showHintPhase, 1500);
+            if (segment === 0) setTimeout(() => showSuccess('szymon', 'Punkt pośredni zaliczony! Czas naładować baterię! ⚡', showRechargePhase), 1500);
+            else               setTimeout(() => showSuccess('szymon', 'Lokalizacja 0 znaleziona! Bezpieczne miejsce! 🎉', showHintPhase), 1500);
           }
         },
         () => {}
@@ -254,7 +254,7 @@
           fillEl.style.width  = (cur / tot * 100) + '%';
           Resources.onShake(); // +2% bateria, -1% benzyna
         },
-        onShakeDone,
+        () => showSuccess('ania', 'Bateria naładowana! Możemy jechać dalej! ⚡', onShakeDone),
         null
       );
 
@@ -266,7 +266,7 @@
           taps++; countEl.textContent = taps;
           fillEl.style.width = (taps / 10 * 100) + '%';
           Resources.onShake();
-          if (taps >= 10) onShakeDone();
+          if (taps >= 10) showSuccess('ania', 'Bateria naładowana! Możemy jechać dalej! ⚡', onShakeDone);
         };
       }
     }
