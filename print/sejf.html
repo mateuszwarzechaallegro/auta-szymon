@@ -2,262 +2,516 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Sejf + Instrukcja — Auta Szymon 2026</title>
+  <title>Instrukcja Organizatora — Auta Szymon 2026</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: Arial, sans-serif;
-      font-size: 12pt;
+      font-size: 11pt;
       background: #fff;
       color: #000;
-      padding: 20mm;
+      padding: 16mm;
     }
     @media print {
-      body { padding: 10mm; }
+      body { padding: 8mm; font-size: 10pt; }
       .no-print { display: none !important; }
       .page-break { page-break-before: always; }
     }
-    h1 { font-size: 20pt; text-align: center; margin-bottom: 6mm; }
-    h2 { font-size: 14pt; margin: 8mm 0 4mm; border-bottom: 1px solid #ccc; padding-bottom: 2mm; }
-    .instructions { background: #f9f9f9; border: 1px solid #ddd; padding: 6mm; border-radius: 4mm; margin-bottom: 8mm; }
-    .safe-box {
-      border: 3px solid #000;
-      border-radius: 6mm;
-      padding: 8mm;
-      margin: 6mm 0;
-      text-align: center;
-    }
-    .symbols-row {
-      display: flex;
-      justify-content: center;
-      gap: 8mm;
-      margin: 6mm 0;
-      font-size: 40pt;
-    }
-    .dial {
-      border: 2px dashed #888;
-      border-radius: 4mm;
-      padding: 4mm 8mm;
-      display: inline-block;
-      text-align: center;
-    }
-    .combination-answer {
-      font-size: 36pt;
-      letter-spacing: 8mm;
-      font-weight: 900;
-      margin: 4mm 0;
-    }
-    .nfc-codes {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 4mm 0;
-    }
-    .nfc-codes th, .nfc-codes td {
-      border: 1px solid #ccc;
-      padding: 3mm 4mm;
-      text-align: left;
-    }
-    .nfc-codes th { background: #f0f0f0; font-weight: bold; }
-    .code-val { font-family: monospace; font-size: 13pt; font-weight: bold; letter-spacing: 2px; }
-    .qr-placeholder {
-      border: 2px dashed #888;
-      width: 50mm;
-      height: 50mm;
-      margin: 6mm auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 9pt;
-      color: #888;
-      text-align: center;
-    }
-    .cut-here { border-top: 2px dashed red; margin: 8mm 0; padding-top: 4mm; font-size: 9pt; color: red; }
+
+    /* ── Typografia ── */
+    h1 { font-size: 18pt; text-align: center; margin-bottom: 2mm; }
+    h2 { font-size: 13pt; margin: 7mm 0 3mm;
+         border-bottom: 2px solid #000; padding-bottom: 1.5mm; }
+    h3 { font-size: 11pt; margin: 5mm 0 2mm; font-weight: bold; }
+    p  { margin-bottom: 3mm; line-height: 1.5; }
+    code { background: #eee; padding: 0 2px; border-radius: 2px; font-size: 9pt; }
+
+    /* ── Przycisk drukowania ── */
     .btn-print {
-      display: block;
-      margin: 0 auto 8mm;
-      padding: 10px 30px;
-      background: #e94560;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 14pt;
-      cursor: pointer;
+      display: block; margin: 0 auto 8mm;
+      padding: 10px 30px; background: #e94560; color: #fff;
+      border: none; border-radius: 8px; font-size: 13pt; cursor: pointer;
     }
+
+    /* ── Boxy ── */
+    .box {
+      border: 1px solid #bbb; border-radius: 3mm;
+      padding: 4mm 6mm; margin-bottom: 5mm;
+      background: #f9f9f9;
+    }
+    .box-warn {
+      border-color: #e94560; background: #fff0f2;
+    }
+    .box-green {
+      border-color: #4CAF50; background: #f0fff2;
+    }
+    .box-blue {
+      border-color: #1565C0; background: #f0f4ff;
+    }
+    .box-yellow {
+      border-color: #f9a825; background: #fffde7;
+    }
+
+    /* ── Tabele ── */
+    table { border-collapse: collapse; width: 100%; margin: 3mm 0; font-size: 10pt; }
+    th, td { border: 1px solid #ccc; padding: 2.5mm 3.5mm; text-align: left; vertical-align: top; }
+    th { background: #f0f0f0; font-weight: bold; }
+    .mono { font-family: monospace; font-weight: bold; font-size: 12pt; letter-spacing: 2px; }
+    .center { text-align: center; }
+
+    /* ── Sejf ── */
+    .safe-combo {
+      border: 3px solid #000; border-radius: 5mm;
+      padding: 6mm; text-align: center; margin: 4mm 0;
+    }
+    .combo-symbols { font-size: 36pt; letter-spacing: 6mm; margin: 3mm 0; }
+    .combo-labels  { font-size: 9pt; color: #555; letter-spacing: 1px; }
+
+    /* ── Tajny tryb ── */
+    .secret-box {
+      border: 3px dashed #9C27B0; border-radius: 4mm;
+      padding: 5mm 7mm; background: #f9f0ff; margin: 5mm 0;
+    }
+    .secret-title { font-size: 13pt; font-weight: bold; color: #6a0dad; margin-bottom: 3mm; }
+
+    /* ── Sekwencja ── */
+    .stage {
+      border-left: 4px solid #e94560;
+      padding-left: 5mm; margin-bottom: 6mm;
+    }
+    .stage-header {
+      font-size: 12pt; font-weight: bold;
+      background: #000; color: #fff;
+      display: inline-block; padding: 1mm 4mm;
+      border-radius: 2mm; margin-bottom: 3mm;
+    }
+    .who {
+      display: inline-block;
+      font-size: 8pt; font-weight: bold;
+      padding: 0.5mm 2.5mm; border-radius: 2mm;
+      margin-right: 2mm; vertical-align: middle;
+    }
+    .szymon { background: #ffcccc; color: #900; }
+    .amelia { background: #fff3cc; color: #7a5900; }
+    .ania   { background: #cce5ff; color: #004080; }
+    .wszyscy{ background: #e0ffe0; color: #005000; }
+
+    .step { margin: 2mm 0; padding-left: 4mm; }
+    .varname { font-family: monospace; font-size: 9pt;
+               background: #e8e8e8; padding: 0 3px; border-radius: 2px;
+               color: #c0392b; }
+    .codeval { font-family: monospace; font-weight: bold; font-size: 12pt;
+               background: #222; color: #FFD700;
+               padding: 0 4px; border-radius: 2px; letter-spacing: 2px; }
+
+    /* ── Checklist ── */
+    .checklist { line-height: 2.2; padding-left: 4mm; }
+    .checklist li { margin-bottom: 1mm; }
+
+    /* ── Separator ── */
+    hr { border: none; border-top: 1px solid #ccc; margin: 5mm 0; }
   </style>
 </head>
 <body>
 
-<button class="btn-print no-print" onclick="window.print()">🖨️ DRUKUJ</button>
+<button class="btn-print no-print" onclick="window.print()">🖨️ DRUKUJ INSTRUKCJĘ</button>
 
 <h1>⚡ AUTA — URODZINY SZYMONA 2026 ⚡</h1>
-<h1>🔐 INSTRUKCJA SEJFU + KODY NFC</h1>
-
-<div class="instructions">
-  <strong>Dla organizatora:</strong><br>
-  1. Wydrukuj tę stronę (najlepiej kolor).<br>
-  2. Ustaw sejf na kombinację: <strong>🔧 🏁 ⚡ 🔴</strong> (Klucz → Flaga → Błyskawica → Tłok).<br>
-  3. Włóż do środka kartkę z QR kodem prowadzącym do: <code>https://[TWOJA DOMENA]/final/</code><br>
-  4. Ukryj sejf przy bazie. Dzieci otworzą go po zebraniu wszystkich 4 symboli.<br>
-  5. Programuj tagi NFC adresami URL z tabeli poniżej.<br>
+<div style="text-align:center;font-size:10pt;color:#555;margin-bottom:6mm;">
+  Instrukcja organizatora · 16 maja 2026 · POUFNE — nie pokazywać dzieciom
 </div>
 
-<h2>🔐 Kombinacja sejfu</h2>
-<div class="safe-box">
-  <div style="font-size:11pt;color:#666;margin-bottom:4mm;">USTAW POKRĘTŁA W TEJ KOLEJNOŚCI:</div>
-  <div class="combination-answer">🔧 🏁 ⚡ 🔴</div>
-  <div style="font-size:10pt;color:#444;margin-top:4mm;">
-    Klucz &nbsp;&nbsp; Flaga &nbsp;&nbsp; Błyskawica &nbsp;&nbsp; Tłok
+<!-- ══════════════════════════════════════════════════════ -->
+<h2>🕹️ Tajny tryb organizatora</h2>
+
+<div class="secret-box">
+  <div class="secret-title">🔮 SKIP — potrójne tapnięcie</div>
+  <p>Gdy dzieci utknęły albo chcesz pominąć etap: <strong>dotknij 3 razy szybko</strong>
+  napis <strong>„ETAP X / 5"</strong> w prawym górnym rogu ekranu (800ms na 3 tapnięcia).</p>
+  <p>Efekt: <strong>natychmiastowe przejście do następnego etapu</strong> bez żadnych warunków.</p>
+  <p style="font-size:9pt;color:#6a0dad;margin-top:2mm;">
+    Dostępne na każdym etapie (1–5). Na desktopie działa też kliknięcie myszą.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2>⛽ Kody butelek paliwa</h2>
+
+<p style="font-size:10pt;color:#555;margin-bottom:3mm;">
+  Przy każdej lokacji leży fizyczna "butelka" z kodem. Amelia wpisuje go w grze → +30% benzyna.
+</p>
+
+<table>
+  <tr>
+    <th>Miejsce</th><th>Etap</th><th>Kod</th><th>Gdzie ukryć butelkę</th>
+  </tr>
+  <tr>
+    <td>Baza startowa</td><td>E0 → E1</td>
+    <td class="mono">ZK9QBX</td>
+    <td>Piaskownica przy huśtawce (razem z brelokiem NFC)</td>
+  </tr>
+  <tr>
+    <td>Most</td><td>E3</td>
+    <td class="mono">SGM9S7</td>
+    <td>PLACEHOLDER — przy paczce na Moście / tagu NFC E3</td>
+  </tr>
+  <tr>
+    <td>Plac Zabaw</td><td>E4</td>
+    <td class="mono">NBFQUM</td>
+    <td>PLACEHOLDER — przy paczce na Placu Zabaw / tagu NFC E4</td>
+  </tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2>📡 Tagi NFC — adresy URL</h2>
+
+<p style="font-size:10pt;color:#555;margin-bottom:3mm;">
+  Zaprogramuj każdy tag NFC podanym adresem (app: NFC Tools / TagWriter).
+</p>
+
+<table>
+  <tr>
+    <th>#</th><th>Etap</th><th>URL tagu NFC</th><th>Gdzie ukryć tag</th>
+  </tr>
+  <tr>
+    <td>0</td><td>Start (brelok)</td>
+    <td><code>https://mateuszwarzechaallegro.github.io/auta-szymon/zadanie/1/</code></td>
+    <td>Piaskownica przy huśtawce</td>
+  </tr>
+  <tr>
+    <td>2</td><td>Etap 2 (Filk)</td>
+    <td><code>https://mateuszwarzechaallegro.github.io/auta-szymon/zadanie/2/?nfc=1</code></td>
+    <td>PLACEHOLDER — wskazuje <span class="varname">STAGE2_NFC_HINT</span></td>
+  </tr>
+  <tr>
+    <td>3</td><td>Etap 3 — Lok. 1</td>
+    <td><code>https://mateuszwarzechaallegro.github.io/auta-szymon/zadanie/3/?nfc=1</code></td>
+    <td>PLACEHOLDER — przy paczce #1</td>
+  </tr>
+  <tr>
+    <td>4</td><td>Etap 4 — Lok. 2</td>
+    <td><code>https://mateuszwarzechaallegro.github.io/auta-szymon/zadanie/4/?nfc=1</code></td>
+    <td>PLACEHOLDER — przy paczce #2</td>
+  </tr>
+  <tr>
+    <td>5</td><td>Etap 5 — Lok. 3 (finał)</td>
+    <td><code>https://mateuszwarzechaallegro.github.io/auta-szymon/zadanie/5/?nfc=1</code></td>
+    <td>PLACEHOLDER — przy prezencie / tagu NFC E5</td>
+  </tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+
+<h2>🗺️ Pełna sekwencja gry</h2>
+
+<div class="box box-blue" style="margin-bottom:5mm;">
+  <strong>Role:</strong>
+  <span class="who szymon">Szymon 🔴</span> Nawigator — prowadzi GPS &nbsp;
+  <span class="who amelia">Amelia 🟡</span> Mechanik — wpisuje kody &nbsp;
+  <span class="who ania">Ania 🔵</span> Pilot — potrząsa telefonem
+</div>
+
+<!-- ─── ETAP 0 ─── -->
+<div class="stage">
+  <div class="stage-header">ETAP 0 — START (kartka fizyczna, brak ekranu)</div>
+  <div class="step">
+    <span class="who wszyscy">Wszyscy</span>
+    Dzieci dostają wydrukowaną kartę z rymowanką (Złomek namieszał).
+    Zagadka wskazuje na <strong>piaskownicę przy huśtawce</strong> (ogród).
+  </div>
+  <div class="step">
+    Przy huśtawce: brelok NFC + butelka paliwa z kodem <span class="codeval">ZK9QBX</span>.
+    Skanują brelok telefonem → otwiera się Etap 1.
   </div>
 </div>
 
-<div style="text-align:center;margin:6mm 0;font-size:10pt;color:#666;">
-  Dzieci odkryją te symbole po kolei (jeden na każdej z 4 lokalizacji).<br>
-  Kombinację zapamiętają z ekranu lub z notatek.
+<!-- ─── ETAP 1 ─── -->
+<div class="stage">
+  <div class="stage-header">ETAP 1 / 5</div>
+
+  <div class="step">
+    <span class="who amelia">Amelia</span>
+    Wpisuje kod butelki paliwa <span class="codeval">ZK9QBX</span> → +30% benzyna.<br>
+    Zmienna: <span class="varname">FUEL_BOTTLE_CODES[1]</span>
+  </div>
+
+  <div class="step">
+    <span class="who ania">Ania</span>
+    Potrząsa telefonem <strong>10 razy</strong>.
+    Każde potrząśnięcie: −1% benzyna, +2% bateria.
+    Przycisk "Jedź!" aktywuje się po 10 shake'ach.
+  </div>
+
+  <div class="step">
+    <span class="who szymon">Szymon</span>
+    Nawiguje GPS do <strong>Starych Wraków</strong> (strzałka + odległość na ekranie).<br>
+    Zmienna: <span class="varname">STAGE1_WAYPOINTS</span> — obsługuje wiele punktów pośrednich, np.:
+    <div style="font-family:monospace;font-size:8.5pt;background:#f4f4f4;padding:3mm;margin:2mm 0;border-radius:2mm;">
+      { lat: 52.573100, lng: 17.018500, hint: 'Jedźcie do bramy' },<br>
+      { lat: 52.573500, lng: 17.019200, hint: 'W lewo przy płocie' },<br>
+      { lat: 52.574000, lng: 17.019800, hint: 'Stare Wraki — tu NFC!' },
+    </div>
+    Po dotarciu (<20m): ekran sukcesu, telefon przechodzi do Amelii.
+  </div>
+
+  <div class="step">
+    <span class="who amelia">Amelia</span>
+    Czyta drużynie na głos wskazówkę do Etapu 2.<br>
+    Zmienna: <span class="varname">STAGE2_NFC_HINT</span> — aktualnie:
+    <em>"Wraki dwa na podwórku stoją… Obejdźcie je, za nimi jest pniak — w nim ukryty jest kolejny znak!"</em>
+  </div>
+
+  <div class="step" style="color:#888;font-size:9pt;">
+    → Przycisk: „JEDŹ! Etap 2"
+  </div>
 </div>
 
-<div class="cut-here">✂ --- Tutaj wkleić kartkę z kodem QR do środka sejfu ---</div>
-<div class="qr-placeholder">
-  Wklej tu naklejkę z kodem QR<br>prowadzącą do:<br><code>/final/</code>
-</div>
-<div class="cut-here">✂ ------</div>
+<!-- ─── ETAP 2 ─── -->
+<div class="stage">
+  <div class="stage-header">ETAP 2 / 5</div>
 
+  <div class="step">
+    <span class="who wszyscy">Wejście</span>
+    Skanują tag NFC (Filk) → strona odblokowuje się.
+    Fallback: potrójne tapnięcie w <strong>ETAP 2/5</strong>.
+  </div>
+
+  <div class="step">
+    <span class="who amelia">Amelia</span>
+    <strong>Trivia o "Autach"</strong> — 3 pytania, wymagane 2/3 poprawnych (można powtarzać):
+    <table style="margin-top:2mm;">
+      <tr><th>#</th><th>Pytanie</th><th>Odpowiedź</th></tr>
+      <tr><td>1</td><td>Kolor Zygzaka?</td><td>Czerwony</td></tr>
+      <tr><td>2</td><td>Laweta — przyjaciel Zygzaka?</td><td>Złomek</td></tr>
+      <tr><td>3</td><td>Miasto Zygzaka?</td><td>Radiator Springs</td></tr>
+    </table>
+  </div>
+
+  <div class="step">
+    <span class="who ania">Ania</span>
+    Jedzie <strong>≥5 km/h przez 60 sekund</strong> bez zatrzymania. Pasek postępu na ekranie.
+  </div>
+
+  <div class="step">
+    <span class="who szymon">Szymon</span>
+    Naciska przycisk potwierdzający gotowość drużyny do drogi.
+  </div>
+
+  <div class="step">
+    Wyświetla wskazówkę do E3:<br>
+    Zmienna: <span class="varname">STAGE3_NFC_HINT</span> — aktualnie:
+    <em>"Na moście nad rzeczką… Odblaski czerwone — policzcie do dwóch! Za drugim breloczek… A w trawie przy moście butelka się chowa — paliwo dla auta!"</em>
+  </div>
+
+  <div class="step" style="color:#888;font-size:9pt;">
+    → Przycisk: „JEDŹ DO MOSTU"
+  </div>
+</div>
+
+<!-- ─── ETAP 3 ─── -->
+<div class="stage">
+  <div class="stage-header">ETAP 3 / 5</div>
+
+  <div class="step">
+    <span class="who amelia">Amelia</span>
+    Wpisuje kod butelki paliwa <span class="codeval">SGM9S7</span> → +30% benzyna.<br>
+    Zmienna: <span class="varname">FUEL_BOTTLE_CODES[3]</span>
+  </div>
+
+  <div class="step">
+    <span class="who szymon">Szymon</span>
+    Nawiguje GPS do <strong>Mostu</strong> (strzałka + odległość).<br>
+    Zmienna: <span class="varname">STAGE3_WAYPOINTS</span> — tablica punktów, np.:
+    <div style="font-family:monospace;font-size:8.5pt;background:#f4f4f4;padding:3mm;margin:2mm 0;border-radius:2mm;">
+      { lat: 52.574500, lng: 17.020100, hint: 'Most — szukajcie odblasku' },
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="who amelia">Amelia</span>
+    Po dotarciu ekran pokazuje <strong>"Jesteście blisko!"</strong> + wskazówkę <span class="varname">STAGE3_NFC_HINT</span> (wierszyk o moście, odblasku i butelce paliwa).<br>
+    Amelia czyta wskazówki drużynie, szukają breloczka i butelki, a potem dotykają tagiem NFC telefonu.
+  </div>
+
+  <div class="step">
+    <span class="who ania">Ania</span>
+    <strong>Pit Stop Chaos</strong> — 4 narzędzia migają w losowej kolejności (🔧🔩🪛⚙️).
+    Ania klika je w tej samej kolejności w <strong>10 sekund</strong>.
+    Błąd lub czas → "Spróbuj ponownie" (nieograniczone próby).
+  </div>
+
+  <div class="step" style="color:#888;font-size:9pt;">
+    → Wyświetla wskazówkę do E4: <span class="varname">STAGE4_NFC_HINT</span>
+    <em>(plac zabaw, szafka z prądem, breloczek za nią, butelka paliwa w trawie)</em><br>
+    → Przycisk: „JEDŹ NA PLAC ZABAW"
+  </div>
+</div>
+
+<!-- ─── ETAP 4 ─── -->
+<div class="stage">
+  <div class="stage-header">ETAP 4 / 5</div>
+
+  <div class="step">
+    <span class="who amelia">Amelia</span>
+    Wpisuje kod butelki paliwa <span class="codeval">NBFQUM</span> → +30% benzyna.<br>
+    Zmienna: <span class="varname">FUEL_BOTTLE_CODES[4]</span>
+  </div>
+
+  <div class="step">
+    <span class="who szymon">Szymon</span>
+    Nawiguje GPS do <strong>Placu Zabaw</strong> (strzałka + odległość).<br>
+    Zmienna: <span class="varname">STAGE4_WAYPOINTS</span> — tablica punktów, np.:
+    <div style="font-family:monospace;font-size:8.5pt;background:#f4f4f4;padding:3mm;margin:2mm 0;border-radius:2mm;">
+      { lat: 52.575200, lng: 17.021300, hint: 'Plac Zabaw — szukajcie szafki z prądem' },
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="who amelia">Amelia</span>
+    Po dotarciu ekran pokazuje <strong>"Jesteście blisko!"</strong> + wskazówkę <span class="varname">STAGE4_NFC_HINT</span> (wierszyk o placu zabaw, szafce z prądem i butelce paliwa).<br>
+    Amelia czyta wskazówki drużynie, szukają breloczka i butelki, a potem dotykają tagiem NFC telefonu.<br>
+    Fallback: potrójne tapnięcie ETAP 4/5.
+  </div>
+
+  <div class="step">
+    <span class="who szymon">Szymon</span>
+    <strong>Memory match</strong> — 8 kart (4 pary: 🏎️ Zygzak, 🚙 Złomek, 🟣 Ramona, 🔵 Szerszeń).
+    Wszystkie 4 pary w <strong>90 sekund</strong>. Porażka → "Spróbuj ponownie".
+  </div>
+
+  <div class="step">
+    <span class="who wszyscy">Sekwencja prędkości</span> — 4 fazy po kolei:
+    <table style="margin-top:2mm;">
+      <tr><th>Faza</th><th>Kto</th><th>Zadanie</th><th>Warunek</th></tr>
+      <tr>
+        <td>1</td>
+        <td><span class="who ania">Ania</span></td>
+        <td>Jedź 5–10 km/h</td>
+        <td>Trzymaj <strong>10 sek</strong> (timer pauzuje poza strefą)</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><span class="who szymon">Szymon</span></td>
+        <td>Jedź 5–10 km/h</td>
+        <td>Trzymaj <strong>25 sek</strong></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><span class="who amelia">Amelia</span></td>
+        <td>Jedź ≥15 km/h</td>
+        <td>Trzymaj <strong>3 sek</strong> (reset gdy zwolni)</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><span class="who szymon">Szymon</span></td>
+        <td>Jedź ≥15 km/h</td>
+        <td>Trzymaj <strong>6 sek</strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="step" style="color:#888;font-size:9pt;">
+    → Wyświetla wskazówkę do E5: <span class="varname">STAGE5_NFC_HINT</span>
+    <em>(hydrant na skrzyżowaniu, breloczek przy nim)</em><br>
+    → Przycisk: „JEDŹ DO HYDRANTU"
+  </div>
+</div>
+
+<!-- ─── ETAP 5 ─── -->
+<div class="stage">
+  <div class="stage-header">ETAP 5 / 5</div>
+
+  <div class="step">
+    <span class="who szymon">Szymon</span>
+    Nawiguje GPS do <strong>Hydrantu</strong> (ostatni przystanek, strzałka + odległość).<br>
+    Zmienna: <span class="varname">STAGE5_WAYPOINTS</span>
+  </div>
+
+  <div class="step">
+    <span class="who amelia">Amelia</span>
+    Po dotarciu ekran pokazuje <strong>"Jesteście blisko!"</strong> + wskazówkę <span class="varname">STAGE5_NFC_HINT</span> (wierszyk o hydrancie i breloczku).<br>
+    Amelia czyta wskazówki, szukają breloczka, a potem dotykają tagiem NFC telefonu.<br>
+    Fallback: potrójne tapnięcie ETAP 5/5.
+  </div>
+
+  <div class="step">
+    <span class="who szymon">Szymon</span>
+    <strong>Zagadka finałowa</strong> — wskazuje gdzie jest prezent.<br>
+    Zmienna: <span class="varname">GIFT_RIDDLE</span>
+  </div>
+
+  <div class="step" style="color:#888;font-size:9pt;">
+    → Przycisk: „KONIEC GRY!"
+  </div>
+</div>
+
+<!-- ─── FINAŁ ─── -->
+<div class="stage" style="border-color:#FFD700;">
+  <div class="stage-header" style="background:#FFD700;color:#000;">FINAŁ</div>
+  <div class="step">
+    Ekran z konfetti, gratulacjami i czasem misji.
+  </div>
+  <div class="step">
+    Dzieci biegną po prezent wskazany przez zagadkę z E5.
+  </div>
+</div>
+
+<!-- ─── Mechaniki globalne ─── -->
+<div class="box box-yellow" style="margin-top:4mm;">
+  <strong>Mechaniki globalne:</strong><br>
+  <strong>⛽ Benzyna</strong> — zużywa się tylko przy potrząsaniu (−1%/shake). Uzupełniana kodami z butelek (+30%).
+  Jeśli 0% i bateria 0% → modal "BRAK PALIWA" z polem na kod ratunkowy.<br><br>
+  <strong>⚡ Bateria</strong> — drenuje się podczas jazdy (~8%/min przy 12 km/h). Uzupełniana potrząsaniem (+2%/shake).
+  Jeśli <5% i jest benzyna → modal "LowEnergy" → Ania potrząsa telefonem.
+</div>
+
+<!-- ─── Kod ratunkowy ─── -->
+<div class="box box-warn" style="margin-top:4mm;">
+  <strong>🆘 Kod ratunkowy (gdy ⛽ = 0% i ⚡ = 0%)</strong><br><br>
+  Gdy oba wskaźniki spadną do zera, gra pokaże modal z <strong>polem do wpisania kodu</strong>.<br><br>
+  <table style="margin:2mm 0;">
+    <tr><th>Kod</th><th>Efekt</th><th>Jak użyć</th></tr>
+    <tr>
+      <td class="mono">HSJ5MT</td>
+      <td><strong>+30% ⛽</strong></td>
+      <td>Podaj dzieciom ustnie — wpisują na ekranie.<br>
+      Po zatankowaniu: potrząsnąć telefonem żeby naładować baterię!</td>
+    </tr>
+  </table>
+  <p style="font-size:9pt;color:#888;margin-top:2mm;">
+    Kod jest <strong>wielorazowy</strong> — możesz go podać ponownie jeśli znowu utknęli.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
 <div class="page-break"></div>
 
-<h2>📡 Kody NFC tagów (backup)</h2>
-<p style="margin-bottom:4mm;font-size:10pt;color:#555;">
-  Każdy tag NFC jest zaprogramowany adresem URL. Przy każdym tagu nakleij etykietkę z kodem backup.
-  Dzieci wpisują go gdy NFC nie działa.
-</p>
-
-<table class="nfc-codes">
-  <tr>
-    <th>#</th>
-    <th>Etap</th>
-    <th>URL do zaprogramowania w tagu</th>
-    <th>Backup kod</th>
-    <th>Gdzie ukryć tag</th>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>Etap 1 (Baza)</td>
-    <td><code>https://[DOMENA]/zadanie/1/?nfc=1</code></td>
-    <td class="code-val">START1</td>
-    <td>PLACEHOLDER: przy bazie startowej</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>Etap 2</td>
-    <td><code>https://[DOMENA]/zadanie/2/?nfc=1</code></td>
-    <td class="code-val">FLIK22</td>
-    <td>PLACEHOLDER: zagadka z E1 wskazuje miejsce</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>Etap 3 — Lok. 1</td>
-    <td><code>https://[DOMENA]/zadanie/3/?nfc=1</code></td>
-    <td class="code-val">PACZK3</td>
-    <td>PLACEHOLDER: przy paczce #1 w Lokalizacji 1</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>Etap 4 — Lok. 2</td>
-    <td><code>https://[DOMENA]/zadanie/4/?nfc=1</code></td>
-    <td class="code-val">PACZK4</td>
-    <td>PLACEHOLDER: przy paczce #2 w Lokalizacji 2</td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td>Etap 5 — Lok. 3</td>
-    <td><code>https://[DOMENA]/zadanie/5/?nfc=1</code></td>
-    <td class="code-val">PACZK5</td>
-    <td>PLACEHOLDER: przy beeper + paczce #3</td>
-  </tr>
-  <tr>
-    <td>6</td>
-    <td>Etap 6 — Lok. 4</td>
-    <td><code>https://[DOMENA]/zadanie/6/?nfc=1</code></td>
-    <td class="code-val">PACZK6</td>
-    <td>PLACEHOLDER: przy paczce #4 w Lokalizacji 4</td>
-  </tr>
-</table>
-
-<div style="margin-top:8mm;padding:4mm 6mm;background:#fff3cd;border:1px solid #ffc107;border-radius:4mm;">
-  <strong>Uwaga:</strong> Zastąp <code>[DOMENA]</code> prawdziwym adresem GitHub Pages, np.
-  <code>username.github.io/auta-szymon</code>
-</div>
-
-<h2>⛽ Kody Butelek Paliwa</h2>
-<p style="margin-bottom:4mm;font-size:10pt;color:#555;">
-  Przy każdej lokalizacji umieść fizyczną "butelkę paliwa" (butelka lub kartka) z wydrukowanym kodem.
-  Dzieci wpisują go w grze, żeby naładować bak ⛽ (+30%).
-</p>
-
-<table class="nfc-codes">
-  <tr>
-    <th>Lokalizacja</th>
-    <th>Etap</th>
-    <th>Kod</th>
-    <th>GPS-gate (50m)</th>
-    <th>Uwaga</th>
-  </tr>
-  <tr>
-    <td>Baza startowa</td>
-    <td>E1</td>
-    <td class="code-val">BENZ1</td>
-    <td>❌ (brak)</td>
-    <td>Zawsze dostępny przy starcie</td>
-  </tr>
-  <tr>
-    <td>Lokalizacja 1</td>
-    <td>E3</td>
-    <td class="code-val">BENZ3</td>
-    <td>✅ 50m od tagu E3</td>
-    <td>Uzupełnij FUEL_BOTTLE_COORDS[3] w game.js</td>
-  </tr>
-  <tr>
-    <td>Lokalizacja 2</td>
-    <td>E4</td>
-    <td class="code-val">BENZ4</td>
-    <td>✅ 50m od tagu E4</td>
-    <td>Uzupełnij FUEL_BOTTLE_COORDS[4] w game.js</td>
-  </tr>
-  <tr>
-    <td>Lokalizacja 3</td>
-    <td>E5</td>
-    <td class="code-val">BENZ5</td>
-    <td>✅ 50m od tagu E5</td>
-    <td>Uzupełnij FUEL_BOTTLE_COORDS[5] w game.js</td>
-  </tr>
-  <tr>
-    <td>Lokalizacja 4</td>
-    <td>E6</td>
-    <td class="code-val">BENZ6</td>
-    <td>✅ 50m od tagu E6</td>
-    <td>Uzupełnij FUEL_BOTTLE_COORDS[6] w game.js</td>
-  </tr>
-</table>
-
-<div style="margin-top:4mm;padding:4mm 6mm;background:#e8f5e9;border:1px solid #4CAF50;border-radius:4mm;font-size:10pt;">
-  <strong>Jak uzupełnić GPS-gate:</strong> w <code>assets/game.js</code> znajdź <code>FUEL_BOTTLE_COORDS</code>
-  i wpisz współrzędne każdego punktu tankowania (te same co waypoint końcowy dla danego etapu).
-</div>
-
 <h2>📋 Checklist przed imprezą (16 maja 2026)</h2>
-<ul style="line-height:2.2;padding-left:6mm;">
-  <li>☐ Uzupełnij współrzędne GPS w <code>assets/game.js</code> (STAGE3–6_WAYPOINTS)</li>
-  <li>☐ Wpisz wskazówki do waypointów (hint dla każdego punktu trasy)</li>
-  <li>☐ Wpisz STAGE2_NFC_HINT (zagadka z E1 → miejsce tagu E2)</li>
-  <li>☐ Wpisz STAGE3_NFC_HINT (wskazówka do znalezienia tagu w Lok. 1)</li>
-  <li>☐ Wpisz EXTRA_GIFT_LOCATION (opis miejsca dodatkowego prezentu)</li>
-  <li>☐ Zastąp [DOMENA] w tabeli NFC powyżej</li>
-  <li>☐ Zaprogramuj 6 tagów NFC (app: NFC Tools lub TagWriter)</li>
-  <li>☐ Wydrukuj i przykrój etykiety backup-code</li>
-  <li>☐ Ukryj tagi + paczki w lokalizacjach</li>
-  <li>☐ Ukryj beeper w Lokalizacji 3 (razem z tagiem #5)</li>
-  <li>☐ Ustaw sejf na kombinację 🔧🏁⚡🔴 i ukryj przy bazie</li>
-  <li>☐ Naładuj telefon do 100%</li>
-  <li>☐ Test: otwórz stronę w Chrome Android, sprawdź że GPS i NFC działają</li>
+
+<ul class="checklist">
+  <li>☐ <strong>Uzupełnij w <code>assets/game.js</code>:</strong>
+    <ul style="padding-left:6mm;line-height:2;">
+      <li>☐ <span class="varname">STAGE1_WAYPOINTS</span> — min. 1 punkt (Stare Wraki), można więcej pośrednich</li>
+      <li>☐ <span class="varname">STAGE2_NFC_HINT</span> — wskazówka gdzie jest tag E2 (Amelia czyta na głos)</li>
+      <li>☐ <span class="varname">STAGE3_WAYPOINTS</span> — Most</li>
+      <li>☐ <span class="varname">STAGE3_NFC_HINT</span> — wskazówka gdzie jest tag E3 (wyświetlana po E2)</li>
+      <li>☐ <span class="varname">STAGE4_WAYPOINTS</span> — Plac Zabaw</li>
+      <li>☐ <span class="varname">STAGE4_NFC_HINT</span> — wskazówka gdzie jest tag E4 (wyświetlana po E3)</li>
+      <li>☐ <span class="varname">STAGE5_WAYPOINTS</span> — Hydrant</li>
+      <li>☐ <span class="varname">STAGE5_NFC_HINT</span> — wskazówka gdzie jest tag E5 (wyświetlana po E4)</li>
+      <li>☐ <span class="varname">GIFT_RIDDLE</span> — zagadka wskazująca na prezent (wyświetlana w E5)</li>
+    </ul>
+  </li>
   <li>☐ Push do GitHub Pages i sprawdź HTTPS</li>
+  <li>☐ Wydrukuj kartę Etap 0 (<code>print/etap0.html</code>) i wręcz dzieciom na starcie</li>
+  <li>☐ Wydrukuj etykiety butelek paliwa (<code>print/butelki.html</code>) i przygotuj 3 butelki/kopert</li>
+  <li>☐ Zaprogramuj brelok NFC (URL: <code>https://mateuszwarzechaallegro.github.io/auta-szymon/zadanie/1/</code>) i ukryj w piaskownicy</li>
+  <li>☐ Zaprogramuj 4 tagi NFC (E2–E5) aplikacją NFC Tools lub TagWriter</li>
+  <li>☐ Ukryj tagi NFC + paczki: Most, Plac Zabaw, Hydrant</li>
+  <li>☐ Naładuj telefon do 100% przed startem</li>
+  <li>☐ Test: otwórz stronę w Chrome Android, sprawdź GPS + NFC + potrząsanie</li>
+  <li>☐ Zapamiętaj tajny skip: <strong>3× tapnięcie w ETAP X / 5</strong></li>
 </ul>
 
 </body>

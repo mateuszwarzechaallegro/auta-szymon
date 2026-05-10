@@ -12,14 +12,14 @@
     <div class="flag-strip"></div>
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
-      <span class="task-badge">ETAP 3 / 6</span>
+      <span class="task-badge">ETAP 3 / 5</span>
     </div>
 
     <!-- Phase 1: Szymon GPS nav -->
     <div id="phase-nav" class="task-body">
       <div id="nav-content" style="display:none;">
-        <div class="task-step-label">🗺️ Nawiguj do Lokalizacji 1</div>
-        <div class="task-title">Szukamy Paczki #1!</div>
+        <div class="task-step-label">🗺️ Nawiguj do Mostu</div>
+        <div class="task-title">Szukamy Paczki przy Moście!</div>
         <div class="task-card">
           <div class="task-card-icon">📻</div>
           <div class="task-card-text"><em>Złomek: "Paczka Szymona! Jedźcie za strzałką!"</em></div>
@@ -39,17 +39,20 @@
     <!-- Phase 2: Amelia NFC entry -->
     <div id="phase-nfc" class="task-body" style="display:none;">
       <div id="nfc-content" style="display:none;">
-        <div class="task-step-label">📡 Odblokuj Lokalizację 1</div>
-        <div class="task-title">Skanuj tag NFC!</div>
-        <div class="task-card">
+        <div class="task-step-label">📡 Jesteście blisko!</div>
+        <div class="task-title">Amelio, przeczytaj wskazówki i znajdź tag!</div>
+        <div class="task-card" style="border-color:#FFD700;">
+          <div class="task-card-icon">🔍</div>
+          <div class="task-card-text">
+            <strong>Wskazówka od Złomka:</strong><br><br>
+            <span style="color:#FFD700;" id="e3-nfc-hint">PLACEHOLDER</span>
+          </div>
+        </div>
+         <div class="task-card">
           <div class="task-card-icon">📡</div>
-          <div class="task-card-text"><strong>Dotknij tagiem NFC telefonu lub wpisz kod!</strong></div>
+          <div class="task-card-text"><strong>Jak znajdziesz tag — dotknij nim telefonu!</strong></div>
         </div>
-        <div class="backup-input-wrap">
-          <div style="font-size:0.8rem;color:#888;">Kod z naklejki:</div>
-          <input id="backup-code-input" type="text" maxlength="6" placeholder="XXXXXX">
-          <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj</button>
-        </div>
+        <div class="task-hint">Dblclick na tytuł żeby pominąć NFC (dev).</div>
       </div>
     </div>
 
@@ -71,22 +74,17 @@
       </div>
     </div>
 
-    <!-- Phase 4: Success -->
+    <!-- Phase 4: Success + E4 hint -->
     <div id="phase-success" class="task-body" style="display:none;">
-      <div class="symbol-reveal active">
-        <div class="symbol-label">Symbol #1 zdobyty!</div>
-        <div class="symbol-big">🔧</div>
-        <div class="symbol-name">KLUCZ</div>
-        <div style="font-size:0.85rem;color:#aaa;margin-top:4px;">To 1. znak kodu do sejfu!</div>
-      </div>
-      <div class="task-card" style="margin-top:16px;border-color:#4CAF50;">
-        <div class="task-card-icon">📦</div>
+      <div class="task-card" style="border-color:#4CAF50;">
+        <div class="task-card-icon">🎉</div>
         <div class="task-card-text">
-          <strong>Złomek: "Paczka #1 jest tu obok! Weźcie ją!"</strong><br>
-          Jedźcie do <strong>Lokalizacji 2!</strong>
+          <strong>Pit Stop rozwiązany!</strong><br><br>
+          <em>Złomek: "Następny tag NFC jest gdzieś na Placu Zabaw!"</em><br><br>
+          <span style="color:#FFD700;font-weight:700;" id="e4-hint-text">PLACEHOLDER</span>
         </div>
       </div>
-      <a class="btn-primary" href="../4/">⚡ JEDŹ DO LOKALIZACJI 2 →</a>
+      <a class="btn-primary" href="../4/">⚡ JEDŹ NA PLAC ZABAW →</a>
     </div>
 
     <div class="flag-strip" style="margin-top:auto;"></div>
@@ -98,33 +96,37 @@
     startEnergyMonitoring();
 
     // Step 1: Szymon GPS nav
-    showHandoff('szymon', 'Nawiguj GPS do Lokalizacji 1 — jesteś kierowcą!', startNav);
+    showHandoff('szymon', 'Nawiguj GPS do Mostu — jesteś kierowcą!', startNav);
 
     function startNav() {
       document.getElementById('nav-content').style.display = 'block';
       const waypoints = STAGE3_WAYPOINTS.length > 0 ? STAGE3_WAYPOINTS :
-        [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij współrzędne Lokalizacji 1' }];
+        [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij współrzędne Mostu' }];
       Navigation.start(waypoints,
         (angle, dist, isClose, isLast, hint) => {
           renderNav(angle, dist, isClose, isLast, hint);
-          if (isClose && isLast) setTimeout(() => showSuccess('szymon', 'Lokalizacja 1 znaleziona! Paczka gdzieś tu jest! 📦', showNFCPhase), 1500);
+          if (isClose && isLast) setTimeout(() => showSuccess('szymon', 'Most znaleziony! Paczka gdzieś tu jest! 📦', showNFCPhase), 1500);
         },
         (idx, isFinal, nextHint) => {
           if (!isFinal && nextHint) document.getElementById('nav-hint').textContent = '✓ ' + nextHint;
         }
       );
-      document.getElementById('nav-status').addEventListener('dblclick', showNFCPhase);
+      addDoubleTap(document.getElementById('nav-status'), showNFCPhase);
+      // Organizer skip: triple-tap/click on ETAP badge → next stage
+      addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../4/'; });
     }
 
     function showNFCPhase() {
       Navigation.stop();
       document.getElementById('phase-nav').style.display = 'none';
       document.getElementById('phase-nfc').style.display = 'block';
-      // Step 2: Amelia enters NFC code
-      showHandoff('amelia', 'Wpisz kod NFC z naklejki obok tagu — PACZK3!', () => {
+      // Step 2: Amelia scans NFC tag
+      showHandoff('amelia', 'Jesteście blisko! Przeczytaj wskazówki i znajdź tag NFC!', () => {
         document.getElementById('nfc-content').style.display = 'block';
-        if (checkNFCToken(3)) { showSuccess('amelia','Tag odblokowany! Wchodzimy do Lokalizacji 1! 📡', startGamePhase); return; }
-        setupBackupCodeInput(3, () => showSuccess('amelia','Tag odblokowany! Wchodzimy do Lokalizacji 1! 📡', startGamePhase));
+        document.getElementById('e3-nfc-hint').innerHTML = STAGE3_NFC_HINT;
+        if (checkNFCToken(3)) { showSuccess('amelia','Tag odblokowany! Wchodzimy na Most! 📡', startGamePhase); return; }
+        // Dev skip: double-tap title to skip NFC → go to Pit Stop Chaos
+        addDoubleTap(document.querySelector('#phase-nfc .task-title'), startGamePhase);
       });
     }
 
@@ -193,10 +195,10 @@
     }
 
     function onGameSuccess() {
-      GameState.addSymbol('wrench');
       GameState.markStage(3);
       document.getElementById('phase-game').style.display    = 'none';
       document.getElementById('phase-success').style.display = 'block';
+      document.getElementById('e4-hint-text').innerHTML = STAGE4_NFC_HINT;
     }
   </script>
 </body>

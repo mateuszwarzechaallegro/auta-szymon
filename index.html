@@ -31,13 +31,19 @@
     </div>
 
     <div class="task-hint" style="margin:12px 16px;">
-      ⚡ Znajdź tag NFC na bazie i dotknij nim telefon ⚡
+      ⚡ Naciśnij START żeby rozpocząć misję! ⚡
     </div>
 
-    <a class="btn-primary" href="zadanie/1/?nfc=1">⚡ START RACE ⚡</a>
+    <a class="btn-primary" href="zadanie/1/">⚡ START RACE ⚡</a>
 
     <div class="bottom-deco">🚗💨<br><span style="font-size:1rem;">✨ ⚡ ✨</span></div>
     <div class="flag-strip" style="margin-top:8px;"></div>
   </div>
+
+  <script>
+    // Reset całego stanu gry przy każdym powrocie na stronę główną
+    const _pfx = 'auta_szymon_26_';
+    Object.keys(localStorage).filter(k => k.startsWith(_pfx)).forEach(k => localStorage.removeItem(k));
+  </script>
 </body>
 </html>

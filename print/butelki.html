@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Etykiety Butelek Paliwa — Auta Szymon 2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #000;
+      padding: 10mm;
+    }
+
+    @media print {
+      body { padding: 6mm; }
+      .no-print { display: none !important; }
+    }
+
+    .btn-print {
+      display: block;
+      margin: 0 auto 8mm;
+      padding: 10px 30px;
+      background: #e94560;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14pt;
+      cursor: pointer;
+    }
+
+    .page-title {
+      text-align: center;
+      font-size: 11pt;
+      color: #666;
+      margin-bottom: 6mm;
+      font-style: italic;
+    }
+
+    /* ── SIATKA ETYKIET ── */
+    .labels-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5mm;
+    }
+
+    /* Etykieta #0 (E1) zajmuje pełną szerokość */
+    .label-e0 {
+      grid-column: 1 / -1;
+    }
+
+    /* ── POJEDYNCZA ETYKIETA ── */
+    .label {
+      border: 3px solid #000;
+      border-radius: 5mm;
+      padding: 5mm 7mm;
+      display: flex;
+      align-items: center;
+      gap: 5mm;
+      position: relative;
+    }
+
+    .label-icon {
+      font-size: 36pt;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .label-body {
+      flex: 1;
+    }
+
+    .label-stage {
+      font-size: 7.5pt;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 1.5mm;
+    }
+
+    .label-title {
+      font-size: 11pt;
+      font-weight: bold;
+      margin-bottom: 2mm;
+      line-height: 1.2;
+    }
+
+    .label-code {
+      font-family: monospace;
+      font-size: 28pt;
+      font-weight: 900;
+      letter-spacing: 4mm;
+      border: 2px solid #000;
+      border-radius: 3mm;
+      padding: 1.5mm 4mm;
+      display: inline-block;
+      background: #fff;
+    }
+
+    .label-sub {
+      font-size: 8pt;
+      color: #555;
+      margin-top: 2mm;
+    }
+
+    /* Kolorowe paski dla łatwego sortowania */
+    .label::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 5mm;
+      border-radius: 5mm 0 0 5mm;
+      background: var(--stripe-color, #ccc);
+    }
+    .label { padding-left: 9mm; }
+
+    .label-e0  { --stripe-color: #555; }
+    .label-e3  { --stripe-color: #2196F3; }
+    .label-e4  { --stripe-color: #FF9800; }
+
+
+    /* Linie cięcia między etykietami */
+    .cut-hint {
+      text-align: center;
+      font-size: 8pt;
+      color: #aaa;
+      margin: 2mm 0;
+    }
+
+    /* Tabela podsumowania */
+    .summary-table {
+      margin-top: 8mm;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10pt;
+    }
+    .summary-table th, .summary-table td {
+      border: 1px solid #ccc;
+      padding: 2.5mm 4mm;
+      text-align: left;
+    }
+    .summary-table th { background: #f0f0f0; font-weight: bold; }
+    .summary-table .code { font-family: monospace; font-weight: bold; font-size: 11pt; letter-spacing: 1.5px; }
+    .summary-title { font-size: 10pt; font-weight: bold; margin-top: 6mm; margin-bottom: 2mm; color: #333; }
+  </style>
+</head>
+<body>
+
+<button class="btn-print no-print" onclick="window.print()">🖨️ DRUKUJ</button>
+<div class="page-title no-print">Wytnij każdą etykietę i naklej na odpowiednią butelkę paliwa</div>
+
+<!-- ════════════════════════════════════════
+     ETYKIETY
+════════════════════════════════════════ -->
+<div class="labels-grid">
+
+  <!-- E0 / E1 — butelka startowa (pełna szerokość) -->
+  <div class="label label-e0">
+    <div class="label-icon">⛽</div>
+    <div class="label-body">
+      <div class="label-stage">Butelka #1 — Etap 0 / Baza startowa</div>
+      <div class="label-title">Paliwo Radiator Springs — START</div>
+      <div class="label-code">ZK9QBX</div>
+      <div class="label-sub">Ukryć: piaskownica przy huśtawce (ogród) &nbsp;|&nbsp; Wpisywana na początku Etapu 1</div>
+    </div>
+  </div>
+
+  <!-- E3 -->
+  <div class="label label-e3">
+    <div class="label-icon">⛽</div>
+    <div class="label-body">
+      <div class="label-stage">Butelka #2 — Etap 3 / Most</div>
+      <div class="label-title">Paliwo Radiator Springs</div>
+      <div class="label-code">SGM9S7</div>
+      <div class="label-sub">Ukryć: przy paczce na Moście</div>
+    </div>
+  </div>
+
+  <!-- E4 -->
+  <div class="label label-e4">
+    <div class="label-icon">⛽</div>
+    <div class="label-body">
+      <div class="label-stage">Butelka #3 — Etap 4 / Plac Zabaw</div>
+      <div class="label-title">Paliwo Radiator Springs</div>
+      <div class="label-code">NBFQUM</div>
+      <div class="label-sub">Ukryć: przy paczce na Placu Zabaw</div>
+    </div>
+  </div>
+
+
+
+</div>
+
+<!-- ════════════════════════════════════════
+     TABELA PODSUMOWANIA (dla organizatora)
+════════════════════════════════════════ -->
+<div class="summary-title">Tabela kodów — dla organizatora</div>
+<table class="summary-table">
+  <tr>
+    <th>#</th>
+    <th>Etap</th>
+    <th>Kod</th>
+    <th>Kolor paska</th>
+    <th>Gdzie ukryć</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>E0 → E1 (baza)</td>
+    <td class="code">ZK9QBX</td>
+    <td>⬛ szary</td>
+    <td>Piaskownica przy huśtawce (ogród)</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>E3 — Most</td>
+    <td class="code">SGM9S7</td>
+    <td>🔵 niebieski</td>
+    <td>Przy paczce na Moście</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>E4 — Plac Zabaw</td>
+    <td class="code">NBFQUM</td>
+    <td>🟠 pomarańczowy</td>
+    <td>Przy paczce na Placu Zabaw</td>
+  </tr>
+
+</table>
+
+</body>
+</html>

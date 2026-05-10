@@ -3,46 +3,43 @@
 // ============================================================
 // CONSTANTS
 // ============================================================
-const NFC_BACKUP_CODES = {
-  1: 'START1', 2: 'FLIK22', 3: 'PACZK3', 4: 'PACZK4', 5: 'PACZK5', 6: 'PACZK6',
-};
 const FUEL_BOTTLE_CODES = {
-  1: 'BENZ1', 3: 'BENZ3', 4: 'BENZ4', 5: 'BENZ5', 6: 'BENZ6',
+  1: 'ZK9QBX', 3: 'SGM9S7', 4: 'NBFQUM',
 };
-// PLACEHOLDER GPS coords for fuel-bottle GPS gate (fill before party)
-const FUEL_BOTTLE_COORDS = {
-  3: { lat: 0, lng: 0 },
-  4: { lat: 0, lng: 0 },
-  5: { lat: 0, lng: 0 },
-  6: { lat: 0, lng: 0 },
-};
-// Base coords for dead-state emergency nav (PLACEHOLDER)
-const BASE_COORDS = { lat: 0, lng: 0 };
 
-const SAFE_SYMBOLS = [
-  { id: 'wrench',    emoji: '\u{1F527}', name: 'Klucz'      },
-  { id: 'flag',      emoji: '\u{1F3C1}', name: 'Flaga'      },
-  { id: 'lightning', emoji: '\u26A1',    name: 'Błyskawica' },
-  { id: 'piston',    emoji: '\u{1F534}', name: 'Tłok'       },
-];
+const RESCUE_CODE = 'HSJ5MT';  // emergency +30% benzyna when dead
 
 // ============================================================
 // LOCATION PLACEHOLDERS — replace before party
 // ============================================================
-const STAGE2_NFC_HINT    = 'PLACEHOLDER: opisz gdzie w ogrodzie jest tag NFC (np. "Pod dużym kamieniem przy furtce")';
-const STAGE3_NFC_HINT    = 'PLACEHOLDER: opisz gdzie jest tag NFC w lokalizacji 1';
-const EXTRA_GIFT_LOCATION = 'PLACEHOLDER: opisz gdzie jest schowany dodatkowy prezent';
+const STAGE2_NFC_HINT    = 'Wraki dwa na podwórku stoją,<br>zardzewiałe, nikogo się nie boją.<br>Obejdźcie je, za nimi jest pniak —<br>w nim ukryty jest kolejny znak!';
+const STAGE3_NFC_HINT    = 'Na moście nad rzeczką droga się toczy,<br>barierki po bokach cieszą wam oczy.<br>Odblaski czerwone — policzcie do dwóch!<br>Za drugim breloczek — to nie żaden duch!<br><br>A w trawie przy moście butelka się chowa —<br>paliwo dla auta, tankujcie od nowa!';
+const STAGE4_NFC_HINT    = 'Obok plac zabaw, zjeżdżalnia i piach,<br>szafka z prądem stoi — nie wpadajcie w strach!<br>Nie dotykajcie jej, niebezpieczna bywa —<br>za nią breloczek cierpliwie wzywa!<br><br>A w trawie obok butelka się kryje —<br>paliwo dla auta, niech silnikożyje!';
+const STAGE5_NFC_HINT    = 'Na skrzyżowaniu hydrant stoi śmiało,<br>strażakom wody nigdy nie brakowało.<br>Czerwony jak wóz, pilnuje tu drogi —<br>breloczek przy nim leży, tuż koło jego nogi!';
+const GIFT_RIDDLE        = 'Brawo, bohaterowie, koniec przygody!<br>Przeszliście wszystkie próby bez żadnej szkody!<br>Złomek jest dumny, Zygzak woła „hura!" —<br>Szymon zasłużył na prezent, to nie bzdura!<br><br>W ogrodzie czeka coś, co znacie doskonale,<br>okrągłe i sprężyste — skaczecie na nim stale!<br>Podrzuca was do nieba, aż głowa się kręci —<br>tam prezent na Szymona — najdzielniejsze z dzieci!';
 
-// E1: 2-segment tutorial route ~100m total; segment 1 = mid-point, segment 2 = Location 0
+// E1: tutorial route
 const STAGE1_WAYPOINTS = [
-  { lat: 0, lng: 0, hint: 'PLACEHOLDER: punkt pośredni (~50m od bazy)' },
-  { lat: 0, lng: 0, hint: 'PLACEHOLDER: Lokalizacja 0 — bezpieczne miejsce' },
+  { lat: 52.572708, lng: 17.016759, hint: 'Skręć w prawo w polną drogę' },
+  { lat: 52.573394, lng: 17.017269, hint: 'Pierwsza w prawo!' },
+  { lat: 52.573091, lng: 17.018629, hint: 'Do końca prosto!' },
 ];
 
-const STAGE3_WAYPOINTS = [];
-const STAGE4_WAYPOINTS = [];
-const STAGE5_WAYPOINTS = [];
-const STAGE6_WAYPOINTS = [];
+const STAGE3_WAYPOINTS = [
+  { lat: 52.574837, lng: 17.017656, hint: 'Jedź w kierunku kolei' },
+  { lat: 52.576586, lng: 17.020251, hint: 'Przed siebie, przed siebie!' },
+  { lat: 52.577078, lng: 17.021149, hint: 'Jesteś na miejscu' },
+];
+const STAGE4_WAYPOINTS = [
+  { lat: 52.576589, lng: 17.020267, hint: 'Wracamy do najbliższego skrzyżowania' },
+  { lat: 52.576008, lng: 17.022353, hint: 'W kierunku placu zabaw' },
+  { lat: 52.576087, lng: 17.022928, hint: 'Jesteśmy na miejscu' },
+];
+const STAGE5_WAYPOINTS = [
+  { lat: 52.576069, lng: 17.024026, hint: 'Na skrzyżowaniu w prawo' },
+  { lat: 52.573551, lng: 17.022677, hint: 'Dłuuuuuga prosta' },
+  { lat: 52.573787, lng: 17.021734, hint: 'Jesteście na miejscu' },
+];
 
 // ============================================================
 // UTILITIES
@@ -91,7 +88,7 @@ const GameState = (() => {
     getNFCUnlocked:    (n) => get('nfc_'+n, false),
     setNFCUnlocked:    (n) => set('nfc_'+n, true),
     reset: () => {
-      ['symbols','stages','startTime','benzyna','bateria','lastRefuelLat','lastRefuelLng'].forEach(k => {
+      ['symbols','stages','startTime','benzyna','bateria'].forEach(k => {
         try { localStorage.removeItem('auta_szymon_26_'+k); } catch {}
       });
       for (let i=1; i<=6; i++) {
@@ -110,11 +107,10 @@ const Resources = (() => {
   function rload(key, def) { const v = parseFloat(localStorage.getItem(PREFIX+key)); return isNaN(v) ? def : v; }
   function rsave(key, val) { localStorage.setItem(PREFIX+key, String(val)); }
 
-  let benzyna   = rload('benzyna', 20);
+  let benzyna   = rload('benzyna',  0);
   let bateria   = rload('bateria',  0);
   let idleTimer = null;
-  let lastGps   = null;
-  let gpsAccumM = 0;
+  let lastGps   = null;   // { lat, lng, time }
   let _stateCb  = null;
 
   const clamp = v => Math.max(0, Math.min(100, v));
@@ -124,38 +120,58 @@ const Resources = (() => {
 
   function _state() {
     if (bateria >= 5) return 'normal';
-    if (benzyna > 0)  return 'low';
+    if (benzyna > 0)  return 'low';   // can shake to recharge
     return 'dead';
   }
 
-  // Each detected shake: −1% benzyna, +2% bateria
+  // Shake: −1% benzyna → +2% bateria  (fuel is the only battery source)
   function onShake() {
     if (benzyna <= 0) return;
     addBenzyna(-1);
     addBateria(2);
   }
 
-  function _onGpsPos(lat, lng) {
+  // ── Battery drain based on GPS speed ──────────────────────
+  // Calibrated for BICYCLE (max ~20 km/h)
+  // Drain rates (% per second):
+  //   <2 km/h   → 0.012  (~0.7%/min)   stopped / walking
+  //   2-8 km/h  → 0.067  (4.0%/min)    slow cycling
+  //   8-15 km/h → 0.133  (8.0%/min)    normal cycling
+  //   >15 km/h  → 0.233  (14%/min)     fast cycling
+  function _drainPerSec(kmh) {
+    if (kmh < 2)  return 0.012;
+    if (kmh < 8)  return 0.067;
+    if (kmh < 15) return 0.133;
+    return 0.233;
+  }
+
+  function _onGpsPos(lat, lng, speedMs, timestamp) {
+    const now = timestamp || Date.now();
     if (lastGps) {
-      const d = haversineM(lastGps.lat, lastGps.lng, lat, lng);
-      if (d > 0 && d < 200) {
-        gpsAccumM += d;
-        while (gpsAccumM >= 10) { addBateria(1); gpsAccumM -= 10; }
-      }
+      const dtSec = Math.min((now - lastGps.time) / 1000, 10); // cap delta at 10s
+      const kmh   = (speedMs != null && speedMs >= 0) ? speedMs * 3.6 : 0;
+      addBateria(-(_drainPerSec(kmh) * dtSec));
     }
-    lastGps = { lat, lng };
+    lastGps = { lat, lng, time: now };
     _resetIdleTimer();
   }
 
+  // Idle drain: fires only when GPS stops sending updates (e.g. phone locked)
+  // −1% per 45s ≈ 1.3%/min
   function _resetIdleTimer() {
     clearInterval(idleTimer);
-    idleTimer = setInterval(() => addBateria(-1), 20000);
+    idleTimer = setInterval(() => addBateria(-1), 45000);
   }
 
   function startGpsTracking() {
     if (!navigator.geolocation) { _resetIdleTimer(); return; }
     navigator.geolocation.watchPosition(
-      pos => _onGpsPos(pos.coords.latitude, pos.coords.longitude),
+      pos => _onGpsPos(
+        pos.coords.latitude,
+        pos.coords.longitude,
+        pos.coords.speed,    // m/s, may be null
+        pos.timestamp
+      ),
       null,
       { enableHighAccuracy: true, maximumAge: 1000 }
     );
@@ -167,15 +183,8 @@ const Resources = (() => {
     if (_stateCb) _stateCb(_state());
   }
 
-  function saveLastRefuel(lat, lng) {
-    localStorage.setItem(PREFIX+'lastRefuelLat', lat);
-    localStorage.setItem(PREFIX+'lastRefuelLng', lng);
-  }
-  function getLastRefuel() {
-    const lat = parseFloat(localStorage.getItem(PREFIX+'lastRefuelLat'));
-    const lng = parseFloat(localStorage.getItem(PREFIX+'lastRefuelLng'));
-    return (isNaN(lat) || isNaN(lng)) ? null : { lat, lng };
-  }
+  function saveLastRefuel(lat, lng) {}
+  function getLastRefuel() { return null; }
 
   return {
     getBenzyna:    () => benzyna,
@@ -328,9 +337,21 @@ function initDeadModal() {
     <div class="modal-box">
       <div class="modal-icon">&#128128;</div>
       <div class="modal-title">BRAK PALIWA I ENERGII!</div>
-      <div class="modal-text">Jedźcie z powrotem do ostatniego punktu tankowania!</div>
-      <div id="dead-nav" style="font-size:1.8rem;font-weight:700;margin:12px 0;color:#FFD700;">-- m</div>
-      <div id="dead-nav-status" style="font-size:0.9rem;color:#aaa;">Szukam GPS...</div>
+      <div class="modal-text">Wpiszcie kod ratunkowy!</div>
+      <div style="margin:12px 0;">
+        <div style="font-size:0.8rem;color:#aaa;margin-bottom:4px;">Kod ratunkowy:</div>
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <input id="dead-code-input" type="text" maxlength="6" placeholder="??????"
+            style="width:140px;background:rgba(255,255,255,0.1);border:1.5px solid rgba(233,69,96,0.5);
+                   border-radius:8px;color:#fff;font-size:1.3rem;font-weight:700;
+                   padding:10px;text-align:center;outline:none;text-transform:uppercase;letter-spacing:3px;">
+          <button id="dead-code-submit" class="btn-primary"
+            style="width:auto;padding:10px 16px;margin:0;">OK</button>
+        </div>
+        <div id="dead-code-error" style="display:none;color:#e94560;font-size:0.85rem;margin-top:4px;text-align:center;">
+          Bledny kod!
+        </div>
+      </div>
     </div>
   `;
   document.body.appendChild(m);
@@ -341,19 +362,29 @@ function showDeadModal() {
   if (_deadActive) return;
   const m = document.getElementById('dead-modal'); if (!m) return;
   _deadActive = true; m.classList.add('active');
-  const refuel = Resources.getLastRefuel() || BASE_COORDS;
-  if (!navigator.geolocation) return;
-  navigator.geolocation.watchPosition(pos => {
-    const dist = haversineM(pos.coords.latitude, pos.coords.longitude, refuel.lat, refuel.lng);
-    const dn = document.getElementById('dead-nav');
-    const ds = document.getElementById('dead-nav-status');
-    if (dn) dn.textContent = formatDist(dist);
-    if (ds) ds.textContent = dist < 20 ? 'Dotarliście! Zatankujcie!' : 'Kierujcie sie do punktu tankowania';
-  }, null, { enableHighAccuracy: true, maximumAge: 1000 });
+
+  // Rescue code input
+  const codeInput  = document.getElementById('dead-code-input');
+  const codeSubmit = document.getElementById('dead-code-submit');
+  const codeError  = document.getElementById('dead-code-error');
+  if (codeInput) codeInput.value = '';
+
+  function tryRescueCode() {
+    const code = codeInput ? codeInput.value.trim().toUpperCase() : '';
+    if (code === RESCUE_CODE) {
+      Resources.addBenzyna(30);
+      m.classList.remove('active');
+      _deadActive = false;
+    } else {
+      if (codeError) { codeError.style.display = 'block'; setTimeout(() => codeError.style.display = 'none', 2000); }
+    }
+  }
+  if (codeSubmit) codeSubmit.addEventListener('click', tryRescueCode);
+  if (codeInput) codeInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryRescueCode(); });
 }
 
 // ============================================================
-// ENERGY MONITORING — call from E2-E6 pages after stage init
+// ENERGY MONITORING — call from E2-E5 pages after stage init
 // NOTE: E1 must NOT call this (bateria starts at 0%, would trigger immediately)
 // ============================================================
 function startEnergyMonitoring() {
@@ -367,7 +398,7 @@ function startEnergyMonitoring() {
 }
 
 // ============================================================
-// FUEL BOTTLE — GPS-gated refuel code entry
+// FUEL BOTTLE — refuel code entry (no GPS gate)
 // ============================================================
 function initFuelBottle(stageNum) {
   const usedKey = 'auta_szymon_26_refuel_' + stageNum;
@@ -382,7 +413,7 @@ function initFuelBottle(stageNum) {
     <div id="fuel-bottle-input" style="display:none;padding:8px;background:rgba(0,0,0,0.3);border-radius:8px;margin-top:6px;">
       <div style="font-size:0.8rem;color:#888;margin-bottom:4px;">Wpisz kod z butelki paliwa:</div>
       <div style="display:flex;gap:8px;">
-        <input id="fuel-code-input" type="text" maxlength="5" placeholder="BENZX"
+        <input id="fuel-code-input" type="text" maxlength="6" placeholder="??????"
           style="flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(76,175,80,0.5);
                  border-radius:8px;color:#fff;font-size:1.3rem;font-weight:700;
                  padding:10px;text-align:center;outline:none;text-transform:uppercase;">
@@ -404,16 +435,6 @@ function initFuelBottle(stageNum) {
   }
 
   document.getElementById('fuel-bottle-btn').addEventListener('click', () => {
-    if (stageNum !== 1) {
-      const coords = FUEL_BOTTLE_COORDS[stageNum];
-      if (coords && coords.lat !== 0) {
-        const last = Resources.getLastGps();
-        if (last && haversineM(last.lat, last.lng, coords.lat, coords.lng) > 50) {
-          alert('Jestescie za daleko od punktu tankowania! Podjedzcie blizej.');
-          return;
-        }
-      }
-    }
     document.getElementById('fuel-bottle-input').style.display = 'block';
     document.getElementById('fuel-bottle-btn').style.display   = 'none';
   });
@@ -422,8 +443,6 @@ function initFuelBottle(stageNum) {
     const code = document.getElementById('fuel-code-input').value.trim().toUpperCase();
     if (code === FUEL_BOTTLE_CODES[stageNum]) {
       Resources.addBenzyna(30);
-      const coords = FUEL_BOTTLE_COORDS[stageNum];
-      if (coords && coords.lat !== 0) Resources.saveLastRefuel(coords.lat, coords.lng);
       localStorage.setItem(usedKey, '1');
       document.getElementById('fuel-bottle-input').style.display = 'none';
       const b = document.getElementById('fuel-bottle-btn');
@@ -446,20 +465,11 @@ function checkNFCToken(stageNum) {
   return GameState.getNFCUnlocked(stageNum);
 }
 
-function setupBackupCodeInput(stageNum, onUnlock) {
-  const btn   = document.getElementById('backup-submit');
-  const input = document.getElementById('backup-code-input');
-  if (!btn || !input) return;
-  function tryCode() {
-    const code = input.value.trim().toUpperCase();
-    if (code === NFC_BACKUP_CODES[stageNum]) { GameState.setNFCUnlocked(stageNum); onUnlock(); }
-    else { input.style.borderColor = '#e94560'; setTimeout(() => input.style.borderColor = '', 1000); }
-  }
-  btn.addEventListener('click', tryCode);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') tryCode(); });
+function setupBackupCodeInput(_stageNum, _onUnlock) {
+  // NFC backup codes removed — triple-tap ETAP badge to skip
 }
 
-// showNFCGate — used by E2 entry gate
+// showNFCGate — used by stage entry gates
 function showNFCGate(stageNum, onUnlock) {
   const gate    = document.getElementById('nfc-gate');
   const content = document.getElementById('stage-content');
@@ -470,11 +480,43 @@ function showNFCGate(stageNum, onUnlock) {
   }
   if (gate)    gate.style.display    = 'flex';
   if (content) content.style.display = 'none';
-  setupBackupCodeInput(stageNum, () => {
-    if (gate)    gate.style.display    = 'none';
-    if (content) content.style.display = 'block';
-    onUnlock();
-  });
+}
+
+// ============================================================
+// DEV HELPER — double-tap / dblclick to skip nav phase
+// Works on Android touch (touchend) and desktop (dblclick).
+// Subsequent calls on the same element UPDATE the callback
+// instead of stacking new listeners (no accumulation bug).
+// ============================================================
+function addDoubleTap(el, cb) {
+  if (!el) return;
+  if (el._dtCb !== undefined) { el._dtCb = cb; return; } // update only
+  el._dtCb = cb;
+  el.addEventListener('dblclick', () => { if (el._dtCb) el._dtCb(); });
+  let lastTap = 0;
+  el.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTap < 350) { e.preventDefault(); if (el._dtCb) el._dtCb(); }
+    lastTap = now;
+  }, { passive: false });
+}
+
+// ============================================================
+// TRIPLE-CLICK / TRIPLE-TAP — dev skip on task-badge
+// 3 clicks/taps within 800ms → calls cb()
+// ============================================================
+function addTripleClick(el, cb) {
+  if (!el) return;
+  let count = 0, timer = null;
+  function onTap(e) {
+    if (e.type === 'touchend') e.preventDefault();
+    count++;
+    clearTimeout(timer);
+    if (count >= 3) { count = 0; cb(); return; }
+    timer = setTimeout(() => { count = 0; }, 800);
+  }
+  el.addEventListener('click',    onTap);
+  el.addEventListener('touchend', onTap, { passive: false });
 }
 
 // ============================================================
@@ -586,7 +628,7 @@ const Sensors = (() => {
 // LEGACY SHIM — Navigation uses gpsArrivalRadiusM (hardcoded in Navigation module above)
 // GAME_CONFIG kept for backwards compat in case any page references it
 // ============================================================
-const GAME_CONFIG = { fuelGPSMinSpeedKmh: 5, waypointRadiusM: 30, gpsArrivalRadiusM: 25 };
+const GAME_CONFIG = { waypointRadiusM: 30, gpsArrivalRadiusM: 25 };
 
 // ============================================================
 // GLOBAL INIT

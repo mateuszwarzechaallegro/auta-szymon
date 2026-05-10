@@ -12,7 +12,7 @@
     <div class="flag-strip"></div>
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
-      <span class="task-badge">ETAP 2 / 6</span>
+      <span class="task-badge">ETAP 2 / 5</span>
     </div>
 
     <!-- NFC Gate (entry) -->
@@ -20,11 +20,6 @@
       <div class="task-card">
         <div class="task-card-icon">📡</div>
         <div class="task-card-text"><strong>Znajdź tag NFC Filka i dotknij nim telefon!</strong></div>
-      </div>
-      <div class="backup-input-wrap">
-        <div style="font-size:0.8rem;color:#888;">Kod z naklejki:</div>
-        <input id="backup-code-input" type="text" maxlength="6" placeholder="XXXXXX">
-        <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj</button>
       </div>
     </div>
 
@@ -63,19 +58,20 @@
       </div>
     </div>
 
-    <!-- Phase 3: Szymon confirm GPS -->
+    <!-- Phase 3: Szymon confirm ready -->
     <div id="phase-confirm" class="task-body" style="display:none;">
       <div id="confirm-content" style="display:none;">
-        <div class="task-step-label">🗺️ Potwierdź trasę GPS</div>
-        <div class="task-title">Sprawdź kierunek!</div>
+        <div class="task-step-label">🗺️ Gotowi do drogi?</div>
+        <div class="task-title">Sprawdź drużynę!</div>
         <div class="task-card">
           <div class="task-card-icon">🗺️</div>
           <div class="task-card-text">
-            Sprawdź mapę/kompas — czy jedziecie w kierunku <strong>Lokalizacji 1</strong>?<br><br>
-            Jeśli tak — potwierdź!
+            Czy wszyscy siedzą bezpiecznie?<br>
+            Czy drużyna jest gotowa na dalszą podróż?<br><br>
+            Jeśli tak — ruszamy!
           </div>
         </div>
-        <button id="confirm-btn" class="btn-primary">✅ Potwierdzam trasę!</button>
+        <button id="confirm-btn" class="btn-primary">✅ Gotowi — ruszamy!</button>
       </div>
     </div>
 
@@ -84,11 +80,11 @@
       <div class="task-card" style="border-color:#4CAF50;">
         <div class="task-card-icon">🗺️</div>
         <div class="task-card-text">
-          <strong>ZŁOMEK:</strong> <em>"Paczka jest w Lokalizacji 1!"</em><br><br>
+          <strong>ZŁOMEK:</strong> <em>"Paczka jest przy Moście!"</em><br><br>
           <span id="e3-hint" style="color:#FFD700;font-weight:700;">PLACEHOLDER</span>
         </div>
       </div>
-      <a class="btn-primary" href="../3/">⚡ JEDŹ DO LOKALIZACJI 1 →</a>
+      <a class="btn-primary" href="../3/">⚡ JEDŹ DO MOSTU →</a>
     </div>
 
     <div class="flag-strip" style="margin-top:auto;"></div>
@@ -100,11 +96,6 @@
     if (checkNFCToken(2)) {
       document.getElementById('nfc-gate').style.display = 'none';
       startStage();
-    } else {
-      setupBackupCodeInput(2, () => {
-        document.getElementById('nfc-gate').style.display = 'none';
-        startStage();
-      });
     }
 
     function startStage() {
@@ -199,7 +190,7 @@
       showSuccess('ania', '60 sekund w ruchu! Sprint zaliczony! 💨', () => {
         document.getElementById('phase-ride').style.display    = 'none';
         document.getElementById('phase-confirm').style.display = 'block';
-        showHandoff('szymon', 'Sprawdź strzałkę GPS i potwierdź że jedziecie w dobrym kierunku do Lokalizacji 1!', () => {
+        showHandoff('szymon', 'Sprawdź czy drużyna jest gotowa do drogi!', () => {
           document.getElementById('confirm-content').style.display = 'block';
           document.getElementById('confirm-btn').addEventListener('click', onConfirmSuccess);
         });
@@ -211,9 +202,11 @@
         GameState.markStage(2);
         document.getElementById('phase-confirm').style.display = 'none';
         document.getElementById('phase-success').style.display = 'block';
-        document.getElementById('e3-hint').textContent = STAGE3_NFC_HINT;
+        document.getElementById('e3-hint').innerHTML = STAGE3_NFC_HINT;
       });
     }
+    // Organizer skip: triple-tap/click on ETAP badge → next stage
+    addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../3/'; });
   </script>
 </body>
 </html>

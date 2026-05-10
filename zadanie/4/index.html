@@ -12,14 +12,14 @@
     <div class="flag-strip"></div>
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
-      <span class="task-badge">ETAP 4 / 6</span>
+      <span class="task-badge">ETAP 4 / 5</span>
     </div>
 
     <!-- Phase 1: Szymon GPS nav -->
     <div id="phase-nav" class="task-body">
       <div id="nav-content" style="display:none;">
-        <div class="task-step-label">🗺️ Nawiguj do Lokalizacji 2</div>
-        <div class="task-title">Szukamy Paczki #2!</div>
+        <div class="task-step-label">🗺️ Nawiguj na Plac Zabaw</div>
+        <div class="task-title">Szukamy Paczki na Placu Zabaw!</div>
         <div class="nav-widget">
           <div class="nav-arrow-wrap" id="nav-arrow-wrap">
             <span class="nav-arrow" id="nav-arrow">⬆️</span>
@@ -34,14 +34,18 @@
 
     <!-- NFC gate (shared, no handoff) -->
     <div id="phase-nfc" class="task-body" style="display:none;">
-      <div class="task-step-label">📡 Zeskanuj tag NFC</div>
-      <div class="task-card"><div class="task-card-icon">📡</div>
-        <div class="task-card-text"><strong>Dotknij tagiem NFC telefonu!</strong></div></div>
-      <div class="backup-input-wrap">
-        <div style="font-size:0.8rem;color:#888;">Kod z naklejki:</div>
-        <input id="backup-code-input" type="text" maxlength="6" placeholder="XXXXXX">
-        <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj</button>
+      <div class="task-step-label">📡 Jesteście blisko!</div>
+      <div class="task-title" style="margin-bottom:8px;">Amelio, przeczytaj wskazówki i znajdź tag!</div>
+      <div class="task-card" style="border-color:#FFD700;">
+        <div class="task-card-icon">🔍</div>
+        <div class="task-card-text">
+          <strong>Wskazówka od Złomka:</strong><br><br>
+          <span style="color:#FFD700;" id="e4-nfc-hint">PLACEHOLDER</span>
+        </div>
       </div>
+      <div class="task-card"><div class="task-card-icon">📡</div>
+        <div class="task-card-text"><strong>Jak znajdziesz tag — dotknij nim telefonu!</strong></div></div>
+      <div class="task-hint">Dblclick na tytuł żeby pominąć NFC (dev).</div>
     </div>
 
     <!-- Phase 2: Amelia memory match -->
@@ -118,21 +122,17 @@
       </div>
     </div>
 
-    <!-- Success -->
+    <!-- Success + E5 hint -->
     <div id="phase-success" class="task-body" style="display:none;">
-      <div class="symbol-reveal active">
-        <div class="symbol-label">Symbol #2 zdobyty!</div>
-        <div class="symbol-big">🏁</div>
-        <div class="symbol-name">FLAGA</div>
-        <div style="font-size:0.85rem;color:#aaa;margin-top:4px;">To 2. znak kodu do sejfu!</div>
-      </div>
-      <div class="task-card" style="margin-top:16px;border-color:#4CAF50;">
-        <div class="task-card-icon">📦</div>
+      <div class="task-card" style="border-color:#4CAF50;">
+        <div class="task-card-icon">🎉</div>
         <div class="task-card-text">
-          <strong>Paczka #2 jest obok! Weźcie ją!</strong><br>Jedźcie do <strong>Lokalizacji 3!</strong>
+          <strong>Sekwencja prędkości zaliczona!</strong><br><br>
+          <em>Złomek: "Ostatni przystanek — Hydrant! Tag NFC czeka!"</em><br><br>
+          <span style="color:#FFD700;font-weight:700;" id="e5-hint-text">PLACEHOLDER</span>
         </div>
       </div>
-      <a class="btn-primary" href="../5/">⚡ JEDŹ DO LOKALIZACJI 3 →</a>
+      <a class="btn-primary" href="../5/">⚡ JEDŹ DO HYDRANTU →</a>
     </div>
 
     <div class="flag-strip" style="margin-top:auto;"></div>
@@ -144,32 +144,36 @@
     startEnergyMonitoring();
 
     // Step 1: Szymon GPS nav
-    showHandoff('szymon', 'Nawiguj GPS do Lokalizacji 2 — multi-punkt trasa!', startNav);
+    showHandoff('szymon', 'Nawiguj GPS na Plac Zabaw — multi-punkt trasa!', startNav);
 
     function startNav() {
       document.getElementById('nav-content').style.display = 'block';
       const waypoints = STAGE4_WAYPOINTS.length > 0 ? STAGE4_WAYPOINTS :
-        [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij trasę Lokalizacji 2' }];
+        [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij trasę na Plac Zabaw' }];
       Navigation.start(waypoints,
-        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(() => showSuccess('szymon','Lokalizacja 2 znaleziona! Paczka #2 blisko! 📦', showNFCPhase),1500); },
+        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(() => showSuccess('szymon','Plac Zabaw znaleziony! Paczka gdzieś tu jest! 📦', showNFCPhase),1500); },
         (i,fin,nh) => { if(!fin&&nh) document.getElementById('nav-hint').textContent='✓ '+nh; }
       );
-      document.getElementById('nav-status').addEventListener('dblclick', showNFCPhase);
+      addDoubleTap(document.getElementById('nav-status'), showNFCPhase);
+      // Organizer skip: triple-tap/click on ETAP badge → next stage
+      addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../5/'; });
     }
 
     function showNFCPhase() {
       Navigation.stop();
       document.getElementById('phase-nav').style.display = 'none';
       document.getElementById('phase-nfc').style.display = 'block';
-      setupBackupCodeInput(4, startMemory);
-      if (checkNFCToken(4)) startMemory();
+      document.getElementById('e4-nfc-hint').innerHTML = STAGE4_NFC_HINT;
+      if (checkNFCToken(4)) { showSuccess('amelia','Tag odblokowany! Jesteśmy na Placu Zabaw! 📡', startMemory); return; }
+      // Dev skip: double-tap title to skip NFC → go to Memory match
+      addDoubleTap(document.querySelector('#phase-nfc .task-title'), startMemory);
     }
 
     // Step 2: Amelia memory
     function startMemory() {
       document.getElementById('phase-nfc').style.display    = 'none';
       document.getElementById('phase-memory').style.display = 'block';
-      showHandoff('amelia', 'Znajdź wszystkie 4 pary kart w 90 sekund!', () => {
+      showHandoff('szymon', 'Znajdź wszystkie 4 pary kart w 90 sekund!', () => {
         document.getElementById('memory-content').style.display = 'block';
         runMemory();
       });
@@ -211,7 +215,7 @@
           }
         }
       }
-      function onMemWin(){showSuccess('amelia','Wszystkie 4 pary znalezione! Pamięć jak komputer! 🃏', startSpeedSequence);}
+      function onMemWin(){showSuccess('szymon','Wszystkie 4 pary znalezione! Pamięć jak komputer! 🃏', startSpeedSequence);}
       function onMemFail(){
         retryEl.style.display='block';
         retryEl.onclick=()=>{retryEl.style.display='none';runMemory();};
@@ -331,10 +335,10 @@
           document.getElementById('speed-content').style.display = 'none';
           runSpeedPhase();
         } else {
-          GameState.addSymbol('flag');
           GameState.markStage(4);
           document.getElementById('phase-speed').style.display   = 'none';
           document.getElementById('phase-success').style.display = 'block';
+          document.getElementById('e5-hint-text').innerHTML = STAGE5_NFC_HINT;
         }
       });
     }

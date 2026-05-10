@@ -12,18 +12,18 @@
     <div class="flag-strip"></div>
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
-      <span class="task-badge">ETAP 5 / 6</span>
+      <span class="task-badge">ETAP 5 / 5</span>
     </div>
 
     <!-- Phase 1: Szymon GPS nav -->
     <div id="phase-nav" class="task-body">
       <div id="nav-content" style="display:none;">
-        <div class="task-step-label">🗺️ Nawiguj do Lokalizacji 3</div>
-        <div class="task-title">Tracker Złomka żyje!</div>
+        <div class="task-step-label">🗺️ Nawiguj do Hydrantu</div>
+        <div class="task-title">Ostatni punkt!</div>
         <div class="task-card">
-          <div class="task-card-icon">📡</div>
+          <div class="task-card-icon">🏆</div>
           <div class="task-card-text">
-            <em>Złomek: "Ten tracker chyba nie mój... ale pikanie wskazuje na trzecią paczkę!"</em>
+            <em>Złomek: "To ostatni przystanek — Hydrant! Jedźcie!"</em>
           </div>
         </div>
         <div class="nav-widget">
@@ -34,113 +34,45 @@
           <div class="nav-hint" id="nav-hint">Szukam GPS...</div>
           <div class="nav-status" id="nav-status">Czekam na GPS...</div>
         </div>
-        <div class="task-hint">Jedź za strzałką! Dblclick na status = skip (dev).</div>
+        <div class="task-hint">Jedź za strzałką! Dblclick na status żeby pominąć (dev).</div>
       </div>
     </div>
 
-    <!-- Phase 2: Beeper narrative (Szymon) -->
-    <div id="phase-beeper" class="task-body" style="display:none;">
-      <div id="beeper-content" style="display:none;">
-        <div class="task-step-label">📡 Tracker aktywny!</div>
-        <div class="task-title">Szukajcie dźwięku!</div>
-        <div class="task-card">
-          <div class="task-card-icon" style="animation:pulse 0.6s infinite;">📡</div>
-          <div class="task-card-text">
-            <strong>PIKANIE SIĘ WZMAGA!</strong><br><br>
-            Jesteście w pobliżu! Szukajcie urządzenia które pika — paczka jest tam gdzie pikanie jest najgłośniejsze!<br><br>
-            <em>Gdy znajdziecie — naciśnij przycisk poniżej!</em>
-          </div>
-        </div>
-        <div class="task-hint">🔊 Im głośniej pika — tym bliżej jesteście!</div>
-        <button id="beeper-found-btn" class="btn-primary" style="margin-top:16px;">
-          📡 Znaleźliśmy! Skanujemy NFC →
-        </button>
-      </div>
-    </div>
-
-    <!-- NFC gate (shared) -->
+    <!-- Phase 2: NFC gate -->
     <div id="phase-nfc" class="task-body" style="display:none;">
-      <div class="task-step-label">📡 Zeskanuj tag NFC</div>
-      <div class="task-card"><div class="task-card-icon">📡</div>
-        <div class="task-card-text"><strong>Dotknij tagiem NFC telefonu!</strong></div></div>
-      <div class="backup-input-wrap">
-        <div style="font-size:0.8rem;color:#888;">Kod z naklejki:</div>
-        <input id="backup-code-input" type="text" maxlength="6" placeholder="XXXXXX">
-        <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj</button>
+      <div class="task-step-label">📡 Jesteście blisko!</div>
+      <div class="task-title" style="margin-bottom:8px;">Amelio, przeczytaj wskazówki i znajdź tag!</div>
+      <div class="task-card" style="border-color:#FFD700;">
+        <div class="task-card-icon">🔍</div>
+        <div class="task-card-text">
+          <strong>Wskazówka od Złomka:</strong><br><br>
+          <span style="color:#FFD700;" id="e5-nfc-hint">PLACEHOLDER</span>
+        </div>
       </div>
+      <div class="task-card"><div class="task-card-icon">📡</div>
+        <div class="task-card-text"><strong>Jak znajdziesz tag — dotknij nim telefonu!</strong></div></div>
+      <div class="task-hint">Dblclick na tytuł żeby pominąć NFC (dev).</div>
     </div>
 
-    <!-- Phase 3: Amelia riddle -->
+    <!-- Phase 3: Gift riddle -->
     <div id="phase-riddle" class="task-body" style="display:none;">
       <div id="riddle-content" style="display:none;">
-        <div class="task-step-label">🧩 Zagadka Auciarza</div>
-        <div class="task-title">Złomek pyta!</div>
-        <div class="task-card">
-          <div class="task-card-icon">🤔</div>
-          <div class="task-card-text" style="font-size:1.1rem;line-height:1.8;">
-            <strong>Jestem czarny i okrągły,<br>
-            z gumy i bez mnie auto nie ruszy.<br>
-            Siedzę na felgach.<br>
-            Jestem...?</strong>
+        <div class="task-step-label">🎁 Zagadka Finałowa!</div>
+        <div class="task-title">Gdzie jest prezent?</div>
+        <div class="task-card" style="border-color:#FFD700;background:rgba(255,215,0,0.08);">
+          <div class="task-card-icon">🎁</div>
+          <div class="task-card-text" style="font-size:1.1rem;line-height:1.8;color:#FFD700;">
+            <strong id="gift-riddle-text">PLACEHOLDER</strong>
           </div>
         </div>
-        <div style="display:flex;gap:8px;padding:0 0 12px;">
-          <input id="riddle-input" type="text"
-            style="flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(233,69,96,0.3);
-                   border-radius:8px;color:#fff;font-size:1.3rem;font-weight:700;
-                   padding:12px;text-align:center;outline:none;"
-            placeholder="Twoja odpowiedź...">
-          <button id="riddle-submit" class="btn-primary" style="width:auto;padding:12px 20px;margin:0;">OK</button>
-        </div>
-        <div id="riddle-error" style="display:none;color:#e94560;text-align:center;font-size:0.9rem;">
-          Hmm, nie do końca... spróbuj jeszcze raz! 🔍
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase 4: Ania level challenge -->
-    <div id="phase-level" class="task-body" style="display:none;">
-      <div id="level-content" style="display:none;">
-        <div class="task-step-label">⚖️ Transport specjalny!</div>
-        <div class="task-title">Złomek wiezie jajka!</div>
-        <div class="task-card">
-          <div class="task-card-icon">🥚</div>
+        <div class="task-card" style="margin-top:12px;">
+          <div class="task-card-icon">🏆</div>
           <div class="task-card-text">
-            <em>"Hej amigo! Trzymajcie telefon POZIOMO przez 15 sekund!"</em>
+            <em>Złomek: "KA-CZAOW! Rozwiążcie zagadkę i biegnijcie po prezent!"</em>
           </div>
         </div>
-        <div class="speed-widget">
-          <div class="speed-progress-track" style="height:20px;margin-bottom:8px;">
-            <div class="speed-progress-fill" id="level-fill"></div>
-          </div>
-          <div class="level-meter">
-            <div class="level-ok-zone"></div>
-            <div class="level-indicator" id="level-dot"></div>
-          </div>
-          <div style="font-size:0.85rem;color:#aaa;margin-top:8px;" id="level-status">Trzymaj poziomo...</div>
-          <div class="speed-number" style="font-size:1.6rem;" id="level-secs">0</div>
-          <div class="speed-unit">/ 15 sekund</div>
-        </div>
-        <button id="level-retry" class="btn-primary" style="display:none;margin-top:12px;">🔄 Potłukł jajka! Spróbuj ponownie</button>
-        <button id="level-skip" class="btn-primary" style="display:none;margin-top:12px;">Pomiń (brak żyroskopu)</button>
+        <a class="btn-primary" href="../../final/" style="margin-top:16px;">🎉 KONIEC GRY! →</a>
       </div>
-    </div>
-
-    <!-- Success -->
-    <div id="phase-success" class="task-body" style="display:none;">
-      <div class="symbol-reveal active">
-        <div class="symbol-label">Symbol #3 zdobyty!</div>
-        <div class="symbol-big">⚡</div>
-        <div class="symbol-name">BŁYSKAWICA</div>
-        <div style="font-size:0.85rem;color:#aaa;margin-top:4px;">To 3. znak kodu do sejfu!</div>
-      </div>
-      <div class="task-card" style="margin-top:16px;border-color:#4CAF50;">
-        <div class="task-card-icon">📦</div>
-        <div class="task-card-text">
-          <strong>Paczka #3 jest tu! Weźcie ją!</strong><br>Ostatnia lokalizacja! Jedźcie do <strong>Lokalizacji 4!</strong>
-        </div>
-      </div>
-      <a class="btn-primary" href="../6/">⚡ OSTATNIA LOKALIZACJA! →</a>
     </div>
 
     <div class="flag-strip" style="margin-top:auto;"></div>
@@ -148,104 +80,40 @@
 
   <script src="../../assets/game.js"></script>
   <script>
-    initFuelBottle(5);
     startEnergyMonitoring();
 
     // Step 1: Szymon GPS nav
-    showHandoff('szymon', 'Nawiguj GPS do Lokalizacji 3 — słuchaj beepera!', startNav);
+    showHandoff('szymon', 'Nawiguj GPS do Hydrantu — ostatni przystanek!', startNav);
 
     function startNav() {
       document.getElementById('nav-content').style.display = 'block';
       const waypoints = STAGE5_WAYPOINTS.length > 0 ? STAGE5_WAYPOINTS :
-        [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij współrzędne Lokalizacji 3' }];
+        [{ lat: 0, lng: 0, hint: 'PLACEHOLDER: uzupełnij współrzędne Hydrantu' }];
       Navigation.start(waypoints,
-        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(() => showSuccess('szymon','Lokalizacja 3 znaleziona! Pikanie coraz głośniejsze! 📡', showBeeper),1500); },
+        (a,d,close,last,hint) => { renderNav(a,d,close,last,hint); if(close&&last) setTimeout(() => showSuccess('szymon','Hydrant znaleziony! 🏆', showNFCPhase),1500); },
         (i,fin,nh) => { if(!fin&&nh) document.getElementById('nav-hint').textContent='✓ '+nh; }
       );
-      document.getElementById('nav-status').addEventListener('dblclick', showBeeper);
-    }
-
-    function showBeeper() {
-      Navigation.stop();
-      document.getElementById('phase-nav').style.display    = 'none';
-      document.getElementById('phase-beeper').style.display = 'block';
-      showHandoff('szymon', 'Szukaj urządzenia które pika! Gdy znajdziesz — naciśnij przycisk!', () => {
-        document.getElementById('beeper-content').style.display = 'block';
-        document.getElementById('beeper-found-btn').addEventListener('click', () =>
-          showSuccess('szymon','Znaleźliście beeper! Teraz skanujcie tag NFC! 📡', showNFCPhase)
-        );
-      });
+      addDoubleTap(document.getElementById('nav-status'), showNFCPhase);
+      addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../../final/'; });
     }
 
     function showNFCPhase() {
-      document.getElementById('phase-beeper').style.display = 'none';
-      document.getElementById('phase-nfc').style.display    = 'block';
-      setupBackupCodeInput(5, startRiddle);
-      if (checkNFCToken(5)) startRiddle();
+      Navigation.stop();
+      document.getElementById('phase-nav').style.display = 'none';
+      document.getElementById('phase-nfc').style.display = 'block';
+      document.getElementById('e5-nfc-hint').innerHTML = STAGE5_NFC_HINT;
+      if (checkNFCToken(5)) { showSuccess('amelia','Tag odblokowany! Jesteśmy przy Hydrancie! 📡', startGiftRiddle); return; }
+      // Dev skip: double-tap title to skip NFC → go to gift riddle
+      addDoubleTap(document.querySelector('#phase-nfc .task-title'), startGiftRiddle);
     }
 
-    // Step 2: Amelia riddle
-    function startRiddle() {
+    function startGiftRiddle() {
       document.getElementById('phase-nfc').style.display    = 'none';
       document.getElementById('phase-riddle').style.display = 'block';
-      showHandoff('amelia', 'Odpowiedz na zagadkę Złomka — co jest czarne, okrągłe i bez gumy auto nie ruszy?', () => {
+      showHandoff('szymon', 'Rozwiąż zagadkę — gdzie jest prezent?', () => {
         document.getElementById('riddle-content').style.display = 'block';
-        const ANSWERS = ['opona','opony','guma','kolo','koło'];
-        function checkRiddle() {
-          const v = document.getElementById('riddle-input').value.trim().toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-          if (ANSWERS.includes(v)) {
-            showSuccess('amelia', 'To opona! Zagadka rozwiązana! 🔍', () => {
-              document.getElementById('phase-riddle').style.display = 'none';
-              startLevel();
-            });
-          } else {
-            document.getElementById('riddle-error').style.display = 'block';
-            setTimeout(() => document.getElementById('riddle-error').style.display='none', 2000);
-          }
-        }
-        document.getElementById('riddle-submit').addEventListener('click', checkRiddle);
-        document.getElementById('riddle-input').addEventListener('keydown', e => { if(e.key==='Enter') checkRiddle(); });
-      });
-    }
-
-    // Step 3: Ania level challenge
-    function startLevel() {
-      document.getElementById('phase-level').style.display = 'block';
-      showHandoff('ania', 'Trzymaj telefon POZIOMO przez 15 sekund — nie przechylaj!', () => {
-        document.getElementById('level-content').style.display = 'block';
-        const fillEl   = document.getElementById('level-fill');
-        const secsEl   = document.getElementById('level-secs');
-        const statusEl = document.getElementById('level-status');
-        const retryEl  = document.getElementById('level-retry');
-        const skipEl   = document.getElementById('level-skip');
-
-        const result = Sensors.startLevel(15, 20, 3,
-          (good, tot) => {
-            fillEl.style.width  = Math.min(100, good/tot*100) + '%';
-            secsEl.textContent  = Math.round(good);
-            statusEl.textContent = good > 10 ? 'Swietnie! Prawie!' : 'Trzymaj rowno!';
-          },
-          () => onSuccess(),
-          () => {
-            retryEl.style.display = 'block';
-            retryEl.onclick = () => { retryEl.style.display='none'; startLevel(); };
-          }
-        );
-
-        if (result && result.fallback) {
-          skipEl.style.display = 'block';
-          skipEl.addEventListener('click', onSuccess);
-        }
-      });
-    }
-
-    function onSuccess() {
-      showSuccess('ania', 'Poziomo przez 15 sekund! Transport kompletny! ⚡', () => {
-        GameState.addSymbol('lightning');
+        document.getElementById('gift-riddle-text').innerHTML = GIFT_RIDDLE;
         GameState.markStage(5);
-        document.getElementById('phase-level').style.display   = 'none';
-        document.getElementById('phase-success').style.display = 'block';
       });
     }
   </script>

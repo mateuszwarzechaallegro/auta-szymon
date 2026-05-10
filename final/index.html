@@ -33,34 +33,9 @@
     <div class="mission-box" style="margin:16px;">
       <div class="mission-label">📻 Wiadomość od Zygzaka McQueena</div>
       <div class="mission-text">
-        <em>"KA-CZAOW! Zebraliście wszystkie 4 paczki i otworzyliście sejf!
+        <em>"KA-CZAOW! Ukończyliście wszystkie etapy!
         Jesteście NAJLEPSZĄ Ekipą Ratunkową w historii Radiator Springs!
-        Złomek przeprasza... i jest z Was naprawdę dumny!"</em>
-      </div>
-    </div>
-
-    <div class="task-card" style="margin:0 16px 16px;border-color:#FFD700;background:rgba(255,215,0,0.08);">
-      <div class="task-card-icon">🎁</div>
-      <div class="task-card-text">
-        <strong style="color:#FFD700;font-size:1.1rem;">Jest jeszcze jeden prezent!</strong><br><br>
-        Złomek ukrył go specjalnie dla Szymona:<br><br>
-        <span id="gift-location" style="color:#ffffff;font-size:1rem;line-height:1.7;">
-          PLACEHOLDER: opisz gdzie jest schowany dodatkowy prezent
-          (np. "Pod poduszką na kanapie w salonie" lub "W samochodzie taty w bagażniku")
-        </span>
-      </div>
-    </div>
-
-    <!-- Symbols collected -->
-    <div class="task-card" style="margin:0 16px 16px;">
-      <div class="task-card-icon">🔐</div>
-      <div class="task-card-text">
-        <div style="font-size:0.8rem;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">
-          Zdobyte symbole sejfu:
-        </div>
-        <div style="font-size:2.2rem;letter-spacing:16px;text-align:center;">
-          🔧 🏁 ⚡ 🔴
-        </div>
+        Złomek jest z Was naprawdę dumny!"</em>
       </div>
     </div>
 
@@ -87,9 +62,6 @@
       const s   = Math.floor((ms%60000)/1000);
       document.getElementById('elapsed-time').textContent = m + ' min ' + s + 's';
     }
-
-    // Gift location placeholder
-    document.getElementById('gift-location').textContent = EXTRA_GIFT_LOCATION;
 
     // Confetti
     const colors = ['#e94560','#FFD700','#4CAF50','#2196F3','#FF9800','#ffffff'];

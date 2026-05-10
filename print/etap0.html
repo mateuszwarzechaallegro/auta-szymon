@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Etap 0 — Karta Startowa (do druku)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12pt;
+      background: #fff;
+      color: #000;
+      padding: 16mm;
+    }
+    @media print {
+      body { padding: 8mm; }
+      .no-print { display: none !important; }
+    }
+
+    /* ── PRZYCISK DRUKUJ ── */
+    .btn-print {
+      display: block;
+      margin: 0 auto 10mm;
+      padding: 10px 30px;
+      background: #e94560;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14pt;
+      cursor: pointer;
+    }
+
+    /* ── KARTA DZIECI ── */
+    .card-kids {
+      border: 4px solid #000;
+      border-radius: 8mm;
+      padding: 10mm 12mm;
+      max-width: 160mm;
+      margin: 0 auto;
+    }
+    .card-header {
+      text-align: center;
+      border-bottom: 2px solid #000;
+      padding-bottom: 5mm;
+      margin-bottom: 6mm;
+    }
+    .card-header .badge {
+      display: inline-block;
+      background: #000;
+      color: #fff;
+      font-size: 9pt;
+      font-weight: bold;
+      letter-spacing: 2px;
+      padding: 1mm 4mm;
+      border-radius: 2mm;
+      margin-bottom: 3mm;
+    }
+    .card-header h1 {
+      font-size: 22pt;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+    .card-header .subtitle {
+      font-size: 11pt;
+      color: #444;
+      margin-top: 2mm;
+    }
+
+    .poem {
+      font-size: 13pt;
+      line-height: 1.8;
+      border: 2px dashed #888;
+      border-radius: 4mm;
+      padding: 6mm 8mm;
+      margin-bottom: 6mm;
+      background: #fafafa;
+    }
+    .poem p { margin-bottom: 4mm; }
+    .poem p:last-child { margin-bottom: 0; }
+
+    .clue-box {
+      border: 2px solid #000;
+      border-radius: 4mm;
+      padding: 5mm 8mm;
+      margin-bottom: 5mm;
+    }
+    .clue-box .clue-label {
+      font-size: 9pt;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 2mm;
+    }
+    .clue-box .clue-text {
+      font-size: 13pt;
+      font-weight: bold;
+    }
+
+    .instructions {
+      margin-top: 5mm;
+      font-size: 11pt;
+      line-height: 1.6;
+    }
+    .instructions ol { padding-left: 6mm; }
+    .instructions li { margin-bottom: 2mm; }
+
+    .ka-czaow {
+      text-align: center;
+      font-size: 26pt;
+      font-weight: 900;
+      letter-spacing: 2mm;
+      margin-top: 6mm;
+      padding-top: 5mm;
+      border-top: 2px solid #000;
+    }
+
+    /* ── LINIA CIĘCIA ── */
+    .cut-line {
+      border-top: 2px dashed red;
+      margin: 8mm 0;
+      text-align: center;
+      color: red;
+      font-size: 9pt;
+      padding-top: 2mm;
+    }
+
+    /* ── ETYKIETA BUTELKI ── */
+    .bottle-label {
+      max-width: 120mm;
+      margin: 0 auto;
+      border: 3px solid #000;
+      border-radius: 6mm;
+      padding: 6mm 10mm;
+      text-align: center;
+    }
+    .bottle-label .bl-title {
+      font-size: 10pt;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 3mm;
+    }
+    .bottle-label .bl-icon { font-size: 28pt; margin-bottom: 2mm; }
+    .bottle-label .bl-code {
+      font-family: monospace;
+      font-size: 32pt;
+      font-weight: 900;
+      letter-spacing: 6mm;
+      border: 2px solid #000;
+      border-radius: 3mm;
+      padding: 2mm 6mm;
+      display: inline-block;
+      margin: 3mm 0;
+    }
+    .bottle-label .bl-sub {
+      font-size: 9pt;
+      color: #555;
+      margin-top: 2mm;
+    }
+
+    /* ── NOTATKI ORGANIZATORA ── */
+    .organizer {
+      max-width: 160mm;
+      margin: 8mm auto 0;
+      border: 1px solid #aaa;
+      border-radius: 4mm;
+      padding: 5mm 8mm;
+      background: #f9f9f9;
+      font-size: 10pt;
+    }
+    .organizer h2 {
+      font-size: 11pt;
+      font-weight: bold;
+      margin-bottom: 3mm;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .organizer ul { padding-left: 5mm; line-height: 2; }
+    .organizer code {
+      background: #eee;
+      padding: 0 2px;
+      border-radius: 2px;
+      font-size: 9pt;
+    }
+  </style>
+</head>
+<body>
+
+<button class="btn-print no-print" onclick="window.print()">🖨️ DRUKUJ</button>
+
+<!-- ════════════════════════════════════════
+     KARTA DLA DZIECI
+════════════════════════════════════════ -->
+<div class="card-kids">
+
+  <div class="card-header">
+    <div class="badge">ETAP 0 — START MISJI</div>
+    <h1>Ekipa Ratunkowa<br>Radiator Springs!</h1>
+    <div class="subtitle">Wiadomość od Złomka — przeczytajcie uważnie!</div>
+  </div>
+
+  <div class="poem">
+    <p>Zygzak McQueen jest w potrzebie!<br>
+    Złomek pisze prosto do ciebie!</p>
+
+    <p>W ogrodzie waszym, koło huśtawki,<br>
+    Zakopałem w piasku dwie zabawki.</p>
+
+    <p>Jedna lśni srebrna jak moneta —<br>
+    To <strong>brelok</strong>! Z nim zaczyna się feta!</p>
+
+    <p>A druga? <strong>Butelka</strong>! Z kodem na boku —<br>
+    Bez paliwa auto nie ruszy ni kroku.</p>
+
+    <p>Więc biegnijcie szybko, kopcie w piasku —<br>
+    Ekipa ratunkowa ruszy o blasku!</p>
+  </div>
+
+  <div class="clue-box">
+    <div class="clue-label">Gdzie szukać?</div>
+    <div class="clue-text">
+      Ogrod &rarr; Plac zabaw &rarr; Hustawka &rarr; <strong>Piaskownica</strong>
+    </div>
+  </div>
+
+  <div class="instructions">
+    <strong>Co zrobić po znalezieniu:</strong>
+    <ol>
+      <li>Znajdź <strong>brelok NFC</strong> &mdash; dotknij nim ekranu telefonu</li>
+      <li>Misja otworzy się automatycznie</li>
+      <li>Wpisz <strong>kod z butelki paliwa</strong> gdy gra zapyta</li>
+      <li>Jedźcie!</li>
+    </ol>
+  </div>
+
+  <div class="ka-czaow">KA-CZAOW!</div>
+
+</div>
+
+<!-- ════════════════════════════════════════
+     LINIA CIĘCIA — ETYKIETA BUTELKI
+════════════════════════════════════════ -->
+<div class="cut-line">✂ &mdash;&mdash; wytnij i naklej na butelkę paliwa &mdash;&mdash; ✂</div>
+
+<div class="bottle-label">
+  <div class="bl-icon">⛽</div>
+  <div class="bl-title">Butelka Paliwa — Etap 0</div>
+  <div class="bl-code">ZK9QBX</div>
+  <div class="bl-sub">Wpisz ten kod w grze &rarr; +30% paliwa dla Radiatora!</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     NOTATKI ORGANIZATORA (nie drukuj dla dzieci)
+════════════════════════════════════════ -->
+<div class="cut-line">✂ &mdash;&mdash; tylko dla organizatora &mdash;&mdash; ✂</div>
+
+<div class="organizer">
+  <h2>Notatki organizatora</h2>
+  <ul>
+    <li><strong>Brelok NFC</strong> &mdash; zaprogramuj URL: <code>https://[DOMENA]/zadanie/1/</code></li>
+    <li><strong>Ukryj brelok</strong> w piaskownicy przy huśtawce (ogród)</li>
+    <li><strong>Ukryj butelkę paliwa</strong> obok breloka w piaskownicy</li>
+    <li><strong>Kod butelki:</strong> <code>ZK9QBX</code> (6 znaków, wpisywany w Etapie 1)</li>
+    <li>Brelok otwiera stronę <code>/zadanie/1/</code> &mdash; nie ma strony <code>/zadanie/0/</code></li>
+    <li>Jednorazowość kodu zapewnia localStorage (klucz <code>auta_szymon_26_refuel_1</code>)</li>
+  </ul>
+</div>
+
+</body>
+</html>

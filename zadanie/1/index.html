@@ -12,10 +12,10 @@
     <div class="flag-strip"></div>
     <div class="task-header">
       <span class="site-name">⚡ Auta — Szymon</span>
-      <span class="task-badge">ETAP 1 / 6</span>
+      <span class="task-badge">ETAP 1 / 5</span>
     </div>
 
-    <!-- Phase 1: Amelia fuel bottle -->
+    <!-- Phase 1: Amelia — fuel bottle code -->
     <div id="phase-fuel" class="task-body">
       <div id="fuel-content" style="display:none;">
         <div class="task-step-label">⛽ Zatankuj Radiator!</div>
@@ -30,70 +30,37 @@
           <div class="task-card-icon">⛽</div>
           <div class="task-card-text">
             <strong>Paliwo (⛽)</strong><br>
-            Przy każdej lokalizacji jest ukryta <strong>butelka paliwa</strong> z kodem. Wpisz kod żeby dolać +30% paliwa!
+            Przy każdej lokacji jest ukryta <strong>butelka paliwa</strong> z kodem. Wpisz kod żeby dolać +30% paliwa!
           </div>
         </div>
         <div class="backup-input-wrap" style="margin-top:16px;">
-          <input id="fuel-code" type="text" maxlength="5" placeholder="BENZX"
+          <input id="fuel-code" type="text" maxlength="6" placeholder="??????"
             style="text-transform:uppercase;letter-spacing:3px;">
           <button id="fuel-submit" class="btn-primary" style="margin:0;">⛽ Tankuj!</button>
         </div>
         <div id="fuel-error" style="display:none;color:#e94560;font-size:0.88rem;margin-top:8px;text-align:center;">
           Błędny kod! Sprawdź naklejkę na butelce.
         </div>
-        <button id="fuel-skip" class="btn-primary"
-          style="margin-top:20px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);font-size:0.82rem;opacity:0.7;">
-          Pomiń — butelki nie ma
-        </button>
+
       </div>
     </div>
 
-    <!-- Phase 3 + 5: Szymon GPS nav (reused for both nav segments) -->
-    <div id="phase-nav" class="task-body" style="display:none;">
-      <div id="nav-content" style="display:none;">
-        <div class="task-step-label" id="nav-step-label">🗺️ Punkt pośredni — połowa trasy</div>
-        <div class="task-title" id="nav-title">Ruszajcie!</div>
-        <div class="task-card">
-          <div class="task-card-icon">📻</div>
-          <div class="task-card-text" id="nav-desc">
-            <em>Złomek: "Ruszamy w trasę! Jedźcie za strzałką do punktu pośredniego!"</em>
-          </div>
-        </div>
-        <div class="task-card" style="border-color:#4CAF50;margin-top:8px;">
-          <div class="task-card-icon">⚡</div>
-          <div class="task-card-text">
-            <strong>Bateria (⚡)</strong><br>
-            Ładuje się podczas jazdy GPS i przez <strong>potrząsanie telefonem</strong>. Pilnujcie żeby nie spadła do zera!
-          </div>
-        </div>
-        <div class="nav-widget">
-          <div class="nav-arrow-wrap" id="nav-arrow-wrap">
-            <span class="nav-arrow" id="nav-arrow">⬆️</span>
-          </div>
-          <div class="nav-distance" id="nav-distance">-- <span>m</span></div>
-          <div class="nav-hint" id="nav-hint">Szukam sygnału GPS...</div>
-          <div class="nav-status" id="nav-status">Czekam na GPS...</div>
-        </div>
-        <div class="task-hint">Jedź za strzałką! Dblclick na status żeby pominąć (dev).</div>
-      </div>
-    </div>
-
-    <!-- Phase 4: Ania battery recharge (mid-nav tutorial) -->
+    <!-- Phase 2: Ania — shake to charge battery -->
     <div id="phase-shake" class="task-body" style="display:none;">
       <div id="shake-content" style="display:none;">
         <div class="task-step-label">⚡ Naładuj Baterię!</div>
         <div class="task-title">Potrząśnij Telefonem!</div>
-        <div class="task-card" style="border-color:#e94560;">
+        <div class="task-card" style="border-color:#4CAF50;">
           <div class="task-card-icon">🔋</div>
           <div class="task-card-text">
-            <em>Złomek: "Stać! Bateria prawie pada! Ania, potrząśnij telefonem żeby ją naładować!"</em>
+            <em>Złomek: "Stać! Bateria Radiatora jest rozładowana! Ania, potrząśnij telefonem żeby ją naładować — dopiero potem ruszamy!"</em>
           </div>
         </div>
         <div class="task-card" style="border-color:#4CAF50;margin-top:8px;">
           <div class="task-card-icon">⚡</div>
           <div class="task-card-text">
             <strong>Bateria (⚡)</strong><br>
-            Każde potrząśnięcie telefonem ładuje baterię. Ania jest odpowiedzialna za ładowanie!
+            Każde potrząśnięcie ładuje baterię. Bez baterii auto nie jedzie! Ania jest odpowiedzialna za ładowanie!
           </div>
         </div>
         <div class="speed-widget" style="margin-top:12px;">
@@ -109,7 +76,30 @@
       </div>
     </div>
 
-    <!-- Phase 6: Amelia reads hint to E2 -->
+    <!-- Phase 3: Szymon — GPS nav to Location 0 -->
+    <div id="phase-nav" class="task-body" style="display:none;">
+      <div id="nav-content" style="display:none;">
+        <div class="task-step-label">🎯 Stare Wraki — Cel!</div>
+        <div class="task-title">Jedź za strzałką!</div>
+        <div class="task-card">
+          <div class="task-card-icon">📻</div>
+          <div class="task-card-text">
+            <em>Złomek: "Bateria naładowana — ruszajcie! Szymon, jedź za strzałką do Starych Wraków!"</em>
+          </div>
+        </div>
+        <div class="nav-widget">
+          <div class="nav-arrow-wrap" id="nav-arrow-wrap">
+            <span class="nav-arrow" id="nav-arrow">⬆️</span>
+          </div>
+          <div class="nav-distance" id="nav-distance">-- <span>m</span></div>
+          <div class="nav-hint" id="nav-hint">Szukam sygnału GPS...</div>
+          <div class="nav-status" id="nav-status">Czekam na GPS...</div>
+        </div>
+        <div class="task-hint">Jedź za strzałką! Double-tap na status żeby pominąć (dev).</div>
+      </div>
+    </div>
+
+    <!-- Phase 4: Amelia — reads hint to E2 -->
     <div id="phase-hint" class="task-body" style="display:none;">
       <div id="hint-content" style="display:none;">
         <div class="task-step-label">🗺️ Wskazówka do Etapu 2</div>
@@ -117,11 +107,11 @@
         <div class="task-card" style="border-color:#FFD700;">
           <div class="task-card-icon">📻</div>
           <div class="task-card-text">
-            <strong>Złomek:</strong> <em>"Szukajcie tagu NFC przy:</em><br><br>
+            <strong>Złomek:</strong> <em>"Szukajcie tagu NFC przy:"</em><br><br>
             <span style="color:#FFD700;font-weight:700;font-size:1.1rem;" id="e2-hint-text">PLACEHOLDER</span>
           </div>
         </div>
-        <a class="btn-primary" href="../2/">⚡ JEDŹ! Etap 2 →</a>
+
       </div>
     </div>
 
@@ -130,7 +120,7 @@
 
   <script src="../../assets/game.js"></script>
   <script>
-    // ── Phase 1: Amelia fuel bottle ─────────────────────────────
+    // ── Phase 1: Amelia — fuel bottle ───────────────────────────
     showHandoff('amelia', 'Znajdź butelkę paliwa przy bazie i wpisz kod — zatankujmy Radiator!', startFuel);
 
     function startFuel() {
@@ -152,64 +142,16 @@
 
       document.getElementById('fuel-submit').addEventListener('click', tryFuel);
       document.getElementById('fuel-code').addEventListener('keydown', e => { if (e.key === 'Enter') tryFuel(); });
-      document.getElementById('fuel-skip').addEventListener('click', onFuelDone);
+
     }
 
     function onFuelDone() {
-      document.getElementById('phase-fuel').style.display = 'none';
-      document.getElementById('phase-nav').style.display  = 'block';
-      showHandoff('szymon', 'Nawiguj GPS do punktu pośredniego — jesteś kierowcą!', () => startNav(0));
-    }
-
-    // ── Phase 3 + 5: Szymon GPS nav ─────────────────────────────
-    // Called with segment=0 (mid-point) then segment=1 (Location 0)
-    function startNav(segment) {
-      document.getElementById('nav-content').style.display = 'block';
-
-      if (segment === 0) {
-        document.getElementById('nav-step-label').textContent = '🗺️ Punkt pośredni — połowa trasy';
-        document.getElementById('nav-title').textContent      = 'Ruszajcie!';
-        document.getElementById('nav-desc').innerHTML         =
-          '<em>Złomek: "Ruszamy! Jedźcie za strzałką do punktu pośredniego!"</em>';
-      } else {
-        document.getElementById('nav-step-label').textContent = '🎯 Lokalizacja 0 — Cel!';
-        document.getElementById('nav-title').textContent      = 'Prawie jesteście!';
-        document.getElementById('nav-desc').innerHTML         =
-          '<em>Złomek: "Świetna robota z baterią! Teraz do Lokalizacji 0 — już blisko!"</em>';
-      }
-
-      // Fallback waypoints when GPS not yet configured
-      const wps = STAGE1_WAYPOINTS.length >= 2 ? STAGE1_WAYPOINTS : [
-        { lat: 0, lng: 0, hint: 'PLACEHOLDER: punkt pośredni (~50m od bazy)' },
-        { lat: 0, lng: 0, hint: 'PLACEHOLDER: Lokalizacja 0 — bezpieczne miejsce' },
-      ];
-
-      Navigation.start([wps[segment]],
-        (angle, dist, isClose, isLast, hint) => {
-          renderNav(angle, dist, isClose, isLast, hint);
-          if (isClose && isLast) {
-            if (segment === 0) setTimeout(() => showSuccess('szymon', 'Punkt pośredni zaliczony! Czas naładować baterię! ⚡', showRechargePhase), 1500);
-            else               setTimeout(() => showSuccess('szymon', 'Lokalizacja 0 znaleziona! Bezpieczne miejsce! 🎉', showHintPhase), 1500);
-          }
-        },
-        () => {}
-      );
-
-      // Dev skip: dblclick on status label
-      document.getElementById('nav-status').ondblclick = () => {
-        if (segment === 0) showRechargePhase();
-        else               showHintPhase();
-      };
-    }
-
-    // ── Phase 4: Ania battery recharge ──────────────────────────
-    function showRechargePhase() {
-      Navigation.stop();
-      document.getElementById('phase-nav').style.display   = 'none';
+      document.getElementById('phase-fuel').style.display  = 'none';
       document.getElementById('phase-shake').style.display = 'block';
-      showHandoff('ania', 'Bateria prawie padła! Potrząśnij telefonem 10 razy żeby ją naładować!', startShake);
+      showHandoff('ania', 'Bateria Radiatora jest rozładowana! Potrząśnij telefonem 10 razy żeby ją naładować!', startShake);
     }
 
+    // ── Phase 2: Ania — shake to charge battery ─────────────────
     function startShake() {
       document.getElementById('shake-content').style.display = 'block';
       document.getElementById('shake-count').textContent = '0';
@@ -222,9 +164,9 @@
         (cur, tot) => {
           countEl.textContent = cur;
           fillEl.style.width  = (cur / tot * 100) + '%';
-          Resources.onShake(); // +2% bateria, -1% benzyna
+          Resources.onShake(); // +2% bateria, −1% benzyna
         },
-        () => showSuccess('ania', 'Bateria naładowana! Możemy jechać dalej! ⚡', onShakeDone),
+        () => showSuccess('ania', 'Bateria naładowana! Radiator gotowy do jazdy! ⚡', onShakeDone),
         null
       );
 
@@ -236,7 +178,7 @@
           taps++; countEl.textContent = taps;
           fillEl.style.width = (taps / 10 * 100) + '%';
           Resources.onShake();
-          if (taps >= 10) showSuccess('ania', 'Bateria naładowana! Możemy jechać dalej! ⚡', onShakeDone);
+          if (taps >= 10) showSuccess('ania', 'Bateria naładowana! Radiator gotowy do jazdy! ⚡', onShakeDone);
         };
       }
     }
@@ -245,10 +187,34 @@
       document.getElementById('shake-content').style.display = 'none';
       document.getElementById('phase-shake').style.display   = 'none';
       document.getElementById('phase-nav').style.display     = 'block';
-      showHandoff('szymon', 'Bateria naładowana! Jedź do Lokalizacji 0 — już prawie jesteście!', () => startNav(1));
+      showHandoff('szymon', 'Bateria naładowana! Jedź do Starych Wraków — ty jesteś kierowcą!', startNav);
     }
 
-    // ── Phase 6: Amelia reads hint ──────────────────────────────
+    // ── Phase 3: Szymon — GPS nav to Location 0 ─────────────────
+    function startNav() {
+      document.getElementById('nav-content').style.display = 'block';
+
+      const wps = STAGE1_WAYPOINTS.length >= 1 ? STAGE1_WAYPOINTS : [
+        { lat: 0, lng: 0, hint: 'PLACEHOLDER: Stare Wraki' },
+      ];
+
+      Navigation.start(wps,
+        (angle, dist, isClose, isLast, hint) => {
+          renderNav(angle, dist, isClose, isLast, hint);
+          if (isClose && isLast) {
+            setTimeout(() => showSuccess('szymon', 'Stare Wraki znalezione! Dajcie telefon Amelii! 🎉', showHintPhase), 1500);
+          }
+        },
+        () => {}
+      );
+
+      // Dev skip: double-tap (mobile) or dblclick (desktop)
+      addDoubleTap(document.getElementById('nav-status'), showHintPhase);
+      // Organizer skip: triple-tap/click on ETAP badge → next stage
+      addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../2/'; });
+    }
+
+    // ── Phase 4: Amelia — reads E2 hint ─────────────────────────
     function showHintPhase() {
       Navigation.stop();
       GameState.markStage(1);
@@ -256,7 +222,7 @@
       document.getElementById('phase-hint').style.display = 'block';
       showHandoff('amelia', 'Przeczytaj drużynie wskazówkę do Etapu 2 na głos — to zagadka!', () => {
         document.getElementById('hint-content').style.display = 'block';
-        document.getElementById('e2-hint-text').textContent   = STAGE2_NFC_HINT;
+        document.getElementById('e2-hint-text').innerHTML       = STAGE2_NFC_HINT;
       });
     }
   </script>
