@@ -33,6 +33,12 @@ const STAGE2_NFC_HINT    = 'PLACEHOLDER: opisz gdzie w ogrodzie jest tag NFC (np
 const STAGE3_NFC_HINT    = 'PLACEHOLDER: opisz gdzie jest tag NFC w lokalizacji 1';
 const EXTRA_GIFT_LOCATION = 'PLACEHOLDER: opisz gdzie jest schowany dodatkowy prezent';
 
+// E1: 2-segment tutorial route ~100m total; segment 1 = mid-point, segment 2 = Location 0
+const STAGE1_WAYPOINTS = [
+  { lat: 0, lng: 0, hint: 'PLACEHOLDER: punkt pośredni (~50m od bazy)' },
+  { lat: 0, lng: 0, hint: 'PLACEHOLDER: Lokalizacja 0 — bezpieczne miejsce' },
+];
+
 const STAGE3_WAYPOINTS = [];
 const STAGE4_WAYPOINTS = [];
 const STAGE5_WAYPOINTS = [];

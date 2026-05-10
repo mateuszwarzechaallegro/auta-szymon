@@ -15,7 +15,7 @@
       <span class="task-badge">ETAP 1 / 6</span>
     </div>
 
-    <!-- Phase 1: Amelia NFC -->
+    <!-- Phase 1: Amelia NFC unlock -->
     <div id="phase-nfc" class="task-body">
       <div id="nfc-content" style="display:none;">
         <div class="task-step-label">📡 Odblokuj misję</div>
@@ -43,6 +43,13 @@
             <em>Złomek: "Szefowo, jesteśmy bez paliwa! Znajdź butelkę paliwa przy bazie startowej i wpisz kod z naklejki!"</em>
           </div>
         </div>
+        <div class="task-card" style="border-color:#FF9800;margin-top:8px;">
+          <div class="task-card-icon">⛽</div>
+          <div class="task-card-text">
+            <strong>Paliwo (⛽)</strong><br>
+            Przy każdej lokalizacji jest ukryta <strong>butelka paliwa</strong> z kodem. Wpisz kod żeby dolać +30% paliwa!
+          </div>
+        </div>
         <div class="backup-input-wrap" style="margin-top:16px;">
           <input id="fuel-code" type="text" maxlength="5" placeholder="BENZX"
             style="text-transform:uppercase;letter-spacing:3px;">
@@ -58,46 +65,68 @@
       </div>
     </div>
 
-    <!-- Phase 3: Ania shake -->
+    <!-- Phase 3 + 5: Szymon GPS nav (reused for both nav segments) -->
+    <div id="phase-nav" class="task-body" style="display:none;">
+      <div id="nav-content" style="display:none;">
+        <div class="task-step-label" id="nav-step-label">🗺️ Punkt pośredni — połowa trasy</div>
+        <div class="task-title" id="nav-title">Ruszajcie!</div>
+        <div class="task-card">
+          <div class="task-card-icon">📻</div>
+          <div class="task-card-text" id="nav-desc">
+            <em>Złomek: "Ruszamy w trasę! Jedźcie za strzałką do punktu pośredniego!"</em>
+          </div>
+        </div>
+        <div class="task-card" style="border-color:#4CAF50;margin-top:8px;">
+          <div class="task-card-icon">⚡</div>
+          <div class="task-card-text">
+            <strong>Bateria (⚡)</strong><br>
+            Ładuje się podczas jazdy GPS i przez <strong>potrząsanie telefonem</strong>. Pilnujcie żeby nie spadła do zera!
+          </div>
+        </div>
+        <div class="nav-widget">
+          <div class="nav-arrow-wrap" id="nav-arrow-wrap">
+            <span class="nav-arrow" id="nav-arrow">⬆️</span>
+          </div>
+          <div class="nav-distance" id="nav-distance">-- <span>m</span></div>
+          <div class="nav-hint" id="nav-hint">Szukam sygnału GPS...</div>
+          <div class="nav-status" id="nav-status">Czekam na GPS...</div>
+        </div>
+        <div class="task-hint">Jedź za strzałką! Dblclick na status żeby pominąć (dev).</div>
+      </div>
+    </div>
+
+    <!-- Phase 4: Ania battery recharge (mid-nav tutorial) -->
     <div id="phase-shake" class="task-body" style="display:none;">
       <div id="shake-content" style="display:none;">
         <div class="task-step-label">⚡ Naładuj Baterię!</div>
         <div class="task-title">Potrząśnij Telefonem!</div>
-        <div class="task-card">
-          <div class="task-card-icon">🚗</div>
+        <div class="task-card" style="border-color:#e94560;">
+          <div class="task-card-icon">🔋</div>
           <div class="task-card-text">
-            <em>Złomek: "Hej amigo! Telefon ma pustą baterię! Potrząśnij nim mocno 20 razy żeby ją naładować!"</em>
+            <em>Złomek: "Stać! Bateria prawie pada! Ania, potrząśnij telefonem żeby ją naładować!"</em>
           </div>
         </div>
-
-        <!-- Energy system info -->
-        <div class="task-card" style="border-color:#4CAF50;margin-top:10px;">
+        <div class="task-card" style="border-color:#4CAF50;margin-top:8px;">
           <div class="task-card-icon">⚡</div>
           <div class="task-card-text">
             <strong>Bateria (⚡)</strong><br>
-            Ładuje się przez <strong>potrząsanie telefonem</strong> — każde potrząśnięcie dodaje energię. Pilnujcie żeby nie spadła do zera!
+            Każde potrząśnięcie telefonem ładuje baterię. Ania jest odpowiedzialna za ładowanie!
           </div>
         </div>
-        <div class="task-card" style="border-color:#FF9800;margin-top:8px;">
-          <div class="task-card-icon">⛽</div>
-          <div class="task-card-text">
-            <strong>Paliwo (⛽)</strong><br>
-            Szukajcie <strong>butelek z paliwem</strong> ukrytych przy każdej lokalizacji. Każda ma kod — wpisz go w oknie tankowania żeby dolać +30% paliwa!
-          </div>
-        </div>
-
         <div class="speed-widget" style="margin-top:12px;">
           <div class="speed-number" id="shake-count">0</div>
-          <div class="speed-unit">/ 20 POTRZĄŚNIĘĆ</div>
+          <div class="speed-unit">/ 10 POTRZĄŚNIĘĆ</div>
           <div class="speed-progress-track">
             <div class="speed-progress-fill" id="shake-fill"></div>
           </div>
         </div>
-        <button id="shake-fallback" class="btn-primary" style="display:none;margin-top:12px;">Dotknij 20 razy (brak akcelerometru)</button>
+        <button id="shake-fallback" class="btn-primary" style="display:none;margin-top:12px;">
+          Dotknij 10 razy (brak akcelerometru)
+        </button>
       </div>
     </div>
 
-    <!-- Phase 3: Szymon reads hint -->
+    <!-- Phase 6: Amelia reads hint to E2 -->
     <div id="phase-hint" class="task-body" style="display:none;">
       <div id="hint-content" style="display:none;">
         <div class="task-step-label">🗺️ Wskazówka do Etapu 2</div>
@@ -118,7 +147,7 @@
 
   <script src="../../assets/game.js"></script>
   <script>
-    // Step 1: Amelia unlocks NFC
+    // ── Phase 1: Amelia NFC unlock ──────────────────────────────
     showHandoff('amelia', 'Wpisz kod startowy NFC żeby uruchomić misję Ekipy Ratunkowej!', () => {
       document.getElementById('nfc-content').style.display = 'block';
       if (checkNFCToken(1)) { onNFCUnlocked(); return; }
@@ -131,11 +160,11 @@
       showHandoff('amelia', 'Znajdź butelkę paliwa przy bazie i wpisz kod — zatankujmy Radiator!', startFuel);
     }
 
+    // ── Phase 2: Amelia fuel bottle ─────────────────────────────
     function startFuel() {
       document.getElementById('fuel-content').style.display = 'block';
       const USED_KEY = 'auta_szymon_26_refuel_1';
 
-      // Already refueled (eg. page reload)
       if (localStorage.getItem(USED_KEY)) { onFuelDone(); return; }
 
       function tryFuel() {
@@ -157,23 +186,75 @@
     }
 
     function onFuelDone() {
-      document.getElementById('phase-fuel').style.display  = 'none';
+      document.getElementById('phase-fuel').style.display = 'none';
+      document.getElementById('phase-nav').style.display  = 'block';
+      showHandoff('szymon', 'Nawiguj GPS do punktu pośredniego — jesteś kierowcą!', () => startNav(0));
+    }
+
+    // ── Phase 3 + 5: Szymon GPS nav ─────────────────────────────
+    // Called with segment=0 (mid-point) then segment=1 (Location 0)
+    function startNav(segment) {
+      document.getElementById('nav-content').style.display = 'block';
+
+      if (segment === 0) {
+        document.getElementById('nav-step-label').textContent = '🗺️ Punkt pośredni — połowa trasy';
+        document.getElementById('nav-title').textContent      = 'Ruszajcie!';
+        document.getElementById('nav-desc').innerHTML         =
+          '<em>Złomek: "Ruszamy! Jedźcie za strzałką do punktu pośredniego!"</em>';
+      } else {
+        document.getElementById('nav-step-label').textContent = '🎯 Lokalizacja 0 — Cel!';
+        document.getElementById('nav-title').textContent      = 'Prawie jesteście!';
+        document.getElementById('nav-desc').innerHTML         =
+          '<em>Złomek: "Świetna robota z baterią! Teraz do Lokalizacji 0 — już blisko!"</em>';
+      }
+
+      // Fallback waypoints when GPS not yet configured
+      const wps = STAGE1_WAYPOINTS.length >= 2 ? STAGE1_WAYPOINTS : [
+        { lat: 0, lng: 0, hint: 'PLACEHOLDER: punkt pośredni (~50m od bazy)' },
+        { lat: 0, lng: 0, hint: 'PLACEHOLDER: Lokalizacja 0 — bezpieczne miejsce' },
+      ];
+
+      Navigation.start([wps[segment]],
+        (angle, dist, isClose, isLast, hint) => {
+          renderNav(angle, dist, isClose, isLast, hint);
+          if (isClose && isLast) {
+            if (segment === 0) setTimeout(showRechargePhase, 1500);
+            else               setTimeout(showHintPhase, 1500);
+          }
+        },
+        () => {}
+      );
+
+      // Dev skip: dblclick on status label
+      document.getElementById('nav-status').ondblclick = () => {
+        if (segment === 0) showRechargePhase();
+        else               showHintPhase();
+      };
+    }
+
+    // ── Phase 4: Ania battery recharge ──────────────────────────
+    function showRechargePhase() {
+      Navigation.stop();
+      document.getElementById('phase-nav').style.display   = 'none';
       document.getElementById('phase-shake').style.display = 'block';
-      showHandoff('ania', 'Potrząśnij telefonem 20 razy żeby naładować baterię Ekipy!', startShake);
+      showHandoff('ania', 'Bateria prawie padła! Potrząśnij telefonem 10 razy żeby ją naładować!', startShake);
     }
 
     function startShake() {
       document.getElementById('shake-content').style.display = 'block';
+      document.getElementById('shake-count').textContent = '0';
+      document.getElementById('shake-fill').style.width  = '0%';
+
       const countEl = document.getElementById('shake-count');
       const fillEl  = document.getElementById('shake-fill');
 
-      const result = Sensors.startShake(20, Infinity,
+      const result = Sensors.startShake(10, Infinity,
         (cur, tot) => {
           countEl.textContent = cur;
           fillEl.style.width  = (cur / tot * 100) + '%';
-          Resources.onShake(); // -1% benzyna, +2% bateria per shake
+          Resources.onShake(); // +2% bateria, -1% benzyna
         },
-        onShakeSuccess,
+        onShakeDone,
         null
       );
 
@@ -181,20 +262,29 @@
         let taps = 0;
         const fb = document.getElementById('shake-fallback');
         fb.style.display = 'block';
-        fb.addEventListener('click', () => {
+        fb.onclick = () => {
           taps++; countEl.textContent = taps;
-          fillEl.style.width = (taps / 20 * 100) + '%';
+          fillEl.style.width = (taps / 10 * 100) + '%';
           Resources.onShake();
-          if (taps >= 20) onShakeSuccess();
-        });
+          if (taps >= 10) onShakeDone();
+        };
       }
     }
 
-    function onShakeSuccess() {
+    function onShakeDone() {
+      document.getElementById('shake-content').style.display = 'none';
+      document.getElementById('phase-shake').style.display   = 'none';
+      document.getElementById('phase-nav').style.display     = 'block';
+      showHandoff('szymon', 'Bateria naładowana! Jedź do Lokalizacji 0 — już prawie jesteście!', () => startNav(1));
+    }
+
+    // ── Phase 6: Amelia reads hint ──────────────────────────────
+    function showHintPhase() {
+      Navigation.stop();
       GameState.markStage(1);
-      document.getElementById('phase-shake').style.display = 'none';
-      document.getElementById('phase-hint').style.display  = 'block';
-      showHandoff('szymon', 'Przeczytaj wskazówkę do Etapu 2 drużynie na głos — to zagadka!', () => {
+      document.getElementById('phase-nav').style.display  = 'none';
+      document.getElementById('phase-hint').style.display = 'block';
+      showHandoff('amelia', 'Przeczytaj drużynie wskazówkę do Etapu 2 na głos — to zagadka!', () => {
         document.getElementById('hint-content').style.display = 'block';
         document.getElementById('e2-hint-text').textContent   = STAGE2_NFC_HINT;
       });
