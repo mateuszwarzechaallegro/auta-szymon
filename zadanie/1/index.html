@@ -15,25 +15,8 @@
       <span class="task-badge">ETAP 1 / 6</span>
     </div>
 
-    <!-- Phase 1: Amelia NFC unlock -->
-    <div id="phase-nfc" class="task-body">
-      <div id="nfc-content" style="display:none;">
-        <div class="task-step-label">📡 Odblokuj misję</div>
-        <div class="task-card">
-          <div class="task-card-icon">📡</div>
-          <div class="task-card-text">
-            <strong>Dotknij tagiem NFC telefonu</strong><br>lub wpisz kod z naklejki:
-          </div>
-        </div>
-        <div class="backup-input-wrap">
-          <input id="backup-code-input" type="text" maxlength="6" placeholder="XXXXXX">
-          <button id="backup-submit" class="btn-primary" style="margin:0;">Odblokuj</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase 2: Amelia fuel bottle -->
-    <div id="phase-fuel" class="task-body" style="display:none;">
+    <!-- Phase 1: Amelia fuel bottle -->
+    <div id="phase-fuel" class="task-body">
       <div id="fuel-content" style="display:none;">
         <div class="task-step-label">⛽ Zatankuj Radiator!</div>
         <div class="task-title">Wpisz Kod Paliwa!</div>
@@ -147,20 +130,9 @@
 
   <script src="../../assets/game.js"></script>
   <script>
-    // ── Phase 1: Amelia NFC unlock ──────────────────────────────
-    showHandoff('amelia', 'Wpisz kod startowy NFC żeby uruchomić misję Ekipy Ratunkowej!', () => {
-      document.getElementById('nfc-content').style.display = 'block';
-      if (checkNFCToken(1)) { showSuccess('amelia','Misja odblokowana! Ekipa Ratunkowa do akcji! 🚗', onNFCUnlocked); return; }
-      setupBackupCodeInput(1, () => showSuccess('amelia','Misja odblokowana! Ekipa Ratunkowa do akcji! 🚗', onNFCUnlocked));
-    });
+    // ── Phase 1: Amelia fuel bottle ─────────────────────────────
+    showHandoff('amelia', 'Znajdź butelkę paliwa przy bazie i wpisz kod — zatankujmy Radiator!', startFuel);
 
-    function onNFCUnlocked() {
-      document.getElementById('phase-nfc').style.display  = 'none';
-      document.getElementById('phase-fuel').style.display = 'block';
-      showHandoff('amelia', 'Znajdź butelkę paliwa przy bazie i wpisz kod — zatankujmy Radiator!', startFuel);
-    }
-
-    // ── Phase 2: Amelia fuel bottle ─────────────────────────────
     function startFuel() {
       document.getElementById('fuel-content').style.display = 'block';
       const USED_KEY = 'auta_szymon_26_refuel_1';
