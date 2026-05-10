@@ -137,8 +137,6 @@
       document.getElementById('fuel-content').style.display = 'block';
       const USED_KEY = 'auta_szymon_26_refuel_1';
 
-      if (localStorage.getItem(USED_KEY)) { onFuelDone(); return; }
-
       function tryFuel() {
         const code = document.getElementById('fuel-code').value.trim().toUpperCase();
         if (code === FUEL_BOTTLE_CODES[1]) {
