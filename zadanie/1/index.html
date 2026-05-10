@@ -35,23 +35,38 @@
     <!-- Phase 2: Ania shake -->
     <div id="phase-shake" class="task-body" style="display:none;">
       <div id="shake-content" style="display:none;">
-        <div class="task-step-label">🤝 Rozgrzej Silnik!</div>
+        <div class="task-step-label">⚡ Naładuj Baterię!</div>
         <div class="task-title">Potrząśnij Telefonem!</div>
         <div class="task-card">
           <div class="task-card-icon">🚗</div>
           <div class="task-card-text">
-            <em>Złomek: "Hej amigo! Trzeba rozgrzać silnik! Potrząśnij telefonem 20 razy w 15 sekund!"</em>
+            <em>Złomek: "Hej amigo! Telefon ma płaską baterię! Potrząśnij nim mocno 20 razy żeby ją naładować!"</em>
           </div>
         </div>
-        <div class="speed-widget">
+
+        <!-- Energy system info -->
+        <div class="task-card" style="border-color:#4CAF50;margin-top:10px;">
+          <div class="task-card-icon">⚡</div>
+          <div class="task-card-text">
+            <strong>Bateria (⚡)</strong><br>
+            Ładuje się przez <strong>potrząsanie telefonem</strong> — każde potrząśnięcie dodaje energię. Pilnujcie żeby nie wypadła poniżej zera!
+          </div>
+        </div>
+        <div class="task-card" style="border-color:#FF9800;margin-top:8px;">
+          <div class="task-card-icon">⛽</div>
+          <div class="task-card-text">
+            <strong>Paliwo (⛽)</strong><br>
+            Szukajcie <strong>butelek z paliwem</strong> ukrytych przy każdej lokalizacji. Każda ma kod — wpisz go w oknie tankowania żeby dolać +30% paliwa!
+          </div>
+        </div>
+
+        <div class="speed-widget" style="margin-top:12px;">
           <div class="speed-number" id="shake-count">0</div>
           <div class="speed-unit">/ 20 POTRZĄŚNIĘĆ</div>
           <div class="speed-progress-track">
             <div class="speed-progress-fill" id="shake-fill"></div>
           </div>
         </div>
-        <div class="task-countdown ok" id="shake-timer" style="margin-top:8px;"></div>
-        <button id="shake-retry" class="btn-primary" style="display:none;margin-top:12px;">🔄 Spróbuj ponownie</button>
         <button id="shake-fallback" class="btn-primary" style="display:none;margin-top:12px;">Dotknij 20 razy (brak akcelerometru)</button>
       </div>
     </div>
@@ -89,34 +104,22 @@
     function onNFCUnlocked() {
       document.getElementById('phase-nfc').style.display   = 'none';
       document.getElementById('phase-shake').style.display = 'block';
-      showHandoff('ania', 'Potrząśnij telefonem 20 razy w 15 sekund żeby naładować silnik!', startShake);
+      showHandoff('ania', 'Potrząśnij telefonem 20 razy żeby naładować baterię Ekipy!', startShake);
     }
 
     function startShake() {
       document.getElementById('shake-content').style.display = 'block';
       const countEl = document.getElementById('shake-count');
       const fillEl  = document.getElementById('shake-fill');
-      const timerEl = document.getElementById('shake-timer');
-      const retryEl = document.getElementById('shake-retry');
-      const TIME_MS = 15000;
-      let deadline  = Date.now() + TIME_MS;
 
-      function tickTimer() {
-        const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-        timerEl.textContent = left + 's';
-        timerEl.className   = 'task-countdown ' + (left <= 5 ? 'warning' : 'ok');
-        if (left > 0) setTimeout(tickTimer, 500);
-      }
-      tickTimer();
-
-      const result = Sensors.startShake(20, TIME_MS,
+      const result = Sensors.startShake(20, Infinity,
         (cur, tot) => {
           countEl.textContent = cur;
           fillEl.style.width  = (cur / tot * 100) + '%';
           Resources.onShake(); // -1% benzyna, +2% bateria per shake
         },
         onShakeSuccess,
-        () => { retryEl.style.display = 'block'; timerEl.textContent = 'Czas minął!'; }
+        null
       );
 
       if (result && result.fallback) {
@@ -130,15 +133,6 @@
           if (taps >= 20) onShakeSuccess();
         });
       }
-
-      retryEl.addEventListener('click', () => {
-        retryEl.style.display = 'none';
-        countEl.textContent   = '0';
-        fillEl.style.width    = '0%';
-        deadline = Date.now() + TIME_MS;
-        tickTimer();
-        startShake();
-      });
     }
 
     function onShakeSuccess() {

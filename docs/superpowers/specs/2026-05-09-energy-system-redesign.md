@@ -116,7 +116,7 @@ Any stage challenge interaction (buttons, inputs, canvas) is disabled when bater
 ## 5. Refueling System
 
 ### Physical Setup
-At each stage location (E1 base, E3, E4, E5, E6) there is a physical "fuel bottle" prop (bottle or card) with a printed 4-character numeric code.
+At each stage location (E1 base, E3, E4, E5, E6) there is a physical "fuel bottle" prop (bottle or card) with a printed 5-character alphanumeric code.
 
 ### Codes (printed on bottles)
 | Location | Stage | Code | GPS enforcement |
