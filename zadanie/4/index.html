@@ -225,10 +225,11 @@
 
     // Step 3: 4-phase speed sequence
     const SPEED_PHASES = [
-      { player:'ania',   type:'sweet', min:5, max:8,  hold:10, label:'Tester: 5–8 km/h',    desc:'Jedź 5–8 km/h przez 10 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
-      { player:'szymon', type:'sweet', min:5, max:8,  hold:25, label:'Kierowca: 5–8 km/h',   desc:'Jedź 5–8 km/h przez 25 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
-      { player:'amelia', type:'sweet', min:9, max:12, hold:3,  label:'Mechanik: 9–12 km/h',  desc:'Jedź 9–12 km/h przez 3 sekundy! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
-      { player:'szymon', type:'sweet', min:9, max:12, hold:6,  label:'Finał: 9–12 km/h',     desc:'Jedź 9–12 km/h przez 6 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
+      { player:'olek',   type:'sweet', min:5, max:8,  hold:5,  label:'Zwiadowca: 5–8 km/h',  desc:'Jedź 5–8 km/h przez 5 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
+      { player:'ania',   type:'sweet', min:5, max:8,  hold:10, label:'Tester: 5–8 km/h',      desc:'Jedź 5–8 km/h przez 10 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
+      { player:'szymon', type:'sweet', min:5, max:8,  hold:25, label:'Kierowca: 5–8 km/h',    desc:'Jedź 5–8 km/h przez 25 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
+      { player:'amelia', type:'sweet', min:9, max:12, hold:3,  label:'Mechanik: 9–12 km/h',   desc:'Jedź 9–12 km/h przez 3 sekundy! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
+      { player:'szymon', type:'sweet', min:9, max:12, hold:6,  label:'Finał: 9–12 km/h',      desc:'Jedź 9–12 km/h przez 6 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
     ];
     let phaseIdx = 0;
 
@@ -240,7 +241,7 @@
 
     function runSpeedPhase() {
       const ph = SPEED_PHASES[phaseIdx];
-      document.getElementById('spd-label').textContent = `Faza ${phaseIdx+1}/4 — ${ph.label}`;
+      document.getElementById('spd-label').textContent = `Faza ${phaseIdx+1}/5 — ${ph.label}`;
       document.getElementById('spd-title').textContent = 'Strefa Prędkości!';
       document.getElementById('spd-desc').textContent  = ph.desc;
       document.getElementById('spd-retry').style.display = 'none';
@@ -328,9 +329,10 @@
     function onSpeedPhaseSuccess() {
       const ph = SPEED_PHASES[phaseIdx];
       const msgs = [
-        'Idealna prędkość! Faza 1 zaliczona! 🚗',
-        'Mistrz kierownicy! Faza 2 zaliczona! 🏎️',
-        'Szybciej! Faza 3 zaliczona! 🔥',
+        'Super start! Faza 1 zaliczona! 🟢',
+        'Idealna prędkość! Faza 2 zaliczona! 🚗',
+        'Mistrz kierownicy! Faza 3 zaliczona! 🏎️',
+        'Szybciej! Faza 4 zaliczona! 🔥',
         'Finał zaliczony! Symbol 🏁 zdobyty!',
       ];
       const msg = msgs[phaseIdx] || '🎉';

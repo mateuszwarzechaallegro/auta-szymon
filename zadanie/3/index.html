@@ -6,6 +6,13 @@
   <meta name="theme-color" content="#0f0f1a">
   <title>Etap 3 — Auta Szymon</title>
   <link rel="stylesheet" href="../../assets/style.css">
+  <style>
+    @keyframes radar-blink {
+      0%   { opacity: 0; transform: scale(0.5); }
+      50%  { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+  </style>
 </head>
 <body>
   <div class="page">
@@ -56,7 +63,39 @@
       </div>
     </div>
 
-    <!-- Phase 3: Ania reaction game -->
+    <!-- Phase 3b: Olek — radar car detection -->
+    <div id="phase-count" class="task-body" style="display:none;">
+      <div id="count-content" style="display:none;">
+        <div class="task-step-label">📡 Radar Samochodowy!</div>
+        <div class="task-title">Tapaj auta na radarze!</div>
+        <div class="task-card" style="border-color:#4CAF50;">
+          <div class="task-card-icon">📡</div>
+          <div class="task-card-text">
+            <em>Złomek: "Olek, włącz radar i łap auta! Jak zobaczysz auto na radarze — tapnij je szybko!"</em>
+          </div>
+        </div>
+        <div style="position:relative;width:220px;height:220px;margin:16px auto 0;border-radius:50%;
+          border:3px solid #4CAF50;background:rgba(76,175,80,0.05);overflow:hidden;" id="radar-area">
+          <!-- Sweep line (CSS animated) -->
+          <div id="radar-sweep" style="position:absolute;top:50%;left:50%;width:50%;height:2px;
+            background:linear-gradient(90deg,#4CAF50,transparent);transform-origin:left center;
+            transform:rotate(0deg);"></div>
+          <!-- Center dot -->
+          <div style="position:absolute;top:50%;left:50%;width:8px;height:8px;background:#4CAF50;
+            border-radius:50%;transform:translate(-50%,-50%);"></div>
+          <!-- Concentric rings -->
+          <div style="position:absolute;inset:25%;border:1px solid rgba(76,175,80,0.2);border-radius:50%;"></div>
+          <div style="position:absolute;inset:10%;border:1px solid rgba(76,175,80,0.15);border-radius:50%;"></div>
+        </div>
+        <div style="text-align:center;margin-top:8px;">
+          <span style="font-size:1.3rem;font-weight:900;color:#4CAF50;" id="radar-score">0</span>
+          <span style="color:#888;"> / 5 aut złapanych</span>
+        </div>
+        <div id="radar-timer" style="text-align:center;color:#aaa;font-size:0.9rem;margin-top:4px;">15s</div>
+      </div>
+    </div>
+
+    <!-- Phase 4: Ania reaction game -->
     <div id="phase-game" class="task-body" style="display:none;">
       <div id="game-content" style="display:none;">
         <div class="task-step-label">🏎️ Pit Stop Chaos!</div>
@@ -89,12 +128,12 @@
     const arrivedViaNFC = new URLSearchParams(window.location.search).get('nfc') === '1';
 
     if (arrivedViaNFC) {
-      // Already at Most — skip GPS nav + NFC scan, go straight to game
+      // Already at Most — skip GPS nav + NFC scan, go straight to Olek's count task
       document.getElementById('phase-nav').style.display = 'none';
-      startGamePhase();
+      startCountPhase();
       // Move fuel bottle to the active phase so it stays visible
       const fw = document.getElementById('fuel-bottle-wrap');
-      if (fw) document.getElementById('phase-game').appendChild(fw);
+      if (fw) document.getElementById('phase-count').appendChild(fw);
     } else {
       // Normal flow: GPS nav → NFC → game
       // Step 1: Szymon GPS nav
@@ -125,16 +164,115 @@
       showHandoff('amelia', 'Jesteście blisko! Przeczytaj wskazówki i znajdź tag NFC!', () => {
         document.getElementById('nfc-content').style.display = 'block';
         document.getElementById('e3-nfc-hint').innerHTML = STAGE3_NFC_HINT;
-        if (checkNFCToken(3)) { showSuccess('amelia','Tag odblokowany! Wchodzimy na Most! 📡', startGamePhase); return; }
-        // Dev skip: double-tap title to skip NFC → go to Pit Stop Chaos
-        addDoubleTap(document.querySelector('#phase-nfc .task-title'), startGamePhase);
+        if (checkNFCToken(3)) { showSuccess('amelia','Tag odblokowany! Wchodzimy na Most! 📡', startCountPhase); return; }
+        // Dev skip: double-tap title to skip NFC → go to Olek's count task
+        addDoubleTap(document.querySelector('#phase-nfc .task-title'), startCountPhase);
       });
     }
 
+    function startCountPhase() {
+      document.getElementById('phase-nfc').style.display   = 'none';
+      document.getElementById('phase-count').style.display = 'block';
+      showHandoff('olek', 'Włącz radar i łap auta! Tapnij auto gdy pojawi się na radarze!', () => {
+        document.getElementById('count-content').style.display = 'block';
+        runRadarGame();
+      });
+    }
+
+    // RADAR GAME: sweep line rotates, cars appear randomly, tap to catch
+    function runRadarGame() {
+      const area    = document.getElementById('radar-area');
+      const sweep   = document.getElementById('radar-sweep');
+      const scoreEl = document.getElementById('radar-score');
+      const timerEl = document.getElementById('radar-timer');
+      const NEEDED = 5, TIME = 15;
+      let score = 0, timeLeft = TIME, done = false;
+      const CAR_EMOJIS = ['🏎️','🚗','🚙','🏁'];
+
+      // Animate sweep line
+      let sweepAngle = 0;
+      const sweepInterval = setInterval(() => {
+        sweepAngle = (sweepAngle + 3) % 360;
+        sweep.style.transform = `rotate(${sweepAngle}deg)`;
+      }, 30);
+
+      // Timer
+      const timerInterval = setInterval(() => {
+        if (done) return;
+        timeLeft--;
+        timerEl.textContent = timeLeft + 's';
+        if (timeLeft <= 0 && !done) {
+          done = true;
+          clearInterval(sweepInterval);
+          clearInterval(timerInterval);
+          clearInterval(spawnInterval);
+          // Time's up but still allow retry
+          timerEl.textContent = 'Czas minął! Ale złapałeś ' + score + '!';
+          if (score >= NEEDED) {
+            onRadarWin();
+          } else {
+            // Restart with fresh time
+            setTimeout(() => {
+              score = 0; timeLeft = TIME; scoreEl.textContent = '0';
+              done = false; runRadarGame();
+            }, 1500);
+          }
+        }
+      }, 1000);
+
+      // Spawn cars at random positions
+      const spawnInterval = setInterval(() => {
+        if (done) return;
+        spawnCar();
+      }, 1200 + Math.random() * 800);
+
+      function spawnCar() {
+        const car = document.createElement('div');
+        const emoji = CAR_EMOJIS[Math.floor(Math.random() * CAR_EMOJIS.length)];
+        // Random position within circle (polar coordinates)
+        const angle = Math.random() * 2 * Math.PI;
+        const radius = 20 + Math.random() * 70; // 20-90px from center
+        const cx = 110 + Math.cos(angle) * radius - 18;
+        const cy = 110 + Math.sin(angle) * radius - 18;
+        car.style.cssText = `position:absolute;left:${cx}px;top:${cy}px;font-size:2rem;
+          cursor:pointer;user-select:none;z-index:10;transition:all 0.2s;
+          animation:radar-blink 0.3s ease-in;`;
+        car.textContent = emoji;
+        car.addEventListener('click', () => {
+          if (done) return;
+          score++;
+          scoreEl.textContent = score;
+          car.style.transform = 'scale(1.5)';
+          car.style.opacity = '0';
+          GameAlert.beep(660 + score * 100, 100, 0.4);
+          GameAlert.vibrate([50]);
+          setTimeout(() => car.remove(), 200);
+          if (score >= NEEDED) {
+            done = true;
+            clearInterval(sweepInterval);
+            clearInterval(timerInterval);
+            clearInterval(spawnInterval);
+            onRadarWin();
+          }
+        });
+        area.appendChild(car);
+        // Auto-remove after 2.5s if not tapped
+        setTimeout(() => { if (car.parentNode) { car.style.opacity = '0'; setTimeout(() => car.remove(), 200); } }, 2500);
+      }
+
+      // Spawn first car immediately
+      setTimeout(spawnCar, 500);
+
+      function onRadarWin() {
+        setTimeout(() => showSuccess('olek', 'Radar działa! 5 aut złapanych! Olek jest super-zwiadowcą! 📡', startGamePhase), 500);
+      }
+    }
+
     function startGamePhase() {
-      document.getElementById('phase-nfc').style.display  = 'none';
-      document.getElementById('phase-game').style.display = 'block';
-      // Step 3: Ania reaction game
+      document.getElementById('phase-nfc').style.display   = 'none';
+      document.getElementById('phase-count').style.display = 'none';
+      document.getElementById('phase-game').style.display  = 'block';
+      // Step 4: Ania reaction game
       showHandoff('ania', 'Zapamiętaj kolejność 4 narzędzi i kliknij je w tej samej kolejności w 10 sekund!', () => {
         document.getElementById('game-content').style.display = 'block';
         runReactionGame();

@@ -34,17 +34,19 @@
       </div>
     </div>
 
-    <!-- Phase 2: Ania GPS ride -->
+    <!-- Phase 2: Relay GPS ride (Amelia 20s → Olek 20s → Ania 20s) -->
     <div id="phase-ride" class="task-body" style="display:none;">
       <div id="ride-content" style="display:none;">
-        <div class="task-step-label">💨 GPS Sprint!</div>
-        <div class="task-title">Jedź przez 60 sekund!</div>
-        <div class="task-card">
+        <div class="task-step-label">💨 GPS Sprint Sztafeta!</div>
+        <div class="task-title" id="ride-title">Jedź przez 20 sekund!</div>
+        <div class="task-card" id="ride-card" style="border-color:#FFD700;">
           <div class="task-card-icon">🚗</div>
-          <div class="task-card-text">
-            <em>Złomek: "Teraz jedźcie! Utrzymajcie ≥5 km/h przez 60 sekund!"</em>
+          <div class="task-card-text" id="ride-desc">
+            <em>Złomek: "Każdy po kolei! Utrzymajcie ≥5 km/h przez 20 sekund!"</em>
           </div>
         </div>
+        <div id="ride-player-banner" style="text-align:center;font-size:1.8rem;font-weight:900;
+          padding:12px;border-radius:12px;margin:8px 0;transition:all 0.3s;"></div>
         <div class="speed-widget">
           <div class="speed-number" id="ride-spd">0</div>
           <div class="speed-unit">km/h</div>
@@ -52,8 +54,9 @@
             <div class="speed-progress-fill" id="ride-fill"></div>
           </div>
           <div style="font-size:0.85rem;color:#aaa;margin-top:4px;">
-            <span id="ride-secs">0</span> / 60 sekund w ruchu
+            <span id="ride-secs">0</span> / 20 sekund w ruchu
           </div>
+          <div id="ride-leg-info" style="font-size:0.8rem;color:#888;margin-top:4px;"></div>
         </div>
       </div>
     </div>
@@ -153,29 +156,101 @@
       showSuccess('amelia', '3 pytania zaliczone! Amelia wie wszystko o Autach! 🏎️', () => {
         document.getElementById('phase-trivia').style.display = 'none';
         document.getElementById('phase-ride').style.display   = 'block';
-        showHandoff('ania', 'Jedź ≥5 km/h przez 60 sekund bez zatrzymania!', startRide);
+        startRelayRide();
       });
     }
 
-    // GPS RIDE
-    function startRide() {
-      document.getElementById('ride-content').style.display = 'block';
-      const spdEl=document.getElementById('ride-spd'), fillEl=document.getElementById('ride-fill'), secsEl=document.getElementById('ride-secs');
-      const TARGET=60; let movingSecs=0, prevPos=null, prevTime=null;
-      let watchId = navigator.geolocation.watchPosition(pos => {
-        const now=Date.now(), lat=pos.coords.latitude, lng=pos.coords.longitude;
-        let spd=0;
-        if (prevPos&&prevTime) { const dt=(now-prevTime)/1000, dist=haversineM(prevPos.lat,prevPos.lng,lat,lng); spd=dt>0?(dist/dt)*3.6:0; }
-        prevPos={lat,lng}; prevTime=now;
-        spdEl.textContent=Math.round(spd);
-        if (spd>=5) movingSecs=Math.min(TARGET,movingSecs+1);
-        fillEl.style.width=(movingSecs/TARGET*100)+'%'; secsEl.textContent=Math.round(movingSecs);
-        if (movingSecs>=TARGET) { navigator.geolocation.clearWatch(watchId); onRideSuccess(); }
-      }, null, {enableHighAccuracy:true,maximumAge:1000});
+    // RELAY GPS RIDE — 3 legs: Amelia 20s → Olek 20s → Ania 20s
+    const RELAY_LEGS = [
+      { player: 'amelia', name: '🟡 AMELIA', color: '#FFD700', secs: 20 },
+      { player: 'olek',   name: '🟢 OLEK',   color: '#4CAF50', secs: 20 },
+      { player: 'ania',   name: '🔵 ANIA',   color: '#2196F3', secs: 20 },
+    ];
+    let relayLeg = 0;
+
+    function startRelayRide() {
+      relayLeg = 0;
+      startRelayLeg();
+    }
+
+    function startRelayLeg() {
+      const leg = RELAY_LEGS[relayLeg];
+      const isFirst = relayLeg === 0;
+
+      // Show handoff with alert
+      if (!isFirst) GameAlert.playerChange(leg.player);
+
+      showHandoff(leg.player, `Twoja kolej! Jedź ≥5 km/h przez ${leg.secs} sekund! (zmiana ${relayLeg+1}/3)`, () => {
+        document.getElementById('ride-content').style.display = 'block';
+
+        // Update UI with current player
+        const banner = document.getElementById('ride-player-banner');
+        banner.textContent = leg.name;
+        banner.style.background = leg.color + '33';
+        banner.style.border     = '3px solid ' + leg.color;
+        banner.style.color      = leg.color;
+
+        document.getElementById('ride-title').textContent = `Zmiana ${relayLeg+1}/3 — ${leg.secs}s!`;
+        document.getElementById('ride-card').style.borderColor = leg.color;
+        document.getElementById('ride-desc').innerHTML =
+          `<em>Złomek: "${leg.name}, jazda! Utrzymaj ≥5 km/h przez ${leg.secs} sekund!"</em>`;
+        document.getElementById('ride-secs').textContent = '0';
+        document.getElementById('ride-fill').style.width = '0%';
+        document.getElementById('ride-fill').style.background = leg.color;
+        document.getElementById('ride-leg-info').textContent =
+          `Zmiana ${relayLeg+1} z 3 | ${RELAY_LEGS.map((l,i) => i===relayLeg ? '['+l.name+']' : l.name).join(' → ')}`;
+
+        runRelayGps(leg);
+      });
+    }
+
+    function runRelayGps(leg) {
+      const spdEl  = document.getElementById('ride-spd');
+      const fillEl = document.getElementById('ride-fill');
+      const secsEl = document.getElementById('ride-secs');
+      const TARGET = leg.secs;
+      let movingSecs = 0, prevPos = null, prevTime = null;
+
+      const watchId = navigator.geolocation.watchPosition(pos => {
+        const now = Date.now(), lat = pos.coords.latitude, lng = pos.coords.longitude;
+        let spd = 0;
+        if (prevPos && prevTime) {
+          const dt = (now - prevTime) / 1000;
+          const dist = haversineM(prevPos.lat, prevPos.lng, lat, lng);
+          spd = dt > 0 ? (dist / dt) * 3.6 : 0;
+        }
+        prevPos = { lat, lng }; prevTime = now;
+        spdEl.textContent = Math.round(spd);
+        if (spd >= 5) movingSecs = Math.min(TARGET, movingSecs + 1);
+        fillEl.style.width = (movingSecs / TARGET * 100) + '%';
+        secsEl.textContent = Math.round(movingSecs);
+        if (movingSecs >= TARGET) {
+          navigator.geolocation.clearWatch(watchId);
+          onRelayLegDone();
+        }
+      }, null, { enableHighAccuracy: true, maximumAge: 1000 });
+    }
+
+    function onRelayLegDone() {
+      const leg = RELAY_LEGS[relayLeg];
+      const msgs = [
+        'Amelia pędziła jak Zygzak! Zmiana 1 zaliczona! 🟡',
+        'Olek gnał jak wiatr! Zmiana 2 zaliczona! 🟢',
+        'Ania dała czadu! Sztafeta kompletna! 🔵',
+      ];
+      relayLeg++;
+      showSuccess(leg.player, msgs[relayLeg-1], () => {
+        if (relayLeg < RELAY_LEGS.length) {
+          document.getElementById('ride-content').style.display = 'none';
+          startRelayLeg();
+        } else {
+          onRideSuccess();
+        }
+      });
     }
 
     function onRideSuccess() {
-      showSuccess('ania', '60 sekund w ruchu! Sprint zaliczony! 💨', () => {
+      showSuccess('ania', 'Sztafeta ukończona! Cała drużyna dała radę! 💨', () => {
         document.getElementById('phase-ride').style.display    = 'none';
         document.getElementById('phase-confirm').style.display = 'block';
         showHandoff('szymon', 'Sprawdź czy drużyna jest gotowa do drogi!', () => {

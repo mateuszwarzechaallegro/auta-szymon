@@ -45,7 +45,36 @@
       </div>
     </div>
 
-    <!-- Phase 2: Ania — shake to charge battery -->
+    <!-- Phase 2: Olek — rhythm tap to start engine -->
+    <div id="phase-engine" class="task-body" style="display:none;">
+      <div id="engine-content" style="display:none;">
+        <div class="task-step-label">🔑 Odpal Silnik!</div>
+        <div class="task-title">Tapaj w rytm!</div>
+        <div class="task-card" style="border-color:#4CAF50;">
+          <div class="task-card-icon">🏎️</div>
+          <div class="task-card-text">
+            <em>Złomek: "Silnik nie odpala! Olek, wciskaj gaz dokładnie gdy kółko się zapali — wyczuj rytm silnika!"</em>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:16px;">
+          <div id="engine-ring" style="width:140px;height:140px;border-radius:50%;border:6px solid #333;
+            margin:0 auto;display:flex;align-items:center;justify-content:center;
+            font-size:3rem;transition:all 0.15s;cursor:pointer;user-select:none;">
+            🏎️
+          </div>
+          <div id="engine-status" style="margin-top:12px;font-size:1.1rem;color:#aaa;">Czekaj na zielone...</div>
+          <div style="margin-top:8px;">
+            <span id="engine-score" style="font-size:1.5rem;font-weight:900;color:#4CAF50;">0</span>
+            <span style="color:#888;"> / 5</span>
+          </div>
+          <div class="speed-progress-track" style="margin-top:8px;">
+            <div class="speed-progress-fill" id="engine-fill" style="background:#4CAF50;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3: Ania — shake to charge battery -->
     <div id="phase-shake" class="task-body" style="display:none;">
       <div id="shake-content" style="display:none;">
         <div class="task-step-label">⚡ Naładuj Baterię!</div>
@@ -76,7 +105,7 @@
       </div>
     </div>
 
-    <!-- Phase 3: Szymon — GPS nav to Location 0 -->
+    <!-- Phase 4: Szymon — GPS nav to Location 0 -->
     <div id="phase-nav" class="task-body" style="display:none;">
       <div id="nav-content" style="display:none;">
         <div class="task-step-label">🎯 Stare Wraki — Cel!</div>
@@ -99,7 +128,7 @@
       </div>
     </div>
 
-    <!-- Phase 4: Amelia — reads hint to E2 -->
+    <!-- Phase 5: Amelia — reads hint to E2 -->
     <div id="phase-hint" class="task-body" style="display:none;">
       <div id="hint-content" style="display:none;">
         <div class="task-step-label">🗺️ Wskazówka do Etapu 2</div>
@@ -146,12 +175,101 @@
     }
 
     function onFuelDone() {
-      document.getElementById('phase-fuel').style.display  = 'none';
-      document.getElementById('phase-shake').style.display = 'block';
+      document.getElementById('phase-fuel').style.display    = 'none';
+      document.getElementById('phase-engine').style.display  = 'block';
+      showHandoff('olek', 'Silnik nie odpala! Wciskaj gaz dokładnie gdy kółko się zapali — wyczuj rytm!', startEngine);
+    }
+
+    // ── Phase 2: Olek — rhythm tap game ─────────────────────────
+    function startEngine() {
+      document.getElementById('engine-content').style.display = 'block';
+      const ring    = document.getElementById('engine-ring');
+      const status  = document.getElementById('engine-status');
+      const scoreEl = document.getElementById('engine-score');
+      const fillEl  = document.getElementById('engine-fill');
+      const NEEDED  = 5;
+      let score = 0, active = false, canTap = true, loopTimer = null;
+
+      // Rhythm: ring pulses green every ~1.2s, stays green for 600ms
+      function pulse() {
+        if (score >= NEEDED) return;
+        active = true;
+        ring.style.borderColor = '#4CAF50';
+        ring.style.boxShadow   = '0 0 30px #4CAF50, 0 0 60px rgba(76,175,80,0.4)';
+        ring.style.transform   = 'scale(1.1)';
+        status.textContent     = 'TERAZ!';
+        status.style.color     = '#4CAF50';
+        GameAlert.beep(440, 100, 0.3);
+        // Window closes after 600ms
+        setTimeout(() => {
+          if (!active) return; // already tapped
+          active = false;
+          ring.style.borderColor = '#333';
+          ring.style.boxShadow   = 'none';
+          ring.style.transform   = 'scale(1)';
+          status.textContent     = 'Za wolno! Czekaj...';
+          status.style.color     = '#e94560';
+        }, 600);
+        // Next pulse in 1.0-1.5s (randomized)
+        loopTimer = setTimeout(pulse, 1000 + Math.random() * 500);
+      }
+
+      ring.addEventListener('click', () => {
+        if (!canTap) return;
+        if (active) {
+          // Good tap — in the green window
+          active = false;
+          score++;
+          scoreEl.textContent = score;
+          fillEl.style.width  = (score / NEEDED * 100) + '%';
+          ring.style.borderColor = '#FFD700';
+          ring.style.boxShadow   = '0 0 40px #FFD700';
+          ring.style.transform   = 'scale(1.2)';
+          status.textContent     = 'TRAFIONY!';
+          status.style.color     = '#FFD700';
+          GameAlert.beep(880, 150, 0.5);
+          GameAlert.vibrate([80]);
+          setTimeout(() => {
+            ring.style.borderColor = '#333';
+            ring.style.boxShadow   = 'none';
+            ring.style.transform   = 'scale(1)';
+            if (score < NEEDED) {
+              status.textContent = 'Czekaj na zielone...';
+              status.style.color = '#aaa';
+            }
+          }, 300);
+          if (score >= NEEDED) {
+            canTap = false;
+            clearTimeout(loopTimer);
+            setTimeout(() => showSuccess('olek', 'Silnik odpala! BRUM BRUM! Rytm idealny! 🏎️', onEngineDone), 600);
+          }
+        } else {
+          // Bad tap — not in the window
+          ring.style.borderColor = '#e94560';
+          ring.style.boxShadow   = '0 0 20px #e94560';
+          status.textContent     = 'Za wcześnie! Czekaj na zielone!';
+          status.style.color     = '#e94560';
+          GameAlert.beep(220, 100, 0.3);
+          setTimeout(() => {
+            ring.style.borderColor = '#333';
+            ring.style.boxShadow   = 'none';
+            status.textContent     = 'Czekaj na zielone...';
+            status.style.color     = '#aaa';
+          }, 400);
+        }
+      });
+
+      // Start first pulse after 1.5s delay
+      setTimeout(pulse, 1500);
+    }
+
+    function onEngineDone() {
+      document.getElementById('phase-engine').style.display = 'none';
+      document.getElementById('phase-shake').style.display  = 'block';
       showHandoff('ania', 'Bateria Radiatora jest rozładowana! Potrząśnij telefonem 10 razy żeby ją naładować!', startShake);
     }
 
-    // ── Phase 2: Ania — shake to charge battery ─────────────────
+    // ── Phase 3: Ania — shake to charge battery ─────────────────
     function startShake() {
       document.getElementById('shake-content').style.display = 'block';
       document.getElementById('shake-count').textContent = '0';
@@ -190,7 +308,7 @@
       showHandoff('szymon', 'Bateria naładowana! Jedź do Starych Wraków — ty jesteś kierowcą!', startNav);
     }
 
-    // ── Phase 3: Szymon — GPS nav to Location 0 ─────────────────
+    // ── Phase 4: Szymon — GPS nav to Location 0 ─────────────────
     function startNav() {
       document.getElementById('nav-content').style.display = 'block';
 
@@ -214,7 +332,7 @@
       addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../2/'; });
     }
 
-    // ── Phase 4: Amelia — reads E2 hint ─────────────────────────
+    // ── Phase 5: Amelia — reads E2 hint ─────────────────────────
     function showHintPhase() {
       Navigation.stop();
       GameState.markStage(1);

@@ -54,7 +54,36 @@
       <div class="task-hint">Dblclick na tytuł żeby pominąć NFC (dev).</div>
     </div>
 
-    <!-- Phase 3: Gift riddle -->
+    <!-- Phase 3: Olek — honk to finish -->
+    <div id="phase-countdown" class="task-body" style="display:none;">
+      <div id="countdown-content" style="display:none;">
+        <div class="task-step-label">📢 Trąbienie na Finisz!</div>
+        <div class="task-title">Zatrąb 5 razy!</div>
+        <div class="task-card" style="border-color:#4CAF50;">
+          <div class="task-card-icon">📢</div>
+          <div class="task-card-text">
+            <em>Złomek: "Olek, zatrąb żeby wszyscy wiedzieli że Ekipa Ratunkowa jest na mecie! Każde trąbienie musi być coraz głośniejsze!"</em>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:16px;">
+          <button id="honk-btn" style="width:160px;height:160px;border-radius:50%;border:5px solid #FFD700;
+            background:rgba(255,215,0,0.1);font-size:3.5rem;cursor:pointer;
+            transition:all 0.15s;user-select:none;display:flex;align-items:center;
+            justify-content:center;margin:0 auto;">
+            📢
+          </button>
+          <div id="honk-level" style="margin-top:12px;font-size:1.3rem;font-weight:900;color:#FFD700;">
+            0 / 5
+          </div>
+          <div class="speed-progress-track" style="margin-top:8px;">
+            <div class="speed-progress-fill" id="honk-fill" style="background:linear-gradient(90deg,#FFD700,#e94560);"></div>
+          </div>
+          <div id="honk-intensity" style="margin-top:4px;color:#888;font-size:0.85rem;">Naciśnij klakson!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4: Gift riddle -->
     <div id="phase-riddle" class="task-body" style="display:none;">
       <div id="riddle-content" style="display:none;">
         <div class="task-step-label">🎁 Zagadka Finałowa!</div>
@@ -89,9 +118,9 @@
     const arrivedViaNFC = new URLSearchParams(window.location.search).get('nfc') === '1';
 
     if (arrivedViaNFC) {
-      // Already at Hydrant — skip GPS nav + NFC scan, go straight to riddle
+      // Already at Hydrant — skip GPS nav + NFC scan, go straight to countdown
       document.getElementById('phase-nav').style.display = 'none';
-      startGiftRiddle();
+      startCountdown();
     } else {
       // Normal flow: GPS nav → NFC → gift riddle
       // Step 1: Szymon GPS nav
@@ -114,14 +143,63 @@
       document.getElementById('phase-nav').style.display = 'none';
       document.getElementById('phase-nfc').style.display = 'block';
       document.getElementById('e5-nfc-hint').innerHTML = STAGE5_NFC_HINT;
-      if (checkNFCToken(5)) { showSuccess('amelia','Tag odblokowany! Jesteśmy przy Hydrancie! 📡', startGiftRiddle); return; }
-      // Dev skip: double-tap title to skip NFC → go to gift riddle
-      addDoubleTap(document.querySelector('#phase-nfc .task-title'), startGiftRiddle);
+      if (checkNFCToken(5)) { showSuccess('amelia','Tag odblokowany! Jesteśmy przy Hydrancie! 📡', startCountdown); return; }
+      // Dev skip: double-tap title to skip NFC → go to countdown
+      addDoubleTap(document.querySelector('#phase-nfc .task-title'), startCountdown);
+    }
+
+    function startCountdown() {
+      document.getElementById('phase-nfc').style.display       = 'none';
+      document.getElementById('phase-countdown').style.display = 'block';
+      showHandoff('olek', 'Zatrąb 5 razy na klakson! Każde trąbienie głośniejsze!', () => {
+        document.getElementById('countdown-content').style.display = 'block';
+        const btn       = document.getElementById('honk-btn');
+        const levelEl   = document.getElementById('honk-level');
+        const fillEl    = document.getElementById('honk-fill');
+        const intensEl  = document.getElementById('honk-intensity');
+        const NEEDED    = 5;
+        let honks       = 0;
+        const intensityLabels = ['Naciśnij klakson!', 'Głośniej!', 'Jeszcze głośniej!', 'MEGA GŁOŚNO!', 'MAKSIMUM!!!'];
+        const bgColors  = ['rgba(255,215,0,0.1)', 'rgba(255,215,0,0.2)', 'rgba(255,215,0,0.35)', 'rgba(255,150,0,0.4)', 'rgba(233,69,96,0.5)'];
+
+        btn.addEventListener('click', () => {
+          if (honks >= NEEDED) return;
+          honks++;
+          // Sound + vibrate — increasing intensity
+          GameAlert.honk(honks);
+          GameAlert.vibrate([50 + honks * 40]);
+          // Visual feedback — button grows + color intensifies
+          const scale = 1 + honks * 0.08;
+          btn.style.transform  = `scale(${scale})`;
+          btn.style.background = bgColors[honks-1] || bgColors[4];
+          btn.style.borderColor = honks >= 4 ? '#e94560' : '#FFD700';
+          // Flash screen with intensity
+          GameAlert.flash(honks >= 4 ? '#FFD700' : '#4CAF50', 200 + honks * 60, 1);
+          setTimeout(() => { btn.style.transform = `scale(${1 + (honks-1) * 0.05})`; }, 200);
+          // Update UI
+          levelEl.textContent  = honks + ' / ' + NEEDED;
+          fillEl.style.width   = (honks / NEEDED * 100) + '%';
+          intensEl.textContent = intensityLabels[Math.min(honks, intensityLabels.length) - 1] || '';
+          if (honks >= NEEDED) {
+            // Final mega-honk: big flash + confetti-like effect
+            setTimeout(() => {
+              GameAlert.flash('#FFD700', 600, 3);
+              GameAlert.vibrate([100, 50, 100, 50, 300]);
+              GameAlert.beep(440, 100, 0.7);
+              setTimeout(() => GameAlert.beep(660, 100, 0.7), 120);
+              setTimeout(() => GameAlert.beep(880, 100, 0.7), 240);
+              setTimeout(() => GameAlert.beep(1100, 300, 0.7), 360);
+              showSuccess('olek', 'BEEEEP! Cała okolica słyszała klakson! Na finisz! 📢🏁', startGiftRiddle);
+            }, 400);
+          }
+        });
+      });
     }
 
     function startGiftRiddle() {
-      document.getElementById('phase-nfc').style.display    = 'none';
-      document.getElementById('phase-riddle').style.display = 'block';
+      document.getElementById('phase-nfc').style.display       = 'none';
+      document.getElementById('phase-countdown').style.display = 'none';
+      document.getElementById('phase-riddle').style.display    = 'block';
       showHandoff('szymon', 'Rozwiąż zagadkę — gdzie jest prezent?', () => {
         document.getElementById('riddle-content').style.display = 'block';
         document.getElementById('gift-riddle-text').innerHTML = GIFT_RIDDLE;

@@ -240,6 +240,7 @@ const PLAYER = {
   szymon: { color: '#e94560', title: 'Nawigatorze!', name: '\u{1F534} SZYMON', ready: 'gotowy' },
   amelia: { color: '#FFD700', title: 'Mechaniku!',   name: '\u{1F7E1} AMELIA', ready: 'gotowa' },
   ania:   { color: '#2196F3', title: 'Pilotko!',     name: '\u{1F535} ANIA',   ready: 'gotowa' },
+  olek:   { color: '#4CAF50', title: 'Zwiadowco!',   name: '\u{1F7E2} OLEK',   ready: 'gotowy' },
 };
 
 function showHandoff(player, task, onConfirm) {
@@ -262,8 +263,8 @@ function showHandoff(player, task, onConfirm) {
 // SUCCESS OVERLAY — shown after each child completes a task
 // ============================================================
 function showSuccess(player, message, onContinue) {
-  const colors = { szymon: '#e94560', amelia: '#FFD700', ania: '#4fc3f7' };
-  const names  = { szymon: '🔴 Szymon', amelia: '🟡 Amelia', ania: '🔵 Ania' };
+  const colors = { szymon: '#e94560', amelia: '#FFD700', ania: '#4fc3f7', olek: '#4CAF50' };
+  const names  = { szymon: '🔴 Szymon', amelia: '🟡 Amelia', ania: '🔵 Ania', olek: '🟢 Olek' };
   const col = colors[player] || '#fff';
   const ov = document.createElement('div');
   ov.className = 'success-overlay';
@@ -278,6 +279,102 @@ function showSuccess(player, message, onContinue) {
   requestAnimationFrame(() => ov.classList.add('active'));
   ov.querySelector('.success-btn').addEventListener('click', () => { ov.remove(); if (onContinue) onContinue(); });
 }
+
+// ============================================================
+// GAME ALERTS — beep, flash, vibrate for player changes & emergencies
+// ============================================================
+const GameAlert = (() => {
+  let _audioCtx = null;
+  function _ctx() {
+    if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return _audioCtx;
+  }
+
+  // Play a simple tone
+  function beep(freq = 880, durationMs = 200, vol = 0.5) {
+    try {
+      const ctx = _ctx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = freq;
+      gain.gain.value = vol;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + durationMs / 1000);
+      osc.stop(ctx.currentTime + durationMs / 1000 + 0.05);
+    } catch {}
+  }
+
+  // Play honk sound (for Stage 5)
+  function honk(intensity = 1) {
+    try {
+      const ctx = _ctx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.value = 200 + intensity * 80;
+      gain.gain.value = Math.min(1, 0.3 + intensity * 0.15);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      const dur = 0.3 + intensity * 0.1;
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+      osc.stop(ctx.currentTime + dur + 0.05);
+    } catch {}
+  }
+
+  // Vibrate device
+  function vibrate(pattern = [200]) {
+    try { if (navigator.vibrate) navigator.vibrate(pattern); } catch {}
+  }
+
+  // Full-screen color flash
+  function flash(color = '#e94560', durationMs = 600, pulses = 1) {
+    const el = document.createElement('div');
+    el.className = 'game-alert-flash';
+    el.style.cssText = `position:fixed;inset:0;z-index:99999;pointer-events:none;
+      background:${color};opacity:0;transition:opacity 0.1s;`;
+    document.body.appendChild(el);
+    let count = 0;
+    function doPulse() {
+      el.style.opacity = '0.7';
+      setTimeout(() => {
+        el.style.opacity = '0';
+        count++;
+        if (count < pulses) setTimeout(doPulse, 150);
+        else setTimeout(() => el.remove(), 200);
+      }, durationMs / pulses);
+    }
+    requestAnimationFrame(doPulse);
+  }
+
+  // Combined alert for player rotation during ride
+  function playerChange(playerKey) {
+    const p = PLAYER[playerKey];
+    if (!p) return;
+    vibrate([100, 50, 100, 50, 200]);
+    beep(660, 150, 0.6);
+    setTimeout(() => beep(880, 150, 0.6), 180);
+    setTimeout(() => beep(1100, 300, 0.6), 380);
+    flash(p.color, 400, 3);
+  }
+
+  // Alarm for battery death / low energy — aggressive red flash + siren
+  function batteryAlarm() {
+    vibrate([300, 100, 300, 100, 300, 100, 600]);
+    flash('#e94560', 1200, 4);
+    // Siren: alternating tones
+    beep(800, 200, 0.7);
+    setTimeout(() => beep(600, 200, 0.7), 250);
+    setTimeout(() => beep(800, 200, 0.7), 500);
+    setTimeout(() => beep(600, 200, 0.7), 750);
+    setTimeout(() => beep(800, 300, 0.7), 1000);
+  }
+
+  return { beep, honk, vibrate, flash, playerChange, batteryAlarm };
+})();
 
 // ============================================================
 // LOW ENERGY MODAL  (bateria < 5%, benzyna > 0%)
@@ -308,6 +405,7 @@ function showLowEnergyModal() {
   if (!m) return;
   _lemActive = true;
   m.classList.add('active');
+  GameAlert.batteryAlarm();
   let shakes = 0, lastT = 0;
   function onMotion(e) {
     if (Resources.getBateria() >= 15) {
@@ -362,6 +460,7 @@ function showDeadModal() {
   if (_deadActive) return;
   const m = document.getElementById('dead-modal'); if (!m) return;
   _deadActive = true; m.classList.add('active');
+  GameAlert.batteryAlarm();
 
   // Rescue code input
   const codeInput  = document.getElementById('dead-code-input');

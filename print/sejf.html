@@ -209,7 +209,8 @@
   <strong>Role:</strong>
   <span class="who szymon">Szymon 🔴</span> Nawigator — prowadzi GPS &nbsp;
   <span class="who amelia">Amelia 🟡</span> Mechanik — wpisuje kody &nbsp;
-  <span class="who ania">Ania 🔵</span> Pilot — potrząsa telefonem
+  <span class="who ania">Ania 🔵</span> Pilot — potrząsa telefonem &nbsp;
+  <span class="who wszyscy" style="background:#c8f7c5;color:#1b5e20;">Olek 🟢</span> Zwiadowca — proste zadania
 </div>
 
 <!-- ─── ETAP 0 ─── -->
@@ -234,6 +235,13 @@
     <span class="who amelia">Amelia</span>
     Wpisuje kod butelki paliwa <span class="codeval">ZK9QBX</span> → +30% benzyna.<br>
     Zmienna: <span class="varname">FUEL_BOTTLE_CODES[1]</span>
+  </div>
+
+  <div class="step">
+    <span class="who wszyscy" style="background:#c8f7c5;color:#1b5e20;">Olek</span>
+    <strong>Odpal silnik — Gra rytmiczna!</strong> — pulsujący pierścień na ekranie. Olek tapuje w momencie gdy pierścień jest <strong>zielony</strong> (okno 600ms, interwał losowy 1.0–1.5s).
+    Potrzeba <strong>5 trafionych tapnięć</strong>. Za wczesne/za późne tapnięcie → czerwony błysk + wibracja.
+    Ekran pokazuje postęp (5 kółek do zapełnienia).
   </div>
 
   <div class="step">
@@ -289,8 +297,22 @@
   </div>
 
   <div class="step">
-    <span class="who ania">Ania</span>
-    Jedzie <strong>≥5 km/h przez 60 sekund</strong> bez zatrzymania. Pasek postępu na ekranie.
+    <span class="who wszyscy" style="background:#c8f7c5;color:#1b5e20;">Olek</span>
+    → <strong>Faza jazdy została usunięta, patrz E2.</strong>
+  </div>
+
+  <div class="step">
+    <span class="who amelia">Amelia</span> → <span class="who wszyscy" style="background:#c8f7c5;color:#1b5e20;">Olek</span> → <span class="who ania">Ania</span>
+    <strong>Jazda sztafetowa 3×20 sekund!</strong><br>
+    Zamiast jednego 60-sekundowego przejazdu, troje dzieci prowadzi po kolei:
+    <table style="margin-top:2mm;">
+      <tr><th>Kolejka</th><th>Kto</th><th>Czas</th><th>Prędkość</th></tr>
+      <tr><td>1</td><td><span class="who amelia">Amelia</span></td><td>20s</td><td>≥5 km/h</td></tr>
+      <tr><td>2</td><td><span class="who wszyscy" style="background:#c8f7c5;color:#1b5e20;">Olek</span></td><td>20s</td><td>≥5 km/h</td></tr>
+      <tr><td>3</td><td><span class="who ania">Ania</span></td><td>20s</td><td>≥5 km/h</td></tr>
+    </table>
+    Przy zmianie gracza: <strong>flash ekranu + wibracja + sygnał dźwiękowy</strong> (GameAlert.playerChange).<br>
+    Pasek postępu na ekranie. Timer pauzuje gdy prędkość spadnie poniżej progu.
   </div>
 
   <div class="step">
@@ -332,6 +354,14 @@
     <span class="who amelia">Amelia</span>
     Po dotarciu ekran pokazuje <strong>"Jesteście blisko!"</strong> + wskazówkę <span class="varname">STAGE3_NFC_HINT</span> (wierszyk o moście, odblasku i butelce paliwa).<br>
     Amelia czyta wskazówki drużynie, szukają breloczka i butelki, a potem dotykają tagiem NFC telefonu.
+  </div>
+
+  <div class="step">
+    <span class="who wszyscy" style="background:#c8f7c5;color:#1b5e20;">Olek</span>
+    <strong>Radar samochodowy!</strong> — ekran pokazuje obracający się radar (linia skanująca 360°).
+    Na radarze pojawiają się samochody (🏎️) w losowych miejscach. Olek tapuje je żeby je "namierzyć".
+    Potrzeba <strong>5 trafionych</strong> w <strong>15 sekund</strong>. Auta znikają po 2.5s jeśli nie tapnięte.
+    Timeout → gra restartuje się automatycznie.
   </div>
 
   <div class="step">
@@ -381,31 +411,37 @@
   </div>
 
   <div class="step">
-    <span class="who wszyscy">Sekwencja prędkości</span> — 4 fazy po kolei:
+    <span class="who wszyscy">Sekwencja prędkości</span> — 5 faz po kolei:
     <table style="margin-top:2mm;">
       <tr><th>Faza</th><th>Kto</th><th>Zadanie</th><th>Warunek</th></tr>
       <tr>
         <td>1</td>
-        <td><span class="who ania">Ania</span></td>
-        <td>Jedź 5–10 km/h</td>
-        <td>Trzymaj <strong>10 sek</strong> (timer pauzuje poza strefą)</td>
+        <td><span class="who wszyscy" style="background:#c8f7c5;color:#1b5e20;">Olek</span></td>
+        <td>Jedź 5–8 km/h</td>
+        <td>Trzymaj <strong>5 sek</strong> (timer pauzuje poza strefą)</td>
       </tr>
       <tr>
         <td>2</td>
-        <td><span class="who szymon">Szymon</span></td>
-        <td>Jedź 5–10 km/h</td>
-        <td>Trzymaj <strong>25 sek</strong></td>
+        <td><span class="who ania">Ania</span></td>
+        <td>Jedź 5–8 km/h</td>
+        <td>Trzymaj <strong>10 sek</strong> (timer pauzuje poza strefą)</td>
       </tr>
       <tr>
         <td>3</td>
-        <td><span class="who amelia">Amelia</span></td>
-        <td>Jedź ≥15 km/h</td>
-        <td>Trzymaj <strong>3 sek</strong> (reset gdy zwolni)</td>
+        <td><span class="who szymon">Szymon</span></td>
+        <td>Jedź 5–8 km/h</td>
+        <td>Trzymaj <strong>25 sek</strong></td>
       </tr>
       <tr>
         <td>4</td>
+        <td><span class="who amelia">Amelia</span></td>
+        <td>Jedź 9–12 km/h</td>
+        <td>Trzymaj <strong>3 sek</strong></td>
+      </tr>
+      <tr>
+        <td>5</td>
         <td><span class="who szymon">Szymon</span></td>
-        <td>Jedź ≥15 km/h</td>
+        <td>Jedź 9–12 km/h</td>
         <td>Trzymaj <strong>6 sek</strong></td>
       </tr>
     </table>
@@ -436,6 +472,17 @@
   </div>
 
   <div class="step">
+    <span class="who wszyscy" style="background:#c8f7c5;color:#1b5e20;">Olek</span>
+    <strong>Trąbienie na finisz!</strong> — duży okrągły przycisk-klakson na ekranie.
+    Olek naciska go <strong>5 razy</strong> — każde trąbienie jest coraz głośniejsze i intensywniejsze:
+    <ul style="padding-left:6mm;margin-top:1mm;line-height:1.6;">
+      <li>Przycisk rośnie i zmienia kolor (żółty → pomarańczowy → czerwony)</li>
+      <li>Flash ekranu + wibracja + dźwięk klaksonu narastający</li>
+      <li>Po 5. trąbieniu: mega-flash + fanfary + wibracja triumfalna</li>
+    </ul>
+  </div>
+
+  <div class="step">
     <span class="who szymon">Szymon</span>
     <strong>Zagadka finałowa</strong> — wskazuje gdzie jest prezent.<br>
     Zmienna: <span class="varname">GIFT_RIDDLE</span>
@@ -463,7 +510,11 @@
   <strong>⛽ Benzyna</strong> — zużywa się tylko przy potrząsaniu (−1%/shake). Uzupełniana kodami z butelek (+30%).
   Jeśli 0% i bateria 0% → modal "BRAK PALIWA" z polem na kod ratunkowy.<br><br>
   <strong>⚡ Bateria</strong> — drenuje się podczas jazdy (~8%/min przy 12 km/h). Uzupełniana potrząsaniem (+2%/shake).
-  Jeśli <5% i jest benzyna → modal "LowEnergy" → Ania potrząsa telefonem.
+  Jeśli <5% i jest benzyna → modal "LowEnergy" → Ania potrząsa telefonem.<br><br>
+  <strong>🔊 System alertów (GameAlert)</strong> — automatyczne powiadomienia wizualno-dźwiękowe:<br>
+  &nbsp;&nbsp;• <strong>Zmiana gracza:</strong> flash ekranu (kolor gracza) + potrójny beep + wibracja<br>
+  &nbsp;&nbsp;• <strong>Bateria ≈0%:</strong> czerwony flash (4 pulsy) + syrena (800/600 Hz) + długa wibracja<br>
+  &nbsp;&nbsp;• <strong>Benzyna = 0%:</strong> czerwony flash + syrena + wibracja — dzieciom nie ucieknie!
 </div>
 
 <!-- ─── Kod ratunkowy ─── -->
