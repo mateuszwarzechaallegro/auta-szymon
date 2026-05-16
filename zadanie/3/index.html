@@ -95,8 +95,24 @@
     initFuelBottle(3);
     startEnergyMonitoring();
 
-    // Step 1: Szymon GPS nav
-    showHandoff('szymon', 'Nawiguj GPS do Mostu — jesteś kierowcą!', startNav);
+    // Organizer skip: triple-tap on ETAP badge → next stage (always available)
+    addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../4/'; });
+
+    // Detect if arrived via NFC tag scan (kids are already at the location)
+    const arrivedViaNFC = new URLSearchParams(window.location.search).get('nfc') === '1';
+
+    if (arrivedViaNFC) {
+      // Already at Most — skip GPS nav + NFC scan, go straight to game
+      document.getElementById('phase-nav').style.display = 'none';
+      startGamePhase();
+      // Move fuel bottle to the active phase so it stays visible
+      const fw = document.getElementById('fuel-bottle-wrap');
+      if (fw) document.getElementById('phase-game').appendChild(fw);
+    } else {
+      // Normal flow: GPS nav → NFC → game
+      // Step 1: Szymon GPS nav
+      showHandoff('szymon', 'Nawiguj GPS do Mostu — jesteś kierowcą!', startNav);
+    }
 
     function startNav() {
       document.getElementById('nav-content').style.display = 'block';
@@ -112,8 +128,6 @@
         }
       );
       addDoubleTap(document.getElementById('nav-status'), showNFCPhase);
-      // Organizer skip: triple-tap/click on ETAP badge → next stage
-      addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../4/'; });
     }
 
     function showNFCPhase() {

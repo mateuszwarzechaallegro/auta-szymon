@@ -143,8 +143,24 @@
     initFuelBottle(4);
     startEnergyMonitoring();
 
-    // Step 1: Szymon GPS nav
-    showHandoff('szymon', 'Nawiguj GPS na Plac Zabaw — multi-punkt trasa!', startNav);
+    // Organizer skip: triple-tap on ETAP badge → next stage (always available)
+    addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../5/'; });
+
+    // Detect if arrived via NFC tag scan (kids are already at the location)
+    const arrivedViaNFC = new URLSearchParams(window.location.search).get('nfc') === '1';
+
+    if (arrivedViaNFC) {
+      // Already at Plac Zabaw — skip GPS nav + NFC scan, go straight to Memory
+      document.getElementById('phase-nav').style.display = 'none';
+      startMemory();
+      // Move fuel bottle to the active phase so it stays visible
+      const fw = document.getElementById('fuel-bottle-wrap');
+      if (fw) document.getElementById('phase-memory').appendChild(fw);
+    } else {
+      // Normal flow: GPS nav → NFC → Memory → Speed
+      // Step 1: Szymon GPS nav
+      showHandoff('szymon', 'Nawiguj GPS na Plac Zabaw — multi-punkt trasa!', startNav);
+    }
 
     function startNav() {
       document.getElementById('nav-content').style.display = 'block';
@@ -155,8 +171,6 @@
         (i,fin,nh) => { if(!fin&&nh) document.getElementById('nav-hint').textContent='✓ '+nh; }
       );
       addDoubleTap(document.getElementById('nav-status'), showNFCPhase);
-      // Organizer skip: triple-tap/click on ETAP badge → next stage
-      addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../5/'; });
     }
 
     function showNFCPhase() {

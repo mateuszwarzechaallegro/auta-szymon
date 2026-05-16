@@ -82,8 +82,21 @@
   <script>
     startEnergyMonitoring();
 
-    // Step 1: Szymon GPS nav
-    showHandoff('szymon', 'Nawiguj GPS do Hydrantu — ostatni przystanek!', startNav);
+    // Organizer skip: triple-tap on ETAP badge → final (always available)
+    addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../../final/'; });
+
+    // Detect if arrived via NFC tag scan (kids are already at the location)
+    const arrivedViaNFC = new URLSearchParams(window.location.search).get('nfc') === '1';
+
+    if (arrivedViaNFC) {
+      // Already at Hydrant — skip GPS nav + NFC scan, go straight to riddle
+      document.getElementById('phase-nav').style.display = 'none';
+      startGiftRiddle();
+    } else {
+      // Normal flow: GPS nav → NFC → gift riddle
+      // Step 1: Szymon GPS nav
+      showHandoff('szymon', 'Nawiguj GPS do Hydrantu — ostatni przystanek!', startNav);
+    }
 
     function startNav() {
       document.getElementById('nav-content').style.display = 'block';
@@ -94,7 +107,6 @@
         (i,fin,nh) => { if(!fin&&nh) document.getElementById('nav-hint').textContent='✓ '+nh; }
       );
       addDoubleTap(document.getElementById('nav-status'), showNFCPhase);
-      addTripleClick(document.querySelector('.task-badge'), () => { window.location.href = '../../final/'; });
     }
 
     function showNFCPhase() {
