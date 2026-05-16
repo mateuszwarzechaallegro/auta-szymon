@@ -74,19 +74,6 @@
       </div>
     </div>
 
-    <!-- Phase 4: Success + E4 hint -->
-    <div id="phase-success" class="task-body" style="display:none;">
-      <div class="task-card" style="border-color:#4CAF50;">
-        <div class="task-card-icon">🎉</div>
-        <div class="task-card-text">
-          <strong>Pit Stop rozwiązany!</strong><br><br>
-          <em>Złomek: "Następny tag NFC jest gdzieś na Placu Zabaw!"</em><br><br>
-          <span style="color:#FFD700;font-weight:700;" id="e4-hint-text">PLACEHOLDER</span>
-        </div>
-      </div>
-      <a class="btn-primary" href="../4/">⚡ JEDŹ NA PLAC ZABAW →</a>
-    </div>
-
     <div class="flag-strip" style="margin-top:auto;"></div>
   </div>
 
@@ -157,13 +144,17 @@
     // REACTION GAME: 4 icons, sequence length 4, 10s time limit
     const ICONS = ['🔧','🔩','🪛','⚙️'];
     const SEQ_LEN = 4, TIME_LIMIT = 10000;
+    let gameActive = false;   // prevents old timer loops from interfering
 
     function runReactionGame() {
+      gameActive = false;     // kill any old tick loop
       const grid    = document.getElementById('reaction-grid');
       const timerEl = document.getElementById('game-timer');
       const statusEl = document.getElementById('game-status');
       const retryEl  = document.getElementById('game-retry');
       retryEl.style.display = 'none';
+      timerEl.textContent = Math.ceil(TIME_LIMIT/1000) + 's';
+      timerEl.className = 'task-countdown ok';
       grid.innerHTML = '';
       const btns = ICONS.map((icon, i) => {
         const b = document.createElement('button');
@@ -172,7 +163,12 @@
         b.textContent = icon; b.dataset.idx = i;
         grid.appendChild(b); return b;
       });
-      const seq = Array.from({length: SEQ_LEN}, () => Math.floor(Math.random() * ICONS.length));
+      // Fisher-Yates shuffle — each icon exactly once, no duplicates
+      const seq = ICONS.map((_,i) => i);
+      for (let i = seq.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [seq[i], seq[j]] = [seq[j], seq[i]];
+      }
       let step = 0;
       statusEl.textContent = 'Zapamiętaj kolejność...';
       let showIdx = 0;
@@ -186,8 +182,10 @@
       setTimeout(showNext, 500);
 
       function startInput() {
+        gameActive = true;
         let deadline = Date.now() + TIME_LIMIT;
         function tick() {
+          if (!gameActive) return;   // old loop — stop
           const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
           timerEl.textContent = left + 's';
           timerEl.className   = 'task-countdown ' + (left <= 3 ? 'warning' : 'ok');
@@ -195,14 +193,17 @@
         }
         tick();
         btns.forEach(b => b.addEventListener('click', () => {
+          if (!gameActive) return;
           if (Number(b.dataset.idx) === seq[step]) {
             b.style.background = 'rgba(76,175,80,0.4)'; step++;
             if (step >= seq.length) onWin();
           } else { onFail(); }
         }, { once: true }));
       }
-      function onWin()  { showSuccess('ania', 'Wszystkie narzędzia w kolejności! Pit Stop rozwiązany! 🔧', onGameSuccess); }
+      function onWin()  { gameActive = false; showSuccess('ania', 'Wszystkie narzędzia w kolejności! Pit Stop rozwiązany! 🔧', onGameSuccess); }
       function onFail() {
+        if (!gameActive) return;   // prevent double-fire from stale tick
+        gameActive = false;
         statusEl.textContent = '❌ Błąd! Spróbuj ponownie!'; retryEl.style.display = 'block';
         retryEl.onclick = () => { retryEl.style.display='none'; runReactionGame(); };
       }
@@ -210,9 +211,7 @@
 
     function onGameSuccess() {
       GameState.markStage(3);
-      document.getElementById('phase-game').style.display    = 'none';
-      document.getElementById('phase-success').style.display = 'block';
-      document.getElementById('e4-hint-text').innerHTML = STAGE4_NFC_HINT;
+      window.location.href = '../4/';
     }
   </script>
 </body>

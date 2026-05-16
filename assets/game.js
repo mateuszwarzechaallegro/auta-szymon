@@ -16,7 +16,7 @@ const STAGE2_NFC_HINT    = 'Wraki dwa na podwórku stoją,<br>zardzewiałe, niko
 const STAGE3_NFC_HINT    = 'Na moście nad rzeczką droga się toczy,<br>barierki po bokach cieszą wam oczy.<br>Odblaski czerwone — policzcie do dwóch!<br>Za drugim breloczek — to nie żaden duch!<br><br>A w trawie przy moście butelka się chowa —<br>paliwo dla auta, tankujcie od nowa!';
 const STAGE4_NFC_HINT    = 'Obok plac zabaw, zjeżdżalnia i piach,<br>szafka z prądem stoi — nie wpadajcie w strach!<br>Nie dotykajcie jej, niebezpieczna bywa —<br>za nią breloczek cierpliwie wzywa!<br><br>A w trawie obok butelka się kryje —<br>paliwo dla auta, niech silnikożyje!';
 const STAGE5_NFC_HINT    = 'Na skrzyżowaniu hydrant stoi śmiało,<br>strażakom wody nigdy nie brakowało.<br>Czerwony jak wóz, pilnuje tu drogi —<br>breloczek przy nim leży, tuż koło jego nogi!';
-const GIFT_RIDDLE        = 'Brawo, bohaterowie, koniec przygody!<br>Przeszliście wszystkie próby bez żadnej szkody!<br>Złomek jest dumny, Zygzak woła „hura!" —<br>Szymon zasłużył na prezent, to nie bzdura!<br><br>W ogrodzie czeka coś, co znacie doskonale,<br>okrągłe i sprężyste — skaczecie na nim stale!<br>Podrzuca was do nieba, aż głowa się kręci —<br>tam prezent na Szymona — najdzielniejsze z dzieci!';
+const GIFT_RIDDLE        = 'Brawo, bohaterowie, koniec przygody!<br>Przeszliście wszystkie próby bez żadnej szkody!<br>Złomek jest dumny, Zygzak woła „hura!" —<br>Szymon zasłużył na prezent, to nie bzdura!<br><br>W ogrodzie czeka coś, co znacie doskonale,<br>okrągłe i sprężyste — skaczecie na nim stale!<br>Podrzuca was do nieba, aż głowa się kręci —<br>tam prezent na Szymona czeka — więc pospieszcie się dzieci!';
 
 // E1: tutorial route
 const STAGE1_WAYPOINTS = [

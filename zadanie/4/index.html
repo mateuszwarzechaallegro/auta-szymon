@@ -82,19 +82,19 @@
             <div style="position:relative;margin:8px 0;">
               <div class="speed-zone-wrap" id="sweet-wrap">
                 <div class="speed-zone-fill" id="sweet-fill"></div>
-                <!-- Green zone: 5-10 on 0-20 scale = 25%-50% -->
-                <div class="speed-zone-green" style="left:25%;width:25%;"></div>
+                <!-- Green zone: 5-8 on 0-15 scale = 33%-53% -->
+                <div class="speed-zone-green" style="left:33.3%;width:20%;"></div>
                 <!-- Markers -->
-                <div class="speed-zone-marker" style="left:25%;"></div>
-                <div class="speed-zone-marker" style="left:50%;"></div>
+                <div class="speed-zone-marker" style="left:33.3%;"></div>
+                <div class="speed-zone-marker" style="left:53.3%;"></div>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#888;">
+              <div id="sweet-labels" style="display:flex;justify-content:space-between;font-size:0.9rem;color:#888;margin-top:4px;">
                 <span>0</span><span style="color:#4CAF50;">5</span>
-                <span style="color:#4CAF50;">10</span><span>20 km/h</span>
+                <span style="color:#4CAF50;">8</span><span>15 km/h</span>
               </div>
             </div>
             <div class="task-countdown ok" id="sweet-hold">0.0 s</div>
-            <div style="font-size:0.85rem;color:#aaa;" id="sweet-status">Jedź 5–10 km/h!</div>
+            <div style="font-size:0.85rem;color:#aaa;" id="sweet-status">Jedź 5–8 km/h!</div>
           </div>
         </div>
         <!-- Burst gauge (shown for phases 3-4) -->
@@ -120,19 +120,6 @@
         </div>
         <button id="spd-retry" class="btn-primary" style="display:none;margin-top:12px;">🔄 Spróbuj ponownie</button>
       </div>
-    </div>
-
-    <!-- Success + E5 hint -->
-    <div id="phase-success" class="task-body" style="display:none;">
-      <div class="task-card" style="border-color:#4CAF50;">
-        <div class="task-card-icon">🎉</div>
-        <div class="task-card-text">
-          <strong>Sekwencja prędkości zaliczona!</strong><br><br>
-          <em>Złomek: "Ostatni przystanek — Hydrant! Tag NFC czeka!"</em><br><br>
-          <span style="color:#FFD700;font-weight:700;" id="e5-hint-text">PLACEHOLDER</span>
-        </div>
-      </div>
-      <a class="btn-primary" href="../5/">⚡ JEDŹ DO HYDRANTU →</a>
     </div>
 
     <div class="flag-strip" style="margin-top:auto;"></div>
@@ -238,10 +225,10 @@
 
     // Step 3: 4-phase speed sequence
     const SPEED_PHASES = [
-      { player:'ania',   type:'sweet', target:10, hold:10,  label:'Tester: 5–10 km/h',    desc:'Jedź 5–10 km/h przez 10 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
-      { player:'szymon', type:'sweet', target:10, hold:25,  label:'Kierowca: 5–10 km/h',   desc:'Jedź 5–10 km/h przez 25 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
-      { player:'amelia', type:'burst', target:15, hold:3,   label:'Mechanik: ≥15 km/h',    desc:'Osiągnij ≥15 km/h i trzymaj przez 3 sekundy! (timer się resetuje gdy zwolnisz)' },
-      { player:'szymon', type:'burst', target:15, hold:6,   label:'Finał: ≥15 km/h',       desc:'Osiągnij ≥15 km/h i trzymaj przez 6 sekund! (timer się resetuje gdy zwolnisz)' },
+      { player:'ania',   type:'sweet', min:5, max:8,  hold:10, label:'Tester: 5–8 km/h',    desc:'Jedź 5–8 km/h przez 10 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
+      { player:'szymon', type:'sweet', min:5, max:8,  hold:25, label:'Kierowca: 5–8 km/h',   desc:'Jedź 5–8 km/h przez 25 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
+      { player:'amelia', type:'sweet', min:9, max:12, hold:3,  label:'Mechanik: 9–12 km/h',  desc:'Jedź 9–12 km/h przez 3 sekundy! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
+      { player:'szymon', type:'sweet', min:9, max:12, hold:6,  label:'Finał: 9–12 km/h',     desc:'Jedź 9–12 km/h przez 6 sekund! (timer zatrzymuje się gdy wyjdziesz ze strefy)' },
     ];
     let phaseIdx = 0;
 
@@ -254,13 +241,12 @@
     function runSpeedPhase() {
       const ph = SPEED_PHASES[phaseIdx];
       document.getElementById('spd-label').textContent = `Faza ${phaseIdx+1}/4 — ${ph.label}`;
-      document.getElementById('spd-title').textContent = ph.type === 'sweet' ? 'Strefa Prędkości!' : 'PEŁNA PARA!';
+      document.getElementById('spd-title').textContent = 'Strefa Prędkości!';
       document.getElementById('spd-desc').textContent  = ph.desc;
       document.getElementById('spd-retry').style.display = 'none';
       showHandoff(ph.player, ph.desc, () => {
         document.getElementById('speed-content').style.display = 'block';
-        if (ph.type === 'sweet') runSweetSpot(ph);
-        else                     runBurst(ph);
+        runSweetSpot(ph);
       });
     }
 
@@ -270,7 +256,14 @@
       const valEl=document.getElementById('spd-val'), fillEl=document.getElementById('sweet-fill');
       const holdEl=document.getElementById('sweet-hold'), statusEl=document.getElementById('sweet-status');
       const retryEl=document.getElementById('spd-retry');
-      const MAX_DISPLAY=20, MIN_SPD=5, MAX_SPD=10;
+      const MAX_DISPLAY=15, MIN_SPD=ph.min, MAX_SPD=ph.max;
+      // Update gauge green zone + markers + labels dynamically
+      const pctMin = (MIN_SPD/MAX_DISPLAY*100), pctMax = (MAX_SPD/MAX_DISPLAY*100);
+      document.querySelector('.speed-zone-green').style.cssText = 'left:'+pctMin+'%;width:'+(pctMax-pctMin)+'%';
+      const markers = document.querySelectorAll('.speed-zone-marker');
+      markers[0].style.left = pctMin+'%'; markers[1].style.left = pctMax+'%';
+      document.getElementById('sweet-labels').innerHTML = '<span>0</span><span style="color:#4CAF50;">'+MIN_SPD+'</span><span style="color:#4CAF50;">'+MAX_SPD+'</span><span>'+MAX_DISPLAY+' km/h</span>';
+      statusEl.textContent = 'Jedź '+MIN_SPD+'–'+MAX_SPD+' km/h!';
       let holdSecs=0, done=false, prevPos=null, prevTime=null;
       const watchId=navigator.geolocation.watchPosition(pos=>{
         if(done)return;
@@ -337,8 +330,8 @@
       const msgs = [
         'Idealna prędkość! Faza 1 zaliczona! 🚗',
         'Mistrz kierownicy! Faza 2 zaliczona! 🏎️',
-        'Pełna para! Faza 3 zaliczona! 🔥',
-        'KA-CZAOW! Faza 4 zaliczona! Symbol 🏁 zdobyty!',
+        'Szybciej! Faza 3 zaliczona! 🔥',
+        'Finał zaliczony! Symbol 🏁 zdobyty!',
       ];
       const msg = msgs[phaseIdx] || '🎉';
       phaseIdx++;
@@ -350,9 +343,7 @@
           runSpeedPhase();
         } else {
           GameState.markStage(4);
-          document.getElementById('phase-speed').style.display   = 'none';
-          document.getElementById('phase-success').style.display = 'block';
-          document.getElementById('e5-hint-text').innerHTML = STAGE5_NFC_HINT;
+          window.location.href = '../5/';
         }
       });
     }

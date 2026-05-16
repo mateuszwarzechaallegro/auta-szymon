@@ -75,18 +75,6 @@
       </div>
     </div>
 
-    <!-- Success -->
-    <div id="phase-success" class="task-body" style="display:none;">
-      <div class="task-card" style="border-color:#4CAF50;">
-        <div class="task-card-icon">🗺️</div>
-        <div class="task-card-text">
-          <strong>ZŁOMEK:</strong> <em>"Paczka jest przy Moście!"</em><br><br>
-          <span id="e3-hint" style="color:#FFD700;font-weight:700;">PLACEHOLDER</span>
-        </div>
-      </div>
-      <a class="btn-primary" href="../3/">⚡ JEDŹ DO MOSTU →</a>
-    </div>
-
     <div class="flag-strip" style="margin-top:auto;"></div>
   </div>
 
@@ -200,9 +188,7 @@
     function onConfirmSuccess() {
       showSuccess('szymon', 'Trasa potwierdzona! Drużyna wie dokąd jechać! 🗺️', () => {
         GameState.markStage(2);
-        document.getElementById('phase-confirm').style.display = 'none';
-        document.getElementById('phase-success').style.display = 'block';
-        document.getElementById('e3-hint').innerHTML = STAGE3_NFC_HINT;
+        window.location.href = '../3/';
       });
     }
     // Organizer skip: triple-tap/click on ETAP badge → next stage
